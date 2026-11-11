@@ -12,8 +12,55 @@
       <p>看懂山西古建筑</p>
     </header>
     <main>
-      <canvas id="stage" aria-label="三维示意场景"></canvas>
-      <p class="note">项目骨架已就绪。这里是占位场景，按住鼠标拖动可以旋转。<span class="badge">示意</span></p>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="屋顶变形器的三维示意"></canvas>
+        <p class="hint">按住鼠标拖动可以旋转，滚轮缩放</p>
+      </div>
+
+      <aside class="panel">
+        <h2>屋顶变形器 <span class="badge">示意</span></h2>
+        <p class="lead">古建筑的屋顶看起来种类很多，其实是同一个屋顶在两个方向上的变化。拖动滑块看看。</p>
+
+        <section>
+          <div class="row">
+            <label for="form">形制</label>
+            <output id="form-name" for="form"></output>
+          </div>
+          <input id="form" type="range" min="0" max="130" step="any" value="0" />
+          <div class="ticks">
+            <button type="button" data-for="form" data-value="0">庑殿</button>
+            <button type="button" data-for="form" data-value="45">歇山</button>
+            <button type="button" data-for="form" data-value="100">悬山</button>
+            <button type="button" data-for="form" data-value="130">硬山</button>
+          </div>
+          <p id="form-desc" class="desc"></p>
+          <p class="how">滑块控制的是：两端的山面从多高开始变成直立的三角形。从屋脊开始就是庑殿，从檐口开始就是悬山，中间是歇山。再把两端的出挑收回，就是硬山。</p>
+        </section>
+
+        <section>
+          <div class="row">
+            <label for="era">时代</label>
+            <output id="era-name" for="era"></output>
+          </div>
+          <input id="era" type="range" min="0" max="100" step="any" value="0" />
+          <div class="ticks">
+            <button type="button" data-for="era" data-value="0">唐</button>
+            <button type="button" data-for="era" data-value="40">宋辽金</button>
+            <button type="button" data-for="era" data-value="70">元</button>
+            <button type="button" data-for="era" data-value="100">明清</button>
+          </div>
+          <dl class="readout">
+            <dt>屋面</dt><dd id="era-slope"></dd>
+            <dt>出檐</dt><dd id="era-eave"></dd>
+            <dt>斗拱</dt><dd id="era-bracket"></dd>
+          </dl>
+        </section>
+
+        <footer class="sources">
+          <p>这是说明趋势的示意模型，数值是近似值，不是某座建筑的测绘数据。</p>
+          <p>依据：形制与等级见梁思成《清式营造则例》；时代变化见梁思成《图像中国建筑史》。</p>
+        </footer>
+      </aside>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
