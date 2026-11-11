@@ -1,0 +1,20 @@
+{
+  "name": "shanxi-gujian",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "观晋｜看懂山西古建筑",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.187.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

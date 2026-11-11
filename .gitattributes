@@ -1,0 +1,6 @@
+# 大文件用 Git LFS 管理（本机需要先安装 git-lfs 并运行 git lfs install）
+*.glb filter=lfs diff=lfs merge=lfs -text
+*.gltf filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+*.hdr filter=lfs diff=lfs merge=lfs -text
