@@ -200,14 +200,23 @@ export function computeDims(state: MorphState): HallDims {
   };
 }
 
-export function formName(state: MorphState): string {
+/** 基本形的名字，以及叠加在上面的变化 */
+export function formParts(state: MorphState): { base: string; extras: string[] } {
   const { t, g, jp, dbl, zj } = effective(state);
   let base: string;
   if (zj > 0.5) base = '四角攒尖';
   else if (t < 0.12) base = '庑殿';
   else if (t < 0.9) base = '歇山';
   else base = g < 0.5 ? '悬山' : '硬山';
-  return (dbl > 0.5 ? '重檐' : '') + (jp > 0.5 ? '卷棚' : '') + base;
+  const extras: string[] = [];
+  if (dbl > 0.5) extras.push('重檐');
+  if (jp > 0.5) extras.push('卷棚');
+  return { base, extras };
+}
+
+export function formName(state: MorphState): string {
+  const { base, extras } = formParts(state);
+  return extras.join('') + base;
 }
 
 export function formDesc(state: MorphState): string {

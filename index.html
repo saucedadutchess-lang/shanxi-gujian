@@ -19,42 +19,58 @@
 
       <aside class="panel">
         <h2>屋顶变形器 <span class="badge">示意</span></h2>
-        <p class="lead">古建筑的屋顶看起来种类很多，其实是同一个屋顶在两个方向上的变化。拖动滑块看看。</p>
+
+        <div class="result" aria-live="polite">
+          <p class="result-label">现在的屋顶</p>
+          <p id="form-name" class="result-name"></p>
+          <p id="form-parts" class="result-parts"></p>
+          <p id="form-desc" class="desc"></p>
+        </div>
 
         <section>
-          <div class="row">
-            <label for="form">形制</label>
-            <output id="form-name" for="form"></output>
-          </div>
-          <input id="form" type="range" min="0" max="130" step="any" value="0" />
+          <h3><span class="step">1</span>先定基本形：屋顶两端怎么收</h3>
+          <input id="form" type="range" min="0" max="130" step="any" value="0" aria-label="基本形" />
           <div class="ticks">
             <button type="button" data-for="form" data-value="0">庑殿</button>
             <button type="button" data-for="form" data-value="45">歇山</button>
             <button type="button" data-for="form" data-value="100">悬山</button>
             <button type="button" data-for="form" data-value="130">硬山</button>
           </div>
-          <p id="form-desc" class="desc"></p>
-          <p class="how">滑块控制的是：两端的山面从多高开始变成直立的三角形。从屋脊开始就是庑殿，从檐口开始就是悬山，中间是歇山。再把两端的出挑收回，就是硬山。</p>
+          <p id="form-how" class="how">滑块控制两端的山面从多高开始变成直立的三角形。从屋脊开始是庑殿，从檐口开始是悬山，中间是歇山。再把两端的出挑收回，就是硬山。</p>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-branch="zj">
+            <span class="sw-text">
+              <span class="sw-name">攒尖</span>
+              <span class="sw-desc">另一种基本形：平面收成正方形，四面坡汇成一个尖</span>
+            </span>
+            <span class="sw-knob"></span>
+          </button>
         </section>
 
         <section>
-          <div class="row">
-            <span class="label">变化</span>
-          </div>
-          <div class="branches">
-            <button type="button" data-branch="dbl" aria-pressed="false">重檐</button>
-            <button type="button" data-branch="jp" aria-pressed="false">卷棚</button>
-            <button type="button" data-branch="zj" aria-pressed="false">攒尖</button>
-          </div>
-          <p class="how">重檐只用于庑殿、歇山和攒尖；卷棚只用于歇山、悬山和硬山。不能用的时候按钮是灰的。</p>
+          <h3><span class="step">2</span>再加变化（可选，可以叠加）</h3>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-branch="dbl">
+            <span class="sw-text">
+              <span class="sw-name">重檐</span>
+              <span class="sw-desc" data-off="悬山、硬山不用重檐">殿身外加一圈廊，多一层屋檐</span>
+            </span>
+            <span class="sw-knob"></span>
+          </button>
+          <button type="button" class="switch" role="switch" aria-checked="false" data-branch="jp">
+            <span class="sw-text">
+              <span class="sw-name">卷棚</span>
+              <span class="sw-desc" data-off="庑殿、攒尖不用卷棚，先把基本形换成歇山、悬山或硬山">去掉正脊，前后两坡在顶部圆滑相接</span>
+            </span>
+            <span class="sw-knob"></span>
+          </button>
         </section>
 
         <section>
+          <h3><span class="step">3</span>换个时代看</h3>
           <div class="row">
-            <label for="era">时代</label>
+            <span class="label">时代</span>
             <output id="era-name" for="era"></output>
           </div>
-          <input id="era" type="range" min="0" max="100" step="any" value="0" />
+          <input id="era" type="range" min="0" max="100" step="any" value="0" aria-label="时代" />
           <div class="ticks">
             <button type="button" data-for="era" data-value="0">唐</button>
             <button type="button" data-for="era" data-value="40">宋辽金</button>
