@@ -115,7 +115,8 @@ main {
   justify-content: space-between;
 }
 
-.row label {
+.row label,
+.row .label {
   font-size: 14px;
   color: var(--muted);
 }
@@ -216,4 +217,41 @@ input[type='range'] {
   font-size: 12px;
   font-weight: 400;
   vertical-align: middle;
+}
+
+.branches {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.branches button {
+  flex: 1;
+  padding: 7px 0;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.branches button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.branches button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.branches button:disabled {
+  color: #b9b0a2;
+  cursor: not-allowed;
+}
+
+input[type='range']:disabled {
+  opacity: 0.4;
 }

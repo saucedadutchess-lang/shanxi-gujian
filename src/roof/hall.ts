@@ -1,39 +1,72 @@
 import * as THREE from 'three';
-import { buildRoof, createTileTexture } from './geometry';
-import { computeDims, lerp, type HallDims, type MorphState } from './params';
+import { CLUSTER_WIDTH, clusterGeometry, type ClusterKind } from './brackets';
+import { buildRoof, type RoofGeometry, type Vert } from './geometry';
+import { computeDims, lerp, type HallDims, type MorphState, type RoofSpec } from './params';
+import { barWindow, latticeDoor, latticeWindow, plankDoor } from './textures';
 
-const MAX_BRACKET_BOXES = 900;
-const MAX_COLUMNS = 40;
+const UP = new THREE.Vector3(0, 1, 0);
+
+/** 一圈柱子和它上面的斗拱 */
+interface Level {
+  /** 柱子中线的面阔、进深坐标 */
+  xs: number[];
+  zs: number[];
+  /** 柱顶高度、斗拱比例 */
+  topY: number;
+  scale: number;
+  /** 两山是否也有斗拱 */
+  allSides: boolean;
+}
 
 /** 一座示意殿堂：台基、殿身、斗拱、屋顶。参数变化时整体重新生成。 */
 export class Hall {
   readonly group = new THREE.Group();
 
   private mat = {
-    tile: new THREE.MeshStandardMaterial({ map: createTileTexture(), roughness: 0.9, side: THREE.DoubleSide }),
-    ridge: new THREE.MeshStandardMaterial({ color: 0x55524c, roughness: 0.9 }),
+    tile: new THREE.MeshStandardMaterial({ color: 0x5f5e5a, roughness: 0.8, side: THREE.DoubleSide }),
+    rib: new THREE.MeshStandardMaterial({ color: 0x6c6b66, roughness: 0.75 }),
+    ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
     wood: new THREE.MeshStandardMaterial({ color: 0x6e4a32, roughness: 0.85, side: THREE.DoubleSide }),
+    rafter: new THREE.MeshStandardMaterial({ color: 0x7a5236, roughness: 0.85 }),
+    column: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8 }),
     bracket: new THREE.MeshStandardMaterial({ color: 0x8a5a36, roughness: 0.85 }),
-    wall: new THREE.MeshStandardMaterial({ color: 0xa5422f, roughness: 0.95, side: THREE.DoubleSide }),
+    wall: new THREE.MeshStandardMaterial({ color: 0x96392a, roughness: 0.95, side: THREE.DoubleSide }),
     plaster: new THREE.MeshStandardMaterial({ color: 0xd9cdb8, roughness: 1 }),
-    door: new THREE.MeshStandardMaterial({ color: 0x5b2c20, roughness: 0.9 }),
     stone: new THREE.MeshStandardMaterial({ color: 0xbdb5a6, roughness: 1 }),
+    stoneDark: new THREE.MeshStandardMaterial({ color: 0xa9a192, roughness: 1 }),
+    earlyDoor: new THREE.MeshStandardMaterial({ map: plankDoor(), roughness: 0.9 }),
+    earlyWindow: new THREE.MeshStandardMaterial({ map: barWindow(), roughness: 0.9 }),
+    lateDoor: new THREE.MeshStandardMaterial({ map: latticeDoor(), roughness: 0.9 }),
+    lateWindow: new THREE.MeshStandardMaterial({ map: latticeWindow(), roughness: 0.9 }),
   };
+
+  private chiwei = [earlyFinial(), lateFinial()];
+  private pinnacle = pinnacleGeometry();
+  private unitCylinder = shared(new THREE.CylinderGeometry(1, 1, 1, 8));
 
   update(state: MorphState) {
     this.clear();
     const d = computeDims(state);
-    this.buildBody(d);
-    this.buildBrackets(d, state.era);
-    this.buildRoof(d);
+
+    // 早期木构多为土红刷饰，明清官式檐下用青绿彩画
+    const late = THREE.MathUtils.smoothstep(state.era, 0.55, 0.95);
+    this.mat.bracket.color.set(0x8a5a36).lerp(new THREE.Color(0x3f6f6a), late);
+    this.mat.rafter.color.set(0x7a5236).lerp(new THREE.Color(0x7a3326), late);
+    this.mat.column.color.set(0x7a3a26).lerp(new THREE.Color(0x8f2f22), late);
+
+    this.buildBody(d, state.era);
+    this.buildRoofLevel(d, d.roof, d.yEave, state.era, true);
+    if (d.lower) {
+      this.buildRoofLevel(d, d.lower.roof, d.lower.yEave, state.era, false);
+    }
   }
 
   private clear() {
-    for (const child of this.group.children) {
-      child.traverse((obj) => {
-        if (obj instanceof THREE.Mesh) obj.geometry.dispose();
-      });
-    }
+    this.group.traverse((obj) => {
+      if ((obj instanceof THREE.Mesh || obj instanceof THREE.InstancedMesh) && !obj.geometry.userData.shared) {
+        obj.geometry.dispose();
+      }
+    });
     this.group.clear();
   }
 
@@ -46,148 +79,321 @@ export class Hall {
   }
 
   private box(w: number, h: number, dz: number, x: number, y: number, z: number, material: THREE.Material) {
+    if (w <= 0 || h <= 0 || dz <= 0) return;
     this.add(new THREE.BoxGeometry(w, h, dz), material).position.set(x, y, z);
   }
 
-  private buildBody(d: HallDims) {
-    const { Wb, Db, platformH, colH, colR } = d;
-    const top = platformH + colH;
+  private instanced(geometry: THREE.BufferGeometry, material: THREE.Material, matrices: THREE.Matrix4[], parent: THREE.Object3D = this.group) {
+    if (matrices.length === 0) return;
+    const mesh = new THREE.InstancedMesh(geometry, material, matrices.length);
+    matrices.forEach((m, i) => mesh.setMatrixAt(i, m));
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    parent.add(mesh);
+  }
 
-    // 台基
-    this.box(Wb * 2 + 3.2, platformH, Db * 2 + 3.2, 0, platformH / 2, 0, this.mat.stone);
-    // 墙身
-    this.box(Wb * 2 - 0.5, colH, Db * 2 - 0.5, 0, platformH + colH / 2, 0, this.mat.wall);
-    // 斗拱之间的栱眼壁
-    const bandH = d.wallTopY - top;
-    this.box(Wb * 2 - 0.7, bandH, Db * 2 - 0.7, 0, top + bandH / 2, 0, this.mat.plaster);
-    // 阑额（柱头之间的横枋）
-    for (const s of [1, -1]) {
-      this.box(Wb * 2, 0.36, 0.3, 0, top - 0.18, s * Db, this.mat.wood);
-      this.box(0.3, 0.36, Db * 2, s * Wb, top - 0.18, 0, this.mat.wood);
+  private buildBody(d: HallDims, era: number) {
+    const { Wb, Db, platformH, colH, colR, gallery, rise } = d;
+    const Wo = Wb + gallery;
+    const Do = Db + gallery;
+    const topY = platformH + colH + rise;
+
+    // 台基、压阑石、踏道
+    this.box(Wo * 2 + 3.0, platformH - 0.16, Do * 2 + 3.0, 0, (platformH - 0.16) / 2, 0, this.mat.stone);
+    this.box(Wo * 2 + 3.2, 0.16, Do * 2 + 3.2, 0, platformH - 0.08, 0, this.mat.stoneDark);
+    const stairW = Math.min(d.bayWidth * 1.4, Wo * 2);
+    for (let i = 0; i < 4; i++) {
+      const h = (platformH * (4 - i)) / 5;
+      this.box(stairW, h, 0.36, 0, h / 2, Do + 1.6 + (i + 0.5) * 0.36, this.mat.stoneDark);
     }
-    // 正面当中三间开门
-    for (let i = 1; i <= 3; i++) {
-      const x = -Wb + (i + 0.5) * d.bayWidth;
-      this.box(d.bayWidth - colR * 2 - 0.2, colH - 0.6, 0.1, x, platformH + (colH - 0.6) / 2, Db - 0.22, this.mat.door);
-    }
+
+    // 墙身、栱眼壁
+    this.box(Wb * 2 - 0.5, topY - platformH, Db * 2 - 0.5, 0, (platformH + topY) / 2, 0, this.mat.wall);
+    this.box(Wb * 2 - 0.7, d.wallTopY - topY, Db * 2 - 0.7, 0, (topY + d.wallTopY) / 2, 0, this.mat.plaster);
+
     // 悬山、硬山：山墙一直砌到屋顶
     if (d.gableWall) {
-      for (const s of [1, -1]) {
-        const h = d.wallTopY - platformH;
-        this.box(0.5, h, Db * 2, s * (Wb - 0.29), platformH + h / 2, 0, this.mat.wall);
-      }
+      const h = d.wallTopY - platformH;
+      for (const s of [1, -1]) this.box(0.5, h, Db * 2, s * (Wb - 0.29), platformH + h / 2, 0, this.mat.wall);
     }
 
-    // 柱子
-    const columns = new THREE.InstancedMesh(
-      new THREE.CylinderGeometry(colR * 0.92, colR, colH, 20),
-      this.mat.wood,
-      MAX_COLUMNS,
-    );
-    const m = new THREE.Matrix4();
-    let n = 0;
-    const put = (x: number, z: number) => columns.setMatrixAt(n++, m.makeTranslation(x, platformH + colH / 2, z));
-    for (let i = 0; i <= d.bays; i++) {
-      put(-Wb + i * d.bayWidth, Db);
-      put(-Wb + i * d.bayWidth, -Db);
+    // 正面的门窗：当中开门，两侧开窗。早期是板门和直棂窗，后期是隔扇门和槛窗
+    const lateStyle = era > 0.55;
+    const doorMat = lateStyle ? this.mat.lateDoor : this.mat.earlyDoor;
+    const windowMat = lateStyle ? this.mat.lateWindow : this.mat.earlyWindow;
+    const doorSpan = d.bays >= 5 ? 1 : 0;
+    const openW = d.bayWidth - colR * 2 - 0.16;
+    for (let i = 0; i < d.bays; i++) {
+      const x = -Wb + (i + 0.5) * d.bayWidth;
+      const isDoor = Math.abs(i - (d.bays - 1) / 2) <= doorSpan;
+      const y0 = platformH + (isDoor ? 0.04 : 1.25);
+      const h = platformH + colH - 0.5 - y0;
+      if (openW <= 0.3) continue;
+      const mesh = this.add(new THREE.PlaneGeometry(openW, h), isDoor ? doorMat : windowMat);
+      mesh.position.set(x, y0 + h / 2, Db - 0.24);
     }
-    for (let j = 1; j < d.sideBays; j++) {
-      put(Wb, -Db + j * d.sideBayWidth);
-      put(-Wb, -Db + j * d.sideBayWidth);
+
+    // 殿身的柱子和斗拱
+    const xs = range(d.bays + 1, (i) => -Wb + i * d.bayWidth);
+    const zs = range(d.sideBays + 1, (j) => -Db + j * d.sideBayWidth);
+    this.buildColumns(xs, zs, platformH, colH + rise, colR);
+    this.buildBeams(d, xs[0], zs[0], topY, 1, !d.gableWall);
+    this.buildBrackets(d, { xs, zs, topY, scale: 1, allSides: !d.gableWall }, era);
+
+    // 重檐：外圈回廊的柱子和斗拱
+    if (d.lower) {
+      const oxs = [-Wo, ...xs, Wo];
+      const ozs = [-Do, ...zs, Do];
+      const lowTop = platformH + colH;
+      this.buildColumns(oxs, ozs, platformH, colH, colR * 0.92);
+      this.buildBeams(d, -Wo, -Do, lowTop, d.lower.scale, true);
+      this.buildBrackets(d, { xs: oxs, zs: ozs, topY: lowTop, scale: d.lower.scale, allSides: true }, era);
+      // 博脊：下檐屋面和殿身相接处的脊
+      const y = d.lower.topY + 0.12;
+      for (const s of [1, -1]) {
+        this.box(Wb * 2 + 0.5, 0.42, 0.3, 0, y, s * (Db + 0.02), this.mat.ridge);
+        this.box(0.3, 0.42, Db * 2 + 0.5, s * (Wb + 0.02), y, 0, this.mat.ridge);
+      }
     }
-    columns.count = n;
-    columns.castShadow = true;
-    columns.receiveShadow = true;
-    this.group.add(columns);
+  }
+
+  /** 沿一圈柱网的外缘立柱子，带柱础 */
+  private buildColumns(xs: number[], zs: number[], y0: number, h: number, r: number) {
+    const shafts: THREE.Matrix4[] = [];
+    const bases: THREE.Matrix4[] = [];
+    const put = (x: number, z: number) => {
+      shafts.push(new THREE.Matrix4().makeTranslation(x, y0 + h / 2, z));
+      bases.push(new THREE.Matrix4().makeTranslation(x, y0 + 0.06, z));
+    };
+    const x0 = xs[0], x1 = xs[xs.length - 1];
+    const z0 = zs[0], z1 = zs[zs.length - 1];
+    for (const x of xs) {
+      put(x, z0);
+      put(x, z1);
+    }
+    for (const z of zs.slice(1, -1)) {
+      put(x0, z);
+      put(x1, z);
+    }
+    this.instanced(new THREE.CylinderGeometry(r * 0.9, r, h, 20), this.mat.column, shafts);
+    this.instanced(new THREE.CylinderGeometry(r * 1.35, r * 1.6, 0.12, 20), this.mat.stoneDark, bases);
+  }
+
+  /** 阑额（柱头之间的横枋），和斗拱最外端托着的挑檐枋 */
+  private buildBeams(d: HallDims, x0: number, z0: number, topY: number, scale: number, allSides: boolean) {
+    const w = Math.abs(x0);
+    const dz = Math.abs(z0);
+    const tier = d.tier * scale;
+    const reach = d.reach * scale;
+    const eaveY = topY + d.bracketH * scale - tier * 0.3;
+    for (const s of [1, -1]) {
+      this.box(w * 2, 0.36, 0.26, 0, topY - 0.18, s * dz, this.mat.column);
+      this.box(0.26, 0.36, dz * 2, s * w, topY - 0.18, 0, this.mat.column);
+      const len = allSides ? (w + reach) * 2 + tier * 0.5 : w * 2;
+      this.box(len, tier * 0.6, tier * 0.5, 0, eaveY, s * (dz + reach), this.mat.bracket);
+      if (allSides) this.box(tier * 0.5, tier * 0.6, (dz + reach) * 2 + tier * 0.5, s * (w + reach), eaveY, 0, this.mat.bracket);
+    }
   }
 
   /**
-   * 斗拱简化成三层逐层外挑的方块。
-   * 早期斗拱大而疏，柱与柱之间只有一朵或没有；晚期小而密。
+   * 斗拱。每根柱头上一朵，柱与柱之间按宽度能排几朵排几朵。
+   * 早期斗拱大，柱间排不下完整的一朵，只放一朵简化的；后期小而密。
    */
-  private buildBrackets(d: HallDims, era: number) {
-    const { Wb, Db, bracketH, platformH, colH } = d;
-    const width = bracketH * 0.6;
-    const topWidth = width * 1.15;
-    const reach = d.reach;
-    const tierH = bracketH / 3;
-
-    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), this.mat.bracket, MAX_BRACKET_BOXES);
-    const m = new THREE.Matrix4();
-    const pos = new THREE.Vector3();
-    const scale = new THREE.Vector3();
+  private buildBrackets(d: HallDims, level: Level, era: number) {
+    const tier = d.tier * level.scale;
+    const jr = d.jump / d.tier;
+    const matrices: Record<ClusterKind, THREE.Matrix4[]> = { full: [], simple: [] };
     const quat = new THREE.Quaternion();
-    let n = 0;
 
-    const cluster = (px: number, pz: number, nx: number, nz: number) => {
-      for (let j = 0; j < 3; j++) {
-        const along = width * (0.55 + 0.3 * j);
-        const out = (reach * (j + 1)) / 3;
-        const depth = out + 0.3;
-        const offset = (out - 0.3) / 2;
-        pos.set(px + nx * offset, platformH + colH + (j + 0.5) * tierH, pz + nz * offset);
-        if (nz !== 0) scale.set(along, tierH * 0.9, depth);
-        else scale.set(depth, tierH * 0.9, along);
-        mesh.setMatrixAt(n++, m.compose(pos, quat, scale));
-      }
+    const put = (kind: ClusterKind, x: number, z: number, angle: number, stretch = 1) => {
+      quat.setFromAxisAngle(UP, angle);
+      matrices[kind].push(
+        new THREE.Matrix4().compose(
+          new THREE.Vector3(x, level.topY, z),
+          quat,
+          new THREE.Vector3(tier, tier, tier * stretch),
+        ),
+      );
     };
 
-    const between = (bay: number) => {
-      const fit = Math.floor(bay / (topWidth * 1.12)) - 1;
-      return Math.max(0, Math.min(fit, Math.round(lerp(1, 5, era))));
-    };
-
-    // 前后檐
-    const kFront = between(d.bayWidth);
-    for (const s of [1, -1]) {
-      for (let i = 0; i <= d.bays; i++) {
-        const x0 = -Wb + i * d.bayWidth;
-        cluster(x0, s * Db, 0, s);
-        if (i === d.bays) break;
-        for (let k = 1; k <= kFront; k++) cluster(x0 + (k * d.bayWidth) / (kFront + 1), s * Db, 0, s);
-      }
-    }
-    // 两山。悬山、硬山的山墙砌到顶，两山没有斗拱
-    if (!d.gableWall) {
-      const kSide = between(d.sideBayWidth);
-      for (const s of [1, -1]) {
-        for (let j = 0; j <= d.sideBays; j++) {
-          const z0 = -Db + j * d.sideBayWidth;
-          cluster(s * Wb, z0, s, 0);
-          if (j === d.sideBays) break;
-          for (let k = 1; k <= kSide; k++) cluster(s * Wb, z0 + (k * d.sideBayWidth) / (kSide + 1), s, 0);
+    const row = (coords: number[], at: (c: number) => [number, number], angle: number) => {
+      for (let i = 0; i < coords.length; i++) {
+        put('full', ...at(coords[i]), angle);
+        if (i === coords.length - 1) break;
+        const bay = coords[i + 1] - coords[i];
+        const fit = Math.floor(bay / (CLUSTER_WIDTH.full * tier * 1.05)) - 1;
+        if (fit >= 1) {
+          for (let k = 1; k <= fit; k++) put('full', ...at(coords[i] + (k * bay) / (fit + 1)), angle);
+        } else if (era < 0.45 && bay > CLUSTER_WIDTH.simple * tier * 1.1) {
+          put('simple', ...at(coords[i] + bay / 2), angle);
         }
       }
+    };
+
+    const { xs, zs } = level;
+    const x1 = xs[xs.length - 1];
+    const z1 = zs[zs.length - 1];
+    row(xs, (x) => [x, z1], 0);
+    row(xs, (x) => [x, zs[0]], Math.PI);
+    if (level.allSides) {
+      row(zs, (z) => [x1, z], Math.PI / 2);
+      row(zs, (z) => [xs[0], z], -Math.PI / 2);
+      // 转角：再加一朵沿 45° 斜出的
+      for (const sx of [1, -1]) {
+        for (const sz of [1, -1]) put('full', sx * x1, sz * z1, Math.atan2(sx, sz), Math.SQRT2);
+      }
     }
 
-    mesh.count = n;
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    this.group.add(mesh);
+    for (const kind of ['full', 'simple'] as const) {
+      this.instanced(clusterGeometry(d.jumps, jr, kind), this.mat.bracket, matrices[kind]);
+    }
   }
 
-  private buildRoof(d: HallDims) {
+  private buildRoofLevel(d: HallDims, spec: RoofSpec, yEave: number, era: number, isTop: boolean) {
     const roof = new THREE.Group();
-    roof.position.y = d.yEave;
+    roof.position.y = yEave;
     this.group.add(roof);
 
-    const geo = buildRoof(d);
-    this.add(geo.tiles, this.mat.tile, roof);
+    const geo = buildRoof(spec);
+    this.add(geo.base, this.mat.tile, roof);
+    this.add(geo.ribs, this.mat.rib, roof);
     this.add(geo.wood, this.mat.wood, roof);
     if (geo.gable) this.add(geo.gable, this.mat.wall, roof);
+    this.buildRafters(geo, roof, era);
 
-    // 正脊和两端的鸱吻
-    const ridge = this.add(new THREE.BoxGeometry(d.xg * 2 + 0.3, 0.55, 0.32), this.mat.ridge, roof);
-    ridge.position.y = d.H + 0.2;
-    for (const s of [1, -1]) {
-      const finial = this.add(new THREE.BoxGeometry(0.5, 1.1, 0.38), this.mat.ridge, roof);
-      finial.position.set(s * d.xg, d.H + 0.5, 0);
-    }
     // 垂脊和戗脊
     for (const pts of geo.hipRidges) {
       if (pts.length < 2) continue;
       const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
       this.add(new THREE.TubeGeometry(curve, pts.length * 3, 0.17, 6, false), this.mat.ridge, roof);
+      // 脊端的兽头（简化成一个小方块）
+      const tip = pts[pts.length - 1];
+      const prev = pts[pts.length - 2];
+      const beast = this.add(new THREE.BoxGeometry(0.3, 0.42, 0.3), this.mat.ridge, roof);
+      beast.position.copy(tip).lerp(prev, 0.25);
+      beast.position.y += 0.18;
+      beast.rotation.y = Math.atan2(tip.x - prev.x, tip.z - prev.z);
+    }
+    if (!isTop) return;
+
+    // 正脊和两端的鸱吻。早期是鸱尾，轮廓简洁；明清是正吻，卷尾
+    const xg = geo.surface.xg;
+    const k = d.ridgeScale;
+    if (k > 0.02) {
+      const ridge = this.add(new THREE.BoxGeometry(xg * 2 + 0.2, 0.52, 0.3), this.mat.ridge, roof);
+      ridge.position.y = geo.topY + 0.2 * k;
+      ridge.scale.y = k;
+      const size = lerp(1.05, 0.9, era) * k;
+      for (const sx of [1, -1]) {
+        const finial = this.add(this.chiwei[era < 0.5 ? 0 : 1], this.mat.ridge, roof);
+        finial.position.set(sx * xg, geo.topY - 0.05, -0.18 * size);
+        finial.scale.set(-sx * size, size, size);
+      }
+    }
+    // 攒尖的宝顶
+    if (d.finialScale > 0.02) {
+      const top = this.add(this.pinnacle, this.mat.ridge, roof);
+      top.position.y = geo.topY - 0.1;
+      top.scale.setScalar(d.finialScale);
     }
   }
+
+  /** 檐下露出的椽子。分两段：里面一段是檐椽，外面一段是飞椽 */
+  private buildRafters(geo: RoofGeometry, parent: THREE.Object3D, era: number) {
+    const s = geo.surface;
+    const { W, D, tau, eave, eaveEnd } = s.spec;
+    const r = lerp(0.075, 0.055, era);
+    const spacing = r * 5.2;
+    const matrices: THREE.Matrix4[] = [];
+    const a = new THREE.Vector3();
+    const b = new THREE.Vector3();
+    const dir = new THREE.Vector3();
+    const quat = new THREE.Quaternion();
+    const dy = -tau - r;
+
+    const segment = (p: Vert, q: Vert) => {
+      a.set(...p);
+      b.set(...q);
+      const len = dir.subVectors(b, a).length();
+      if (len < 0.05) return;
+      quat.setFromUnitVectors(UP, dir.normalize());
+      matrices.push(
+        new THREE.Matrix4().compose(a.add(b).multiplyScalar(0.5), quat, new THREE.Vector3(r, len, r)),
+      );
+    };
+
+    const kx = Math.floor((W - 0.12) / spacing);
+    for (let k = -kx; k <= kx; k++) {
+      const x = k * spacing;
+      const top = Math.min(s.frontTop(Math.abs(x)), (eave + 0.4) / D);
+      if (top < 0.04) continue;
+      for (const sz of [1, -1]) {
+        segment(s.front(x, 0.01, sz, dy), s.front(x, top / 2, sz, dy));
+        segment(s.front(x, top / 2, sz, dy), s.front(x, top, sz, dy));
+      }
+    }
+    if (s.spec.uc > 1e-3) {
+      const kz = Math.floor((D - 0.12) / spacing);
+      for (let k = -kz; k <= kz; k++) {
+        const z = k * spacing;
+        const top = Math.min(s.endTop(Math.abs(z)), (eaveEnd + 0.4) / D);
+        if (top < 0.04) continue;
+        for (const sx of [1, -1]) {
+          segment(s.end(0.01, z, sx, dy), s.end(top / 2, z, sx, dy));
+          segment(s.end(top / 2, z, sx, dy), s.end(top, z, sx, dy));
+        }
+      }
+    }
+    this.instanced(this.unitCylinder, this.mat.rafter, matrices, parent);
+  }
+}
+
+function range<T>(n: number, fn: (i: number) => T): T[] {
+  return Array.from({ length: n }, (_, i) => fn(i));
+}
+
+function shared<T extends THREE.BufferGeometry>(geometry: T): T {
+  geometry.userData.shared = true;
+  return geometry;
+}
+
+function silhouette(draw: (shape: THREE.Shape) => void): THREE.BufferGeometry {
+  const shape = new THREE.Shape();
+  draw(shape);
+  return shared(new THREE.ExtrudeGeometry(shape, { depth: 0.36, bevelEnabled: false, curveSegments: 10 }));
+}
+
+/** 鸱尾：早期正脊两端的构件，像一条向内翘起的鱼尾。x 正方向朝向屋脊中央 */
+function earlyFinial() {
+  return silhouette((s) => {
+    s.moveTo(-0.28, 0);
+    s.lineTo(0.8, 0);
+    s.lineTo(0.8, 0.45);
+    s.quadraticCurveTo(0.5, 1.0, 0.98, 1.72);
+    s.bezierCurveTo(0.45, 1.74, -0.28, 1.45, -0.28, 0.75);
+    s.closePath();
+  });
+}
+
+/** 正吻：明清正脊两端的构件，龙头吞脊，尾部向外卷 */
+function lateFinial() {
+  return silhouette((s) => {
+    s.moveTo(-0.3, 0);
+    s.lineTo(0.72, 0);
+    s.lineTo(0.72, 0.56);
+    s.lineTo(0.46, 0.62);
+    s.quadraticCurveTo(0.34, 1.0, 0.6, 1.14);
+    s.quadraticCurveTo(0.78, 1.36, 0.48, 1.5);
+    s.quadraticCurveTo(0.08, 1.6, -0.3, 1.2);
+    s.closePath();
+  });
+}
+
+/** 宝顶：攒尖顶最高处的构件 */
+function pinnacleGeometry() {
+  const profile: [number, number][] = [
+    [0, 0], [0.5, 0], [0.55, 0.22], [0.32, 0.42], [0.46, 0.75],
+    [0.4, 1.02], [0.14, 1.25], [0.06, 1.7], [0, 1.78],
+  ];
+  return shared(new THREE.LatheGeometry(profile.map(([x, y]) => new THREE.Vector2(x, y)), 24));
 }
