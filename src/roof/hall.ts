@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { CLUSTER_WIDTH, clusterGeometry, type ClusterKind } from './brackets';
+import { CLUSTER_WIDTH, clusterGeometry, levelY, type ClusterKind } from './brackets';
 import { buildRoof, type RoofGeometry, type Vert } from './geometry';
 import { computeDims, lerp, type HallDims, type MorphState, type RoofSpec } from './params';
 import { barWindow, latticeDoor, latticeWindow, masonry, mottled, plankDoor, woodGrain } from './textures';
@@ -31,6 +31,7 @@ export class Hall {
     column: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8, map: woodGrain('v', 2, 2) }),
     beam: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8, map: woodGrain('u', 0.25, 1.5) }),
     bracket: new THREE.MeshStandardMaterial({ color: 0x8a5a36, roughness: 0.85, map: woodGrain('u', 0.7, 0.7) }),
+    dou: new THREE.MeshStandardMaterial({ color: 0x7c4e2e, roughness: 0.85 }),
     wall: new THREE.MeshStandardMaterial({ color: 0x96392a, roughness: 0.95, side: THREE.DoubleSide, map: mottled(0.22) }),
     plaster: new THREE.MeshStandardMaterial({ color: 0xd9cdb8, roughness: 1, map: mottled(0.3) }),
     stone: new THREE.MeshStandardMaterial({ color: 0xc4bcad, roughness: 1, map: masonry(2, 2, 0.4, 1.19, true) }),
@@ -52,7 +53,9 @@ export class Hall {
 
     // 早期木构多为土红刷饰，明清官式檐下用青绿彩画
     const late = THREE.MathUtils.smoothstep(state.era, 0.55, 0.95);
-    this.mat.bracket.color.set(0x8a5a36).lerp(new THREE.Color(0x3f6f6a), late);
+    // 明清彩画里栱多用青、斗多用绿，这里只取个大意
+    this.mat.bracket.color.set(0x8a5a36).lerp(new THREE.Color(0x35608a), late);
+    this.mat.dou.color.set(0x7c4e2e).lerp(new THREE.Color(0x3f7a5c), late);
     this.mat.rafter.color.set(0x7a5236).lerp(new THREE.Color(0x7a3326), late);
     this.mat.column.color.set(0x7a3a26).lerp(new THREE.Color(0x8f2f22), late);
     this.mat.beam.color.copy(this.mat.column.color);
@@ -241,6 +244,25 @@ export class Hall {
     const { xs, zs } = level;
     const x1 = xs[xs.length - 1];
     const z1 = zs[zs.length - 1];
+
+    // 把各朵斗拱连成一圈的枋子：墙面上从第三层起层层叠上去的柱头枋，
+    // 和里面几跳跳头上的罗汉枋。枋与枋之间留一道缝，实物中这里垫着小斗
+    const tiers = d.jumps + d.extraTiers;
+    const beam = (lv: number, out: number) => {
+      const y = level.topY + (levelY(lv) + 0.357) * tier;
+      const h = 0.714 * tier;
+      const w = 0.476 * tier;
+      for (const s of [1, -1]) {
+        const len = level.allSides ? (x1 + out) * 2 + w : x1 * 2;
+        this.box(len, h, w, 0, y, s * (z1 + out), this.mat.bracket);
+        if (level.allSides) this.box(w, h, (z1 + out) * 2 + w, s * (x1 + out), y, 0, this.mat.bracket);
+      }
+    };
+    for (let lv = 3; lv <= tiers + 1; lv++) beam(lv, 0);
+    for (let i = 1; i < d.jumps; i++) {
+      if (i + 3 <= tiers + 1) beam(i + 3, i * jr * tier);
+    }
+
     row(xs, (x) => [x, z1], 0);
     row(xs, (x) => [x, zs[0]], Math.PI);
     if (level.allSides) {
@@ -253,7 +275,9 @@ export class Hall {
     }
 
     for (const kind of ['full', 'simple'] as const) {
-      this.instanced(clusterGeometry(d.jumps, jr, kind, d.extraTiers), this.mat.bracket, matrices[kind]);
+      const geometry = clusterGeometry(d.jumps, jr, kind, d.extraTiers);
+      this.instanced(geometry.arm, this.mat.bracket, matrices[kind]);
+      this.instanced(geometry.dou, this.mat.dou, matrices[kind]);
     }
   }
 
