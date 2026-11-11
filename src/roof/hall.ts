@@ -23,8 +23,8 @@ export class Hall {
   readonly group = new THREE.Group();
 
   private mat = {
-    tile: new THREE.MeshStandardMaterial({ color: 0x5f5e5a, roughness: 0.8, side: THREE.DoubleSide }),
-    rib: new THREE.MeshStandardMaterial({ color: 0x6c6b66, roughness: 0.75 }),
+    tile: new THREE.MeshStandardMaterial({ color: 0x62615d, roughness: 0.8, side: THREE.DoubleSide }),
+    rib: new THREE.MeshStandardMaterial({ color: 0x696864, roughness: 0.78 }),
     ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
     wood: new THREE.MeshStandardMaterial({ color: 0x6e4a32, roughness: 0.85, side: THREE.DoubleSide }),
     rafter: new THREE.MeshStandardMaterial({ color: 0x7a5236, roughness: 0.85 }),
@@ -255,8 +255,10 @@ export class Hall {
     this.group.add(roof);
 
     const geo = buildRoof(spec);
-    this.add(geo.base, this.mat.tile, roof);
-    this.add(geo.ribs, this.mat.rib, roof);
+    // 瓦面只接受阴影、不投射阴影：屋顶的影子由下面的望板来投。
+    // 否则筒瓦之间会互相投下细碎的影子，远看像一块块镂空的斑。
+    this.add(geo.base, this.mat.tile, roof).castShadow = false;
+    this.add(geo.ribs, this.mat.rib, roof).castShadow = false;
     this.add(geo.wood, this.mat.wood, roof);
     if (geo.gable) this.add(geo.gable, this.mat.wall, roof);
     this.buildRafters(geo, roof, era);

@@ -1,10 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 /**
  * 基础三维舞台：渲染器、相机、灯光、地面、轨道控制。
@@ -61,22 +57,10 @@ export function createStage(canvas: HTMLCanvasElement) {
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // 环境光遮蔽：让构件之间的缝隙和檐下的阴影更有层次
-  const target = new THREE.WebGLRenderTarget(1, 1, { samples: 4, type: THREE.HalfFloatType });
-  const composer = new EffectComposer(renderer, target);
-  composer.addPass(new RenderPass(scene, camera));
-  const ao = new GTAOPass(scene, camera, 1, 1);
-  ao.blendIntensity = 0.9;
-  ao.updateGtaoMaterial({ radius: 0.9, distanceExponent: 1.4, thickness: 1.2, scale: 1.1, samples: 12 });
-  composer.addPass(ao);
-  composer.addPass(new OutputPass());
-
   function resize() {
     const { clientWidth, clientHeight } = canvas.parentElement ?? canvas;
     if (clientWidth === 0 || clientHeight === 0) return;
     renderer.setSize(clientWidth, clientHeight, false);
-    composer.setPixelRatio(renderer.getPixelRatio());
-    composer.setSize(clientWidth, clientHeight);
     camera.aspect = clientWidth / clientHeight;
     camera.updateProjectionMatrix();
   }
@@ -85,7 +69,7 @@ export function createStage(canvas: HTMLCanvasElement) {
 
   renderer.setAnimationLoop(() => {
     controls.update();
-    composer.render();
+    renderer.render(scene, camera);
   });
 
   return { scene, camera, renderer, controls };

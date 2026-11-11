@@ -6,7 +6,7 @@ export type Vert = [x: number, y: number, z: number];
 const EPS = 1e-3;
 /** 一垄瓦的间距、筒瓦半径 */
 export const TILE_ROW = 0.3;
-const TILE_R = 0.075;
+const TILE_R = 0.095;
 /** 博风板高度 */
 const RAKE_H = 0.55;
 
