@@ -102,12 +102,13 @@ export class Hall {
     const topY = platformH + colH + rise;
 
     // 台基、压阑石、踏道
-    this.box(Wo * 2 + 3.0, platformH - 0.16, Do * 2 + 3.0, 0, (platformH - 0.16) / 2, 0, this.mat.stone);
-    this.box(Wo * 2 + 3.2, 0.16, Do * 2 + 3.2, 0, platformH - 0.08, 0, this.mat.stoneDark);
+    const out = d.platformOut;
+    this.box((Wo + out) * 2 - 0.2, platformH - 0.16, (Do + out) * 2 - 0.2, 0, (platformH - 0.16) / 2, 0, this.mat.stone);
+    this.box((Wo + out) * 2, 0.16, (Do + out) * 2, 0, platformH - 0.08, 0, this.mat.stoneDark);
     const stairW = Math.min(d.bayWidth * 1.4, Wo * 2);
     for (let i = 0; i < 4; i++) {
       const h = (platformH * (4 - i)) / 5;
-      this.box(stairW, h, 0.36, 0, h / 2, Do + 1.6 + (i + 0.5) * 0.36, this.mat.stoneDark);
+      this.box(stairW, h, 0.36, 0, h / 2, Do + out + (i + 0.5) * 0.36, this.mat.stoneDark);
     }
 
     // 墙身、栱眼壁
@@ -224,12 +225,12 @@ export class Hall {
         put('full', ...at(coords[i]), angle);
         if (i === coords.length - 1) break;
         const bay = coords[i + 1] - coords[i];
-        const fit = Math.floor(bay / (CLUSTER_WIDTH.full * tier * 1.05)) - 1;
-        if (fit >= 1) {
-          for (let k = 1; k <= fit; k++) put('full', ...at(coords[i] + (k * bay) / (fit + 1)), angle);
-        } else if (era < 0.45 && bay > CLUSTER_WIDTH.simple * tier * 1.1) {
-          put('simple', ...at(coords[i] + bay / 2), angle);
-        }
+        // 相邻两朵斗拱的中距约为 5.5 层高（清式的攒当 11 斗口）
+        const fit = Math.round(bay / (5.5 * tier)) - 1;
+        if (bay < CLUSTER_WIDTH.simple * tier * 1.3) continue;
+        // 早期的补间铺作比柱头的简单
+        const kind: ClusterKind = era < 0.2 ? 'simple' : 'full';
+        for (let k = 1; k <= fit; k++) put(kind, ...at(coords[i] + (k * bay) / (fit + 1)), angle);
       }
     };
 
@@ -248,7 +249,7 @@ export class Hall {
     }
 
     for (const kind of ['full', 'simple'] as const) {
-      this.instanced(clusterGeometry(d.jumps, jr, kind), this.mat.bracket, matrices[kind]);
+      this.instanced(clusterGeometry(d.jumps, jr, kind, d.extraTiers), this.mat.bracket, matrices[kind]);
     }
   }
 
@@ -264,7 +265,7 @@ export class Hall {
     this.add(geo.ribs, this.mat.rib, roof).castShadow = false;
     this.add(geo.wood, this.mat.wood, roof);
     if (geo.gable) this.add(geo.gable, this.mat.wall, roof);
-    this.buildRafters(geo, roof, era);
+    this.buildRafters(geo, roof, d.rafterR);
 
     // 垂脊和戗脊
     for (const pts of geo.hipRidges) {
@@ -336,7 +337,7 @@ export class Hall {
         band.position.y = geo.topY + dy * k;
         band.scale.y = k;
       }
-      const size = lerp(1.05, 0.9, era) * k;
+      const size = (d.finialH / 1.72) * k;
       for (const sx of [1, -1]) {
         const finial = this.add(this.chiwei[era < 0.5 ? 0 : 1], this.mat.ridge, roof);
         finial.position.set(sx * xg, geo.topY - 0.05, -0.18 * size);
@@ -352,10 +353,9 @@ export class Hall {
   }
 
   /** 檐下露出的椽子。分两段：里面一段是檐椽，外面一段是飞椽 */
-  private buildRafters(geo: RoofGeometry, parent: THREE.Object3D, era: number) {
+  private buildRafters(geo: RoofGeometry, parent: THREE.Object3D, r: number) {
     const s = geo.surface;
     const { W, D, tau, eave, eaveEnd } = s.spec;
-    const r = lerp(0.075, 0.055, era);
     const spacing = r * 5.2;
     const matrices: THREE.Matrix4[] = [];
     const a = new THREE.Vector3();
@@ -392,14 +392,19 @@ export class Hall {
       }
     }
 
+    // 有飞椽时在飞椽和檐椽相接处转折；没有飞椽时（如佛光寺东大殿）是一根直椽
+    const { fly } = s.spec;
+    const split = (top: number) => (fly > 0.1 ? Math.min(fly / D, top * 0.9) : top / 2);
+
     const kx = Math.floor((W - 0.12) / spacing);
     for (let k = -kx; k <= kx; k++) {
       const x = k * spacing;
       const top = Math.min(s.frontTop(Math.abs(x)), (eave + 0.4) / D);
       if (top < 0.04) continue;
       for (const sz of [1, -1]) {
-        segment(s.front(x, 0.01, sz, dy), s.front(x, top / 2, sz, dy));
-        segment(s.front(x, top / 2, sz, dy), s.front(x, top, sz, dy));
+        const mid = split(top);
+        segment(s.front(x, 0.01, sz, dy), s.front(x, mid, sz, dy));
+        segment(s.front(x, mid, sz, dy), s.front(x, top, sz, dy));
       }
     }
     if (s.spec.uc > 1e-3) {
@@ -409,8 +414,9 @@ export class Hall {
         const top = Math.min(s.endTop(Math.abs(z)), (eaveEnd + 0.4) / D);
         if (top < 0.04) continue;
         for (const sx of [1, -1]) {
-          segment(s.end(0.01, z, sx, dy), s.end(top / 2, z, sx, dy));
-          segment(s.end(top / 2, z, sx, dy), s.end(top, z, sx, dy));
+          const mid = split(top);
+          segment(s.end(0.01, z, sx, dy), s.end(mid, z, sx, dy));
+          segment(s.end(mid, z, sx, dy), s.end(top, z, sx, dy));
         }
       }
     }

@@ -18,7 +18,7 @@ export function createStage(canvas: HTMLCanvasElement) {
 
   const scene = new THREE.Scene();
   scene.background = skyTexture();
-  scene.fog = new THREE.Fog(0xe6e3da, 80, 330);
+  scene.fog = new THREE.Fog(0xe6e3da, 110, 380);
 
   // 柔和的环境光，让背光面和檐下不至于死黑
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -26,26 +26,26 @@ export function createStage(canvas: HTMLCanvasElement) {
   scene.environmentIntensity = 0.45;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 600);
-  camera.position.set(33, 11, 42);
+  camera.position.set(44, 14, 56);
 
   const controls = new OrbitControls(camera, canvas);
-  controls.target.set(0, 6, 0);
+  controls.target.set(0, 7.5, 0);
   controls.enableDamping = true;
   controls.maxPolarAngle = Math.PI / 2 - 0.02;
-  controls.minDistance = 10;
-  controls.maxDistance = 110;
+  controls.minDistance = 14;
+  controls.maxDistance = 150;
 
   scene.add(new THREE.HemisphereLight(0xdfe8f2, 0xb9a98f, 0.7));
   const sun = new THREE.DirectionalLight(0xfff1dc, 2.7);
-  sun.position.set(18, 30, 22);
+  sun.position.set(26, 44, 32);
   sun.castShadow = true;
   sun.shadow.mapSize.set(4096, 4096);
-  sun.shadow.camera.left = -30;
-  sun.shadow.camera.right = 30;
-  sun.shadow.camera.top = 30;
-  sun.shadow.camera.bottom = -30;
+  sun.shadow.camera.left = -44;
+  sun.shadow.camera.right = 44;
+  sun.shadow.camera.top = 44;
+  sun.shadow.camera.bottom = -44;
   sun.shadow.camera.near = 1;
-  sun.shadow.camera.far = 100;
+  sun.shadow.camera.far = 150;
   sun.shadow.bias = -0.0004;
   sun.shadow.normalBias = 0.04;
   sun.shadow.radius = 3;

@@ -73,7 +73,7 @@ function crossArm(length: number, y: number, z: number): THREE.BufferGeometry[] 
  * @param jr 每跳的长度（以足材为单位）
  * @param kind full 是柱头上的完整斗拱；simple 是早期柱间的简化斗拱，下面用短柱垫高
  */
-function buildCluster(jumps: number, jr: number, kind: ClusterKind): THREE.BufferGeometry {
+function buildCluster(jumps: number, jr: number, kind: ClusterKind, extra: number): THREE.BufferGeometry {
   const parts: THREE.BufferGeometry[] = [];
   const simple = kind === 'simple';
   const n = simple ? Math.max(1, jumps - 2) : jumps;
@@ -86,8 +86,8 @@ function buildCluster(jumps: number, jr: number, kind: ClusterKind): THREE.Buffe
     parts.push(flat(post));
   }
 
-  // 栌斗：最下面的大斗
-  parts.push(...dou(1.5, 0.9, 0, lift, 0));
+  // 栌斗：最下面的大斗。佛光寺东大殿的补间铺作没有栌斗，简化的这一种也不放
+  if (!simple) parts.push(...dou(1.5, 0.9, 0, lift, 0));
 
   const level = (i: number) => lift + 0.55 + (i - 1);
   for (let i = 1; i <= n; i++) {
@@ -106,6 +106,15 @@ function buildCluster(jumps: number, jr: number, kind: ClusterKind): THREE.Buffe
     parts.push(...crossArm(i === n ? 3.3 : 2.8, y + 1, zj));
   }
 
+  // 出跳之上再垫几层：向外露出一个短头（耍头），最外端和墙面上各叠一层枋子
+  for (let e = 1; e <= extra; e++) {
+    const y = level(n + e);
+    const zo = n * jr + 0.7;
+    parts.push(outward([[-0.4, 0], [zo - 0.25, 0], [zo, HM * 0.55], [zo - 0.2, HM], [-0.4, HM]], y));
+    parts.push(...crossArm(3.3, y + 1, n * jr));
+    parts.push(...crossArm(4.4, y + 1, 0));
+  }
+
   // 墙面上的两层横栱：下短上长
   parts.push(...crossArm(3.0, level(1), 0));
   if (!simple && n >= 2) parts.push(...crossArm(4.4, level(2), 0));
@@ -119,15 +128,15 @@ function buildCluster(jumps: number, jr: number, kind: ClusterKind): THREE.Buffe
 const cache = new Map<string, THREE.BufferGeometry>();
 
 /** 取一朵斗拱的几何体。同样的参数只生成一次 */
-export function clusterGeometry(jumps: number, jr: number, kind: ClusterKind): THREE.BufferGeometry {
-  const key = `${kind}-${jumps}-${jr.toFixed(2)}`;
+export function clusterGeometry(jumps: number, jr: number, kind: ClusterKind, extra: number): THREE.BufferGeometry {
+  const key = `${kind}-${jumps}-${extra}-${jr.toFixed(2)}`;
   let geometry = cache.get(key);
   if (!geometry) {
     if (cache.size > 60) {
       for (const g of cache.values()) g.dispose();
       cache.clear();
     }
-    geometry = buildCluster(jumps, Number(jr.toFixed(2)), kind);
+    geometry = buildCluster(jumps, Number(jr.toFixed(2)), kind, extra);
     cache.set(key, geometry);
   }
   return geometry;

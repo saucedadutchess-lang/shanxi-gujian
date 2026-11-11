@@ -357,3 +357,74 @@ input[type='range'] {
 input[type='range']:disabled {
   opacity: 0.4;
 }
+
+.basis {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--accent);
+  min-height: 1.6em;
+}
+
+.refs {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.refs summary {
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.refs table {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+}
+
+.refs th,
+.refs td {
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.refs th:first-child,
+.refs td:first-child {
+  text-align: left;
+  color: var(--muted);
+}
+
+.refs thead th {
+  color: var(--muted);
+}
+
+.refs td span,
+.legend span {
+  cursor: help;
+}
+
+.src-solid {
+  border-bottom: 1.5px solid var(--accent);
+}
+
+.src-derived {
+  border-bottom: 1.5px dashed var(--accent);
+}
+
+.src-assumed {
+  color: #a59c8e;
+}
+
+.legend {
+  margin: 8px 0 0;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.readout {
+  grid-template-columns: 2.6em 1fr;
+  font-size: 14px;
+  line-height: 1.5;
+}

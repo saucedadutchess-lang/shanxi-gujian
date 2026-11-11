@@ -7,8 +7,6 @@ const EPS = 1e-3;
 /** 一垄瓦的间距、筒瓦半径 */
 export const TILE_ROW = 0.3;
 const TILE_R = 0.095;
-/** 博风板高度 */
-const RAKE_H = 0.55;
 
 /**
  * 屋面的数学描述。坐标原点在檐口高度、平面中心。
@@ -195,7 +193,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
     for (const sx of [1, -1]) {
       for (const sz of [1, -1]) {
         wood.add(20, 1, (a, b) => {
-          const v = s.front(sx * xg, uc + a * (1 - uc), sz, 0.06 - b * RAKE_H);
+          const v = s.front(sx * xg, uc + a * (1 - uc), sz, 0.06 - b * spec.rake);
           v[0] += sx * 0.03;
           return v;
         });

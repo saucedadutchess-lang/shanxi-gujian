@@ -1,9 +1,12 @@
 /**
  * 屋顶变形器的参数。
  *
- * 所有数值都是为了说明趋势的近似值，不是某座建筑的测绘数据。精度标注：示意。
+ * 时代滑块两端和中间的参照点取自实测和营造典籍（见 references.ts），
+ * 参照点之间是线性插值。没有出处的数字在 references.ts 里标了“暂时假定”。精度标注：示意。
  * 单位：米。x 是面阔方向，z 是进深方向，y 向上。
  */
+
+import { eraValue } from './references';
 
 export interface MorphState {
   /** 山面从哪个高度开始变成三角形：0 = 庑殿，中间 = 歇山，1 = 悬山 */
@@ -25,9 +28,17 @@ export interface RoofSpec {
   /** 屋顶半面阔、半进深（到檐口） */
   W: number;
   D: number;
-  /** 屋面曲线：高度 = H · u^p，u 是离檐口的水平距离比例 */
-  H: number;
-  p: number;
+  /**
+   * 屋面的剖面，从檐口往屋脊走：
+   * 先是飞椽一段（长 fly，比檐椽平缓），再是檐椽一段，到斗拱最外端（离檐口 off）为止，坡度 slopeEave；
+   * 再往里坡度逐渐加大，到屋脊时是 slopeRidge。
+   */
+  off: number;
+  fly: number;
+  slopeEave: number;
+  slopeRidge: number;
+  /** 博风板宽 */
+  rake: number;
   /** 两山坡面做到多高：1 = 庑殿，0 = 悬山 */
   uc: number;
   /** 前后坡做到多高。完整屋顶是 1；重檐的下檐只做到殿身墙面 */
@@ -86,6 +97,12 @@ export interface HallDims {
   /** 正脊和鸱吻的显示比例，宝顶的显示比例 */
   ridgeScale: number;
   finialScale: number;
+  /** 斗拱在出跳之上还垫几层，让各时代的总层数一致 */
+  extraTiers: number;
+  /** 台基边缘到柱心的距离、椽子半径、鸱尾或正吻的高度 */
+  platformOut: number;
+  rafterR: number;
+  finialH: number;
 }
 
 export const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
@@ -95,15 +112,33 @@ export const smoothstep = (lo: number, hi: number, v: number) => {
   return k * k * (3 - 2 * k);
 };
 
-/** 屋面曲线。卷棚时把靠近屋脊的一段换成顶部水平的抛物线 */
-export function roofProfile(spec: Pick<RoofSpec, 'H' | 'p' | 'jp'>, u: number): number {
-  const { H, p, jp } = spec;
+type Profile = Pick<RoofSpec, 'D' | 'off' | 'fly' | 'slopeEave' | 'slopeRidge' | 'jp'>;
+
+/** 飞椽比檐椽平缓多少 */
+const FLY_SLOPE = 0.6;
+
+/** 不考虑卷棚时，离檐口水平距离 x 处的屋面高度和坡度 */
+function rawProfile(spec: Profile, x: number): [y: number, slope: number] {
+  const { D, off, fly, slopeEave: m0, slopeRidge: m1 } = spec;
+  const f = Math.min(fly, off);
+  if (x <= f) return [m0 * FLY_SLOPE * x, m0 * FLY_SLOPE];
+  const y1 = m0 * FLY_SLOPE * f;
+  if (x <= off) return [y1 + m0 * (x - f), m0];
+  const y2 = y1 + m0 * (off - f);
+  const span = D - off;
+  const q = (x - off) / span;
+  return [y2 + span * (m0 * q + ((m1 - m0) / 2) * q * q), m0 + (m1 - m0) * q];
+}
+
+/** 屋面曲线。u 是离檐口的水平距离比例。卷棚时把靠近屋脊的一段换成顶部水平的抛物线 */
+export function roofProfile(spec: Profile, u: number): number {
+  const { D, jp } = spec;
   const u0 = 1 - 0.32 * jp;
-  if (jp <= 0 || u <= u0) return H * Math.pow(u, p);
-  const f0 = Math.pow(u0, p);
-  const s0 = p * Math.pow(u0, p - 1);
+  if (jp <= 0 || u <= u0) return rawProfile(spec, u * D)[0];
+  const [y0, slope] = rawProfile(spec, u0 * D);
+  const s0 = slope * D;
   const d = u - u0;
-  return H * (f0 + s0 * d - (s0 * d * d) / (2 * (1 - u0)));
+  return y0 + s0 * d - (s0 * d * d) / (2 * (1 - u0));
 }
 
 /** 各分支实际生效的程度：卷棚不用于庑殿和攒尖，重檐不用于悬山和硬山 */
@@ -116,43 +151,47 @@ export function effective(s: MorphState) {
   return { t, g, jp, dbl, zj };
 }
 
+/** 斗拱总共有几层（足材）：出跳的层数加上下垫托的层数，各时代大致相同 */
+const BRACKET_TIERS = 5.72;
+
 export function computeDims(state: MorphState): HallDims {
   const { era } = state;
   const { t, g, jp, dbl, zj } = effective(state);
+  const ref = (key: Parameters<typeof eraValue>[1]) => eraValue(era, key);
 
   // 攒尖：平面收成正方形，五间变三间
   const sideBays = 3;
-  const sideBayWidth = 3.0;
+  const sideBayWidth = ref('sideBay');
   const Db = (sideBays * sideBayWidth) / 2;
   const bays = zj < 0.5 ? 5 : 3;
-  const Wb = lerp(9, Db, zj);
+  const Wb = lerp((5 * ref('bay')) / 2, Db, zj);
   const bayWidth = (Wb * 2) / bays;
-  const platformH = 1.0;
+  const platformH = ref('platformH');
 
-  // 时代趋势：柱子变细高，斗拱变小，出檐变浅，屋面变陡
-  const colH = lerp(4.5, 5.0, era);
-  const colR = lerp(0.3, 0.22, era);
-  const bracketH = colH * lerp(0.5, 0.12, era);
-  const eave = colH * lerp(0.8, 0.36, era);
-  const chuji = lerp(1.3, 0.7, era);
-  const jumps = Math.round(lerp(4, 2, era));
-  const tier = bracketH / (jumps + 1.72);
-  const jump = Math.min(1.4 * tier, (0.5 * eave) / jumps);
+  const colH = ref('colH');
+  const colR = ref('colD') / 2;
+  const tier = ref('tier');
+  const bracketH = tier * BRACKET_TIERS;
+  const jumps = Math.round(ref('jumps'));
+  const jump = ref('jump');
   const reach = jump * jumps;
+  const eave = ref('eave');
+  const fly = ref('fly');
+  const slopeEave = ref('slopeEave');
+  const slopeRidge = ref('slopeRidge');
 
   const uc = 1 - t;
-  const eaveEnd = lerp(eave, chuji, smoothstep(0.7, 1, t)) * (1 - g);
+  const eaveEnd = lerp(eave, ref('chuji'), smoothstep(0.7, 1, t)) * (1 - g);
   const D = Db + eave;
   const W = Wb + eaveEnd;
-  const H = D * lerp(0.42, 0.68, era);
-  const p = lerp(1.25, 1.6, era);
   const xg = W - uc * D;
   const gableWall = xg >= Wb - 0.01;
   const tau = 0.22;
 
   const roof: RoofSpec = {
-    W, D, H, p, uc, uTop: 1, ring: false,
-    lift: lerp(0.75, 0.6, era) * smoothstep(0, 0.3, uc),
+    W, D, off: eave - reach, fly, slopeEave, slopeRidge, rake: ref('rake'),
+    uc, uTop: 1, ring: false,
+    lift: lerp(0.8, 0.6, era) * smoothstep(0, 0.3, uc),
     liftLen: D * lerp(0.9, 0.5, era),
     tau, jp,
     gable: gableWall ? { xf: Wb, ulo: eave / D } : { xf: xg, ulo: uc },
@@ -160,33 +199,34 @@ export function computeDims(state: MorphState): HallDims {
   };
 
   // 重檐：殿身先升高，再长出一圈回廊和下檐
-  const ringSlope = lerp(0.42, 0.55, era);
   const lowerScale = 0.8;
+  const galleryFull = sideBayWidth * 0.8;
   const eaveL = eave * 0.85;
-  const riseFull = bracketH * lowerScale + (3 + eaveL) * ringSlope + 0.9;
+  const offL = eaveL - reach * lowerScale;
+  const ringRise = (width: number) => {
+    const WL = Wb + width + eaveL;
+    const DL = Db + width + eaveL;
+    const ring: RoofSpec = {
+      W: WL, D: DL, off: offL, fly: fly * 0.85, slopeEave, slopeRidge, rake: 0,
+      uc: (width + eaveL) / DL, uTop: (width + eaveL) / DL, ring: true,
+      lift: lerp(0.7, 0.5, era), liftLen: DL * lerp(0.6, 0.4, era),
+      tau, jp: 0, gable: null, eave: eaveL, eaveEnd: eaveL,
+    };
+    return { ring, height: roofProfile(ring, ring.uTop) - roofProfile(ring, offL / DL) };
+  };
+  const riseFull = bracketH * lowerScale + ringRise(galleryFull).height + tier * 2.2;
   const rise = smoothstep(0, 0.6, dbl) * riseFull;
-  const gallery = 3 * smoothstep(0.4, 1, dbl);
+  const gallery = galleryFull * smoothstep(0.4, 1, dbl);
 
   const topY = platformH + colH + rise;
-  const yEave = topY + bracketH + tau - roofProfile(roof, (eave - reach) / D);
+  const yEave = topY + bracketH + tau - roofProfile(roof, roof.off / D);
   const wallTopY = yEave + roofProfile(roof, eave / D);
 
   let lower: HallDims['lower'] = null;
   if (gallery > 0.05) {
-    const WL = Wb + gallery + eaveL;
-    const DL = Db + gallery + eaveL;
-    const run = gallery + eaveL;
-    const ur = run / DL;
-    const pL = 1.15;
-    const HL = (run * ringSlope) / Math.pow(ur, pL);
-    const ring: RoofSpec = {
-      W: WL, D: DL, H: HL, p: pL, uc: ur, uTop: ur, ring: true,
-      lift: lerp(0.65, 0.5, era), liftLen: DL * lerp(0.6, 0.4, era),
-      tau, jp: 0, gable: null, eave: eaveL, eaveEnd: eaveL,
-    };
-    const yEaveL =
-      platformH + colH + bracketH * lowerScale + tau - roofProfile(ring, (eaveL - reach * lowerScale) / DL);
-    lower = { roof: ring, yEave: yEaveL, topY: yEaveL + run * ringSlope, scale: lowerScale };
+    const { ring } = ringRise(gallery);
+    const yEaveL = platformH + colH + bracketH * lowerScale + tau - roofProfile(ring, offL / ring.D);
+    lower = { roof: ring, yEave: yEaveL, topY: yEaveL + roofProfile(ring, ring.uTop), scale: lowerScale };
   }
 
   // 攒尖：正脊缩成一点，换成宝顶
@@ -197,6 +237,10 @@ export function computeDims(state: MorphState): HallDims {
     bays, bayWidth, sideBays, sideBayWidth, Wb, Db, platformH, colH, colR,
     bracketH, jumps, tier, jump, reach, eave, gableWall,
     roof, yEave, wallTopY, rise, gallery, lower, ridgeScale, finialScale,
+    extraTiers: 4 - jumps,
+    platformOut: ref('platformOut'),
+    rafterR: ref('rafterD') / 2,
+    finialH: ref('finialH'),
   };
 }
 
@@ -240,10 +284,12 @@ export function eraName(era: number): string {
 }
 
 export function eraReadout(era: number) {
-  const pick = (a: string, b: string, c: string) => (era < 0.3 ? a : era < 0.7 ? b : c);
+  const d = computeDims({ t: 0, g: 0, era, dbl: 0, jp: 0, zj: 0 });
+  const span = d.Db + d.reach;
+  const rise = roofProfile(d.roof, 1) - roofProfile(d.roof, d.roof.off / d.roof.D);
   return {
-    slope: pick('平缓舒展', '适中', '陡峭'),
-    eave: pick('深远', '适中', '较浅'),
-    bracket: pick('硕大而疏朗，柱间只有一朵或没有', '适中', '小而密，柱间排满'),
+    slope: `屋脊高出檐口斗拱 ${rise.toFixed(1)} 米，约为前后跨度的 1/${(span * 2 / rise).toFixed(1)}`,
+    eave: `从柱心挑出 ${d.eave.toFixed(1)} 米，约为柱高的 ${Math.round((d.eave / d.colH) * 100)}%`,
+    bracket: `高 ${d.bracketH.toFixed(1)} 米，约为柱高的 ${Math.round((d.bracketH / d.colH) * 100)}%，出 ${d.jumps} 跳`,
   };
 }

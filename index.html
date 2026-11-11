@@ -77,16 +77,22 @@
             <button type="button" data-for="era" data-value="70">元</button>
             <button type="button" data-for="era" data-value="100">明清</button>
           </div>
+          <p id="era-basis" class="basis"></p>
           <dl class="readout">
             <dt>屋面</dt><dd id="era-slope"></dd>
             <dt>出檐</dt><dd id="era-eave"></dd>
             <dt>斗拱</dt><dd id="era-bracket"></dd>
           </dl>
+          <details class="refs">
+            <summary>这些尺寸的依据</summary>
+            <table id="ref-table"></table>
+            <p class="legend"><span class="src-solid">实线</span>是实测或典籍里的数字；<span class="src-derived">虚线</span>是由它们换算的；<span class="src-assumed">灰色</span>没有出处，是暂时假定的。鼠标停在数字上看说明。</p>
+          </details>
         </section>
 
         <footer class="sources">
-          <p>这是说明趋势的示意模型，数值是近似值，不是某座建筑的测绘数据。</p>
-          <p>依据：形制与等级见梁思成《清式营造则例》；时代变化见梁思成《图像中国建筑史》。斗拱只表现层层出挑的轮廓，不对应具体做法。</p>
+          <p>这是示意模型，不是某一座建筑的复原。唐、宋、清三个位置的比例取自实测和营造典籍，中间是插值；元没有自己的参照。</p>
+          <p>依据：梁思成《记五台山佛光寺建筑》（1944）；李诫《营造法式》（1103）；清工部《工程做法》。斗拱只表现层层出挑的轮廓。</p>
         </footer>
       </aside>
     </main>
