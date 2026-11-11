@@ -220,9 +220,13 @@ export class Hall {
       );
     };
 
+    // 硬山的屋顶不挑出山墙，两端柱头上的斗拱会从山墙里戳出来，所以不放
+    const skipEnds = !level.allSides && d.roof.eaveEnd < CLUSTER_WIDTH.full * tier * 0.5;
+
     const row = (coords: number[], at: (c: number) => [number, number], angle: number) => {
       for (let i = 0; i < coords.length; i++) {
-        put('full', ...at(coords[i]), angle);
+        const isEnd = i === 0 || i === coords.length - 1;
+        if (!(skipEnds && isEnd)) put('full', ...at(coords[i]), angle);
         if (i === coords.length - 1) break;
         const bay = coords[i + 1] - coords[i];
         // 相邻两朵斗拱的中距约为 5.5 层高（清式的攒当 11 斗口）
