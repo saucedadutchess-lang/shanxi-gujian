@@ -158,7 +158,7 @@ export function mottled(repeat: number) {
 }
 
 /** 条石或方砖：错缝砌筑，每块深浅略有不同 */
-export function masonry(cols: number, rows: number, repeatX: number, repeatY: number, stagger: boolean) {
+export function masonry(cols: number, rows: number, repeatX: number, repeatY: number, stagger: boolean, joint = 0.42) {
   const rand = seeded(cols * 31 + rows);
   const texture = canvasTexture(256, 256, (ctx) => {
     const w = 256 / cols;
@@ -166,10 +166,10 @@ export function masonry(cols: number, rows: number, repeatX: number, repeatY: nu
     for (let r = 0; r < rows; r++) {
       const shift = stagger && r % 2 ? w / 2 : 0;
       for (let c = -1; c < cols; c++) {
-        const v = 226 + Math.floor(rand() * 26);
+        const v = 232 + Math.floor(rand() * 20);
         ctx.fillStyle = `rgb(${v}, ${v - 3}, ${v - 8})`;
         ctx.fillRect(c * w + shift, r * h, w, h);
-        ctx.strokeStyle = 'rgba(70, 60, 45, 0.42)';
+        ctx.strokeStyle = `rgba(70, 60, 45, ${joint})`;
         ctx.lineWidth = 2;
         ctx.strokeRect(c * w + shift + 1, r * h + 1, w, h);
       }

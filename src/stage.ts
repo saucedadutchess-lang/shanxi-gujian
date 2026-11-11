@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { masonry } from './roof/textures';
-import { createScenery } from './scenery';
+import { createScenery, skyTexture } from './scenery';
 
 /**
  * 基础三维舞台：渲染器、相机、灯光、地面、轨道控制。
@@ -14,16 +12,17 @@ export function createStage(canvas: HTMLCanvasElement) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 0.95;
 
   const scene = new THREE.Scene();
-  scene.background = skyTexture();
-  scene.fog = new THREE.Fog(0xe6e3da, 110, 380);
+  const sky = skyTexture();
+  scene.background = sky;
+  scene.fog = new THREE.Fog(0xd5dcdc, 140, 420);
 
-  // 柔和的环境光，让背光面和檐下不至于死黑
+  // 用天空本身当环境光：背光面带一点天空的蓝，受光面由太阳照亮
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.45;
+  scene.environment = pmrem.fromEquirectangular(sky).texture;
+  scene.environmentIntensity = 1.0;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 600);
   camera.position.set(44, 14, 56);
@@ -35,10 +34,17 @@ export function createStage(canvas: HTMLCanvasElement) {
   controls.minDistance = 14;
   controls.maxDistance = 150;
 
-  scene.add(new THREE.HemisphereLight(0xdfe8f2, 0xb9a98f, 0.7));
-  const sun = new THREE.DirectionalLight(0xfff1dc, 2.7);
-  sun.position.set(26, 44, 32);
+  // 上午的太阳，从左前方斜照过来，颜色偏暖
+  const sun = new THREE.DirectionalLight(0xffe7c4, 3.4);
+  sun.position.set(-34, 40, 44);
   sun.castShadow = true;
+
+  // 地面的反光：太阳照在浅色的砖地上，会把檐下的斗拱从下往上照亮一些
+  scene.add(new THREE.HemisphereLight(0xcfdcec, 0xd9c7a6, 0.9));
+  const bounce = new THREE.DirectionalLight(0xffe9cf, 0.7);
+  bounce.position.set(10, -6, 40);
+  scene.add(bounce);
+
   sun.shadow.mapSize.set(4096, 4096);
   sun.shadow.camera.left = -44;
   sun.shadow.camera.right = 44;
@@ -51,14 +57,6 @@ export function createStage(canvas: HTMLCanvasElement) {
   sun.shadow.radius = 3;
   scene.add(sun);
 
-  const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(260, 96),
-    // 院子里的方砖地面，每块约 0.6 米
-    new THREE.MeshStandardMaterial({ color: 0xcfc6b5, roughness: 1, map: masonry(4, 4, 217, 217, true) }),
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
   scene.add(createScenery());
 
   function resize() {
@@ -77,21 +75,4 @@ export function createStage(canvas: HTMLCanvasElement) {
   });
 
   return { scene, camera, renderer, controls };
-}
-
-/** 天空：从上到下由淡蓝过渡到纸色 */
-function skyTexture(): THREE.Texture {
-  const canvas = document.createElement('canvas');
-  canvas.width = 4;
-  canvas.height = 256;
-  const ctx = canvas.getContext('2d')!;
-  const gradient = ctx.createLinearGradient(0, 0, 0, 256);
-  gradient.addColorStop(0, '#c9d6de');
-  gradient.addColorStop(0.55, '#e8e4d8');
-  gradient.addColorStop(1, '#efe8da');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, 4, 256);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return texture;
 }

@@ -23,25 +23,27 @@ export class Hall {
   readonly group = new THREE.Group();
 
   private mat = {
-    tile: new THREE.MeshStandardMaterial({ color: 0x62615d, roughness: 0.8, side: THREE.DoubleSide }),
-    rib: new THREE.MeshStandardMaterial({ color: 0x77766f, roughness: 0.78, vertexColors: true }),
+    tile: new THREE.MeshStandardMaterial({ color: 0x4f4e4a, roughness: 0.85, side: THREE.DoubleSide }),
+    rib: new THREE.MeshStandardMaterial({ color: 0x7d7b72, roughness: 0.82, vertexColors: true }),
     ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
-    wood: new THREE.MeshStandardMaterial({ color: 0x6e4a32, roughness: 0.85, side: THREE.DoubleSide }),
-    rafter: new THREE.MeshStandardMaterial({ color: 0x7a5236, roughness: 0.85 }),
-    column: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8, map: woodGrain('v', 2, 2) }),
-    beam: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8, map: woodGrain('u', 0.25, 1.5) }),
-    bracket: new THREE.MeshStandardMaterial({ color: 0x8a5a36, roughness: 0.85, map: woodGrain('u', 0.7, 0.7) }),
-    dou: new THREE.MeshStandardMaterial({ color: 0x7c4e2e, roughness: 0.85 }),
-    wall: new THREE.MeshStandardMaterial({ color: 0x96392a, roughness: 0.95, side: THREE.DoubleSide, map: mottled(0.22) }),
-    plaster: new THREE.MeshStandardMaterial({ color: 0xd9cdb8, roughness: 1, map: mottled(0.3) }),
-    stone: new THREE.MeshStandardMaterial({ color: 0xc4bcad, roughness: 1, map: masonry(2, 2, 0.4, 1.19, true) }),
-    stoneDark: new THREE.MeshStandardMaterial({ color: 0xa9a192, roughness: 1 }),
-    earlyDoor: new THREE.MeshStandardMaterial({ map: plankDoor(), roughness: 0.9 }),
-    earlyWindow: new THREE.MeshStandardMaterial({ map: barWindow(), roughness: 0.9 }),
-    lateDoor: new THREE.MeshStandardMaterial({ map: latticeDoor(), roughness: 0.9 }),
-    lateWindow: new THREE.MeshStandardMaterial({ map: latticeWindow(), roughness: 0.9 }),
+    wood: new THREE.MeshStandardMaterial({ color: 0x5f3f2b, roughness: 0.9, side: THREE.DoubleSide }),
+    rafter: new THREE.MeshStandardMaterial({ color: 0x6f4630, roughness: 0.85 }),
+    column: wooden(0x6e3423, woodGrain('v', 2, 2)),
+    beam: wooden(0x6e3423, woodGrain('u', 0.25, 1.5)),
+    bracket: wooden(0x7d4c30, woodGrain('u', 0.7, 0.7)),
+    dou: new THREE.MeshStandardMaterial({ color: 0x70442a, roughness: 0.85 }),
+    wall: plastered(0x8f3a2b, mottled(0.22), false),
+    wallShaded: plastered(0x8f3a2b, mottled(0.22), true),
+    plaster: plastered(0xd6c9b2, mottled(0.3), false),
+    stone: new THREE.MeshStandardMaterial({ color: 0xa9a59b, roughness: 1, map: masonry(4, 6, 0.42, 1.0, true), vertexColors: true }),
+    stoneDark: new THREE.MeshStandardMaterial({ color: 0x9a958a, roughness: 1 }),
+    earlyDoor: new THREE.MeshStandardMaterial({ map: plankDoor(), roughness: 0.85 }),
+    earlyWindow: new THREE.MeshStandardMaterial({ map: barWindow(), roughness: 0.85 }),
+    lateDoor: new THREE.MeshStandardMaterial({ map: latticeDoor(), roughness: 0.85 }),
+    lateWindow: new THREE.MeshStandardMaterial({ map: latticeWindow(), roughness: 0.85 }),
   };
 
+  private drip = dripGeometry();
   private chiwei = [earlyFinial(), lateFinial()];
   private pinnacle = pinnacleGeometry();
   private fish = fishGeometry();
@@ -54,10 +56,13 @@ export class Hall {
     // 早期木构多为土红刷饰，明清官式檐下用青绿彩画
     const late = THREE.MathUtils.smoothstep(state.era, 0.55, 0.95);
     // 明清彩画里栱多用青、斗多用绿，这里只取个大意
-    this.mat.bracket.color.set(0x8a5a36).lerp(new THREE.Color(0x35608a), late);
-    this.mat.dou.color.set(0x7c4e2e).lerp(new THREE.Color(0x3f7a5c), late);
-    this.mat.rafter.color.set(0x7a5236).lerp(new THREE.Color(0x7a3326), late);
-    this.mat.column.color.set(0x7a3a26).lerp(new THREE.Color(0x8f2f22), late);
+    this.mat.bracket.color.set(0x7d4c30).lerp(new THREE.Color(0x35608a), late);
+    this.mat.dou.color.set(0x70442a).lerp(new THREE.Color(0x3f7a5c), late);
+    this.mat.rafter.color.set(0x6f4630).lerp(new THREE.Color(0x7a3326), late);
+    this.mat.column.color.set(0x6e3423).lerp(new THREE.Color(0x8c2c20), late);
+    // 山西明清建筑的屋脊和吻兽常用琉璃，这里取绿琉璃的大意：颜色发绿，表面有光泽
+    this.mat.ridge.color.set(0x5c5a55).lerp(new THREE.Color(0x4f7a52), late);
+    this.mat.ridge.roughness = lerp(0.85, 0.3, late);
     this.mat.beam.color.copy(this.mat.column.color);
 
     this.buildBody(d, state.era);
@@ -86,7 +91,10 @@ export class Hall {
 
   private box(w: number, h: number, dz: number, x: number, y: number, z: number, material: THREE.Material) {
     if (w <= 0 || h <= 0 || dz <= 0) return;
-    this.add(worldUV(new THREE.BoxGeometry(w, h, dz), w, h, dz), material).position.set(x, y, z);
+    const geometry = worldUV(new THREE.BoxGeometry(w, h, dz), w, h, dz);
+    // 墙和台基靠近地面的地方颜色深一些，像返潮和溅上的泥水
+    if (material === this.mat.wallShaded || material === this.mat.stone) groundStain(geometry, h);
+    this.add(geometry, material).position.set(x, y, z);
   }
 
   private instanced(geometry: THREE.BufferGeometry, material: THREE.Material, matrices: THREE.Matrix4[], parent: THREE.Object3D = this.group) {
@@ -115,13 +123,13 @@ export class Hall {
     }
 
     // 墙身、栱眼壁
-    this.box(Wb * 2 - 0.5, topY - platformH, Db * 2 - 0.5, 0, (platformH + topY) / 2, 0, this.mat.wall);
+    this.box(Wb * 2 - 0.5, topY - platformH, Db * 2 - 0.5, 0, (platformH + topY) / 2, 0, this.mat.wallShaded);
     this.box(Wb * 2 - 0.7, d.wallTopY - topY, Db * 2 - 0.7, 0, (topY + d.wallTopY) / 2, 0, this.mat.plaster);
 
     // 悬山、硬山：山墙一直砌到屋顶
     if (d.gableWall) {
       const h = d.wallTopY - platformH;
-      for (const s of [1, -1]) this.box(0.5, h, Db * 2, s * (Wb - 0.29), platformH + h / 2, 0, this.mat.wall);
+      for (const s of [1, -1]) this.box(0.5, h, Db * 2, s * (Wb - 0.29), platformH + h / 2, 0, this.mat.wallShaded);
     }
 
     // 正面的门窗：当中开门，两侧开窗。早期是板门和直棂窗，后期是隔扇门和槛窗
@@ -294,6 +302,21 @@ export class Hall {
     this.add(geo.wood, this.mat.wood, roof);
     if (geo.gable) this.add(geo.gable, this.mat.wall, roof);
     this.buildRafters(geo, roof, d.rafterR);
+
+    // 滴水。佛光寺东大殿这样的早期建筑檐口没有这种尖舌，所以随时代渐渐长出来
+    const dripSize = THREE.MathUtils.smoothstep(era, 0.15, 0.5);
+    if (dripSize > 0.05) {
+      const quat = new THREE.Quaternion();
+      const matrices = geo.drips.map(({ pos, facing, sign }) => {
+        quat.setFromAxisAngle(UP, facing === 'z' ? (sign > 0 ? 0 : Math.PI) : (sign * Math.PI) / 2);
+        return new THREE.Matrix4().compose(
+          new THREE.Vector3(pos[0], pos[1] - 0.02, pos[2]),
+          quat,
+          new THREE.Vector3(1, dripSize, 1),
+        );
+      });
+      this.instanced(this.drip, this.mat.rib, matrices, roof);
+    }
 
     // 垂脊和戗脊
     for (const pts of geo.hipRidges) {
@@ -527,4 +550,42 @@ function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): 
     }
   }
   return geometry;
+}
+
+/** 木构件的材质：木纹既影响颜色，也让表面有细微的起伏 */
+function wooden(color: number, grain: THREE.Texture) {
+  return new THREE.MeshStandardMaterial({ color, roughness: 0.82, map: grain, bumpMap: grain, bumpScale: 1.2 });
+}
+
+/** 抹灰墙面的材质 */
+function plastered(color: number, texture: THREE.Texture, shaded: boolean) {
+  return new THREE.MeshStandardMaterial({
+    color, roughness: 0.96, map: texture, bumpMap: texture, bumpScale: 0.8,
+    side: THREE.DoubleSide, vertexColors: shaded,
+  });
+}
+
+/** 给方块加顶点色：底边深，往上 1.6 米以内渐渐变浅 */
+function groundStain(geometry: THREE.BoxGeometry, h: number) {
+  const pos = geometry.getAttribute('position');
+  const colors: number[] = [];
+  const bottom = Math.max(0.62, 1 - 0.38 * Math.min(1, h / 1.6));
+  for (let i = 0; i < pos.count; i++) {
+    const tone = pos.getY(i) < 0 ? bottom : 1;
+    colors.push(tone, tone * 0.98, tone * 0.95);
+  }
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+}
+
+/** 滴水的轮廓：一块下垂的尖舌，带顶点色（和筒瓦共用材质） */
+function dripGeometry() {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.1, 0);
+  shape.lineTo(0.1, 0);
+  shape.quadraticCurveTo(0.09, -0.1, 0, -0.17);
+  shape.quadraticCurveTo(-0.09, -0.1, -0.1, 0);
+  const geometry = new THREE.ShapeGeometry(shape, 4);
+  const count = geometry.getAttribute('position').count;
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Array(count * 3).fill(0.8), 3));
+  return shared(geometry);
 }

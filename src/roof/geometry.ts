@@ -6,6 +6,7 @@ export type Vert = [x: number, y: number, z: number];
 const EPS = 1e-3;
 /** 一垄瓦的间距、筒瓦半径 */
 export const TILE_ROW = 0.3;
+const TILE_LEN = 0.42;
 const TILE_R = 0.095;
 
 /**
@@ -82,30 +83,52 @@ class GridBuilder {
     }
   }
 
-  /** 沿一条路径扫出半圆形截面的筒瓦，檐口一端用瓦当封住 */
-  addRib(path: Vert[], lateral: 'x' | 'z', shade: number) {
+  /**
+   * 一垄筒瓦：一节节瓦首尾相叠，每节上端压在下一节底下，所以上端略细、略低。
+   * 檐口一端用瓦当封住。
+   * @param at 这一垄瓦的中线：给一个高度比例 u，返回屋面上的点
+   * @param top 这一垄瓦爬到多高
+   * @param du 一节瓦在 u 上占多长
+   * @param seed 决定每节瓦深浅的随机种子
+   */
+  addRib(at: (u: number) => Vert, top: number, du: number, lateral: 'x' | 'z', seed: number) {
     const base = this.pos.length / 3;
-    const ring = 5;
-    path.forEach(([x, y, z], j) => {
-      // 每垄瓦深浅略有不同，靠近檐口的地方颜色深一点，像积了灰和苔
-      const tone = shade * (0.86 + 0.14 * Math.min(1, (j / (path.length - 1)) * 2.5));
+    const ring = 4;
+    let rings = 0;
+    const pushRing = ([x, y, z]: Vert, radius: number, lift: number, tone: number) => {
       for (let k = 0; k < ring; k++) {
-        this.col.push(tone, tone, tone);
         const a = (Math.PI * k) / (ring - 1);
-        const side = TILE_R * Math.cos(a);
-        const up = TILE_R * Math.sin(a);
+        const side = radius * Math.cos(a);
+        const up = radius * Math.sin(a) + lift;
         if (lateral === 'x') this.pos.push(x + side, y + up, z);
         else this.pos.push(x, y + up, z + side);
+        this.col.push(tone, tone, tone);
       }
-    });
-    for (let j = 0; j < path.length - 1; j++) {
+      rings++;
+    };
+    const count = Math.max(1, Math.ceil(top / du));
+    for (let k = 0; k < count; k++) {
+      const u0 = k * du;
+      const u1 = Math.min(top, u0 + du);
+      const n = Math.sin((k + 1) * 12.9898 + seed * 78.233) * 43758.5453;
+      // 每节瓦深浅略有不同，靠近檐口的地方颜色深一点，像积了灰和苔
+      const tone = (0.92 + 0.08 * (n - Math.floor(n))) * (0.9 + 0.1 * Math.min(1, u0 * 3));
+      pushRing(at(u0), TILE_R, 0.012, tone);
+      pushRing(at(u1), TILE_R * 0.84, -0.01, tone);
+    }
+    for (let j = 0; j < rings - 1; j++) {
+      // 相邻两节之间不连面，留出台阶
+      if (j % 2 === 1) continue;
       for (let k = 0; k < ring - 1; k++) {
         const a = base + j * ring + k;
         const c = a + ring;
         this.idx.push(a, c, a + 1, a + 1, c, c + 1);
       }
     }
-    for (let k = 1; k < ring - 1; k++) this.idx.push(base, base + k, base + k + 1);
+    // 每节瓦下端的截面，以及檐口的瓦当
+    for (let j = 0; j < rings; j += 2) {
+      for (let k = 1; k < ring - 1; k++) this.idx.push(base + j * ring, base + j * ring + k, base + j * ring + k + 1);
+    }
   }
 
   build(): THREE.BufferGeometry {
@@ -116,12 +139,6 @@ class GridBuilder {
     geometry.computeVertexNormals();
     return geometry;
   }
-}
-
-/** 每垄瓦固定的深浅，拖动滑块时不会闪 */
-function ribShade(k: number, side: number) {
-  const n = Math.sin(k * 12.9898 + side * 78.233) * 43758.5453;
-  return 0.86 + 0.14 * (n - Math.floor(n));
 }
 
 export interface RoofGeometry {
@@ -136,6 +153,8 @@ export interface RoofGeometry {
   gable: THREE.BufferGeometry | null;
   /** 垂脊和戗脊的走向 */
   hipRidges: THREE.Vector3[][];
+  /** 檐口每块滴水的位置和朝向 */
+  drips: { pos: Vert; facing: 'x' | 'z'; sign: number }[];
   /** 屋面最高处的高度 */
   topY: number;
 }
@@ -217,33 +236,39 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
     gable = fill.build();
   }
 
-  // 筒瓦：前后坡
+  // 筒瓦。一节瓦长约 0.42 米；各垄的接缝对齐，连成一道道横线
   const ribs = new GridBuilder();
+  const du = TILE_LEN / (D * 1.15);
   const kx = Math.floor((W - 0.08) / TILE_ROW);
   for (let k = -kx; k <= kx; k++) {
     const x = k * TILE_ROW;
     const top = s.frontTop(Math.abs(x));
     if (top < 0.02) continue;
-    const n = Math.max(2, Math.ceil(20 * top));
-    for (const sz of [1, -1]) {
-      const path: Vert[] = [];
-      for (let i = 0; i <= n; i++) path.push(s.front(x, (i / n) * top, sz));
-      ribs.addRib(path, 'x', ribShade(k, sz));
-    }
+    for (const sz of [1, -1]) ribs.addRib((u) => s.front(x, u, sz), top, du, 'x', k + sz * 1000);
   }
-  // 筒瓦：两山坡面
   if (hasSkirt) {
     const kz = Math.floor((D - 0.08) / TILE_ROW);
     for (let k = -kz; k <= kz; k++) {
       const z = k * TILE_ROW;
       const top = s.endTop(Math.abs(z));
       if (top < 0.02) continue;
-      const n = Math.max(2, Math.ceil(20 * top));
-      for (const sx of [1, -1]) {
-        const path: Vert[] = [];
-        for (let i = 0; i <= n; i++) path.push(s.end((i / n) * top, z, sx));
-        ribs.addRib(path, 'z', ribShade(k, sx * 3));
-      }
+      for (const sx of [1, -1]) ribs.addRib((u) => s.end(u, z, sx), top, du, 'z', k + sx * 3000);
+    }
+  }
+
+  // 滴水：两垄筒瓦之间、檐口最下面一块板瓦垂下的尖舌
+  const drips: { pos: Vert; facing: 'x' | 'z'; sign: number }[] = [];
+  for (let k = -kx; k < kx; k++) {
+    const x = (k + 0.5) * TILE_ROW;
+    if (s.frontTop(Math.abs(x)) < 0.02) continue;
+    for (const sz of [1, -1]) drips.push({ pos: s.front(x, 0, sz), facing: 'z', sign: sz });
+  }
+  if (hasSkirt) {
+    const kz = Math.floor((D - 0.08) / TILE_ROW);
+    for (let k = -kz; k < kz; k++) {
+      const z = (k + 0.5) * TILE_ROW;
+      if (s.endTop(Math.abs(z)) < 0.02) continue;
+      for (const sx of [1, -1]) drips.push({ pos: s.end(0, z, sx), facing: 'x', sign: sx });
     }
   }
 
@@ -278,6 +303,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
     wood: wood.build(),
     gable,
     hipRidges,
+    drips,
     topY: s.height(uTop, 0),
   };
 }
