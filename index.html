@@ -28,22 +28,17 @@
         </div>
 
         <section>
-          <h3><span class="step">1</span>先定基本形：屋顶两端怎么收</h3>
-          <input id="form" type="range" min="0" max="130" step="any" value="0" aria-label="基本形" />
-          <div class="ticks">
-            <button type="button" data-for="form" data-value="0">庑殿</button>
-            <button type="button" data-for="form" data-value="45">歇山</button>
-            <button type="button" data-for="form" data-value="100">悬山</button>
-            <button type="button" data-for="form" data-value="130">硬山</button>
+          <h3><span class="step">1</span>先定基本形</h3>
+          <div class="forms" role="group" aria-label="基本形">
+            <button type="button" data-form="0">庑殿</button>
+            <button type="button" data-form="45">歇山</button>
+            <button type="button" data-form="100">悬山</button>
+            <button type="button" data-form="130">硬山</button>
+            <button type="button" data-form="zj">攒尖</button>
           </div>
-          <p id="form-how" class="how">滑块控制两端的山面从多高开始变成直立的三角形。从屋脊开始是庑殿，从檐口开始是悬山，中间是歇山。再把两端的出挑收回，就是硬山。</p>
-          <button type="button" class="switch" role="switch" aria-checked="false" data-branch="zj">
-            <span class="sw-text">
-              <span class="sw-name">攒尖</span>
-              <span class="sw-desc">另一种基本形：平面收成正方形，四面坡汇成一个尖</span>
-            </span>
-            <span class="sw-knob"></span>
-          </button>
+          <p class="how">点一个基本形会清掉已加的变化，从头再来。</p>
+          <input id="form" type="range" min="0" max="130" step="any" value="0" aria-label="在庑殿、歇山、悬山、硬山之间连续变化" />
+          <p class="how">前四种其实是连续的：拖动滑块，两端的山面从多高开始变成直立的三角形。从屋脊开始是庑殿，从檐口开始是悬山，中间是歇山；再把两端的出挑收回，就是硬山。攒尖是把平面收成正方形，四面坡汇成一个尖。</p>
         </section>
 
         <section>

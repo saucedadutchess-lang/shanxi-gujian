@@ -428,3 +428,31 @@ input[type='range']:disabled {
   font-size: 14px;
   line-height: 1.5;
 }
+
+.forms {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.forms button {
+  padding: 8px 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.forms button:hover {
+  border-color: var(--accent);
+}
+
+.forms button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}

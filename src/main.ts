@@ -22,6 +22,7 @@ type Branch = 'dbl' | 'jp' | 'zj';
 const branchTarget: Record<Branch, number> = { dbl: 0, jp: 0, zj: 0 };
 const branchValue: Record<Branch, number> = { dbl: 0, jp: 0, zj: 0 };
 const branchButtons = [...document.querySelectorAll<HTMLButtonElement>('.switch')];
+const formButtons = [...document.querySelectorAll<HTMLButtonElement>('.forms button')];
 
 /** 形制滑块 0–100 是庑殿到悬山，100–130 是把两端出挑收回，变成硬山 */
 function readState(): MorphState {
@@ -58,10 +59,10 @@ function render() {
     jp: !isSpire && shape.t >= 0.12,
     dbl: isSpire || shape.t < 0.9,
   };
-  formSlider.disabled = isSpire;
-  $('#form-how').textContent = isSpire
-    ? '攒尖没有两端的山面，这个滑块暂时不起作用。关掉攒尖就能继续拖。'
-    : '滑块控制两端的山面从多高开始变成直立的三角形。从屋脊开始是庑殿，从檐口开始是悬山，中间是歇山。再把两端的出挑收回，就是硬山。';
+  const current = base === '四角攒尖' ? '攒尖' : base;
+  for (const button of formButtons) {
+    button.setAttribute('aria-pressed', String(button.textContent === current));
+  }
   for (const button of branchButtons) {
     const key = button.dataset.branch as Branch;
     if (!allowed[key] && branchTarget[key] === 1) setBranch(key, 0);
@@ -75,7 +76,11 @@ function render() {
   }
 }
 
-formSlider.addEventListener('input', render);
+// 拖动滑块时如果正在攒尖，先退出攒尖
+formSlider.addEventListener('input', () => {
+  if (branchTarget.zj === 1) setBranch('zj', 0);
+  render();
+});
 eraSlider.addEventListener('input', render);
 
 function ease(k: number) {
@@ -128,6 +133,24 @@ function buildRefTable() {
   }
 }
 
+// 点基本形：清掉已加的变化，再变到那个形制
+for (const button of formButtons) {
+  button.addEventListener('click', () => {
+    for (const key of ['dbl', 'jp'] as const) {
+      if (branchTarget[key] === 1) setBranch(key, 0);
+    }
+    const form = button.dataset.form;
+    if (form === 'zj') {
+      if (branchTarget.zj !== 1) setBranch('zj', 1);
+      return;
+    }
+    if (branchTarget.zj === 1) setBranch('zj', 0);
+    const from = Number(formSlider.value);
+    const to = Number(form);
+    animate(700, (k) => (formSlider.value = String(from + (to - from) * k)));
+  });
+}
+
 buildRefTable();
 render();
     if (k < 1) requestAnimationFrame(tick);
@@ -141,7 +164,6 @@ for (const button of document.querySelectorAll<HTMLButtonElement>('.ticks button
   const value = Number(button.dataset.value);
   button.style.left = `${(value / Number(slider.max)) * 100}%`;
   button.addEventListener('click', () => {
-    if (slider.disabled) return;
     const from = Number(slider.value);
     animate(700, (k) => (slider.value = String(from + (value - from) * k)));
   });
@@ -196,6 +218,24 @@ function buildRefTable() {
       tr.insertCell().append(span);
     }
   }
+}
+
+// 点基本形：清掉已加的变化，再变到那个形制
+for (const button of formButtons) {
+  button.addEventListener('click', () => {
+    for (const key of ['dbl', 'jp'] as const) {
+      if (branchTarget[key] === 1) setBranch(key, 0);
+    }
+    const form = button.dataset.form;
+    if (form === 'zj') {
+      if (branchTarget.zj !== 1) setBranch('zj', 1);
+      return;
+    }
+    if (branchTarget.zj === 1) setBranch('zj', 0);
+    const from = Number(formSlider.value);
+    const to = Number(form);
+    animate(700, (k) => (formSlider.value = String(from + (to - from) * k)));
+  });
 }
 
 buildRefTable();
