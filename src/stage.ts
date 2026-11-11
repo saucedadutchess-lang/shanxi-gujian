@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { masonry } from './roof/textures';
+import { createScenery } from './scenery';
 
 /**
  * 基础三维舞台：渲染器、相机、灯光、地面、轨道控制。
@@ -16,14 +18,14 @@ export function createStage(canvas: HTMLCanvasElement) {
 
   const scene = new THREE.Scene();
   scene.background = skyTexture();
-  scene.fog = new THREE.Fog(0xe9e2d4, 90, 220);
+  scene.fog = new THREE.Fog(0xe6e3da, 80, 330);
 
   // 柔和的环境光，让背光面和檐下不至于死黑
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environmentIntensity = 0.45;
 
-  const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 400);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.5, 600);
   camera.position.set(33, 11, 42);
 
   const controls = new OrbitControls(camera, canvas);
@@ -50,12 +52,14 @@ export function createStage(canvas: HTMLCanvasElement) {
   scene.add(sun);
 
   const ground = new THREE.Mesh(
-    new THREE.CircleGeometry(220, 96),
-    new THREE.MeshStandardMaterial({ color: 0xd9d0bf, roughness: 1 }),
+    new THREE.CircleGeometry(260, 96),
+    // 院子里的方砖地面，每块约 0.6 米
+    new THREE.MeshStandardMaterial({ color: 0xcfc6b5, roughness: 1, map: masonry(4, 4, 217, 217, true) }),
   );
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
+  scene.add(createScenery());
 
   function resize() {
     const { clientWidth, clientHeight } = canvas.parentElement ?? canvas;

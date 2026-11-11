@@ -2,3 +2,5 @@
 node_modules/
 dist/
 *.local
+# 受版权保护的参考资料（测绘图、报告、照片），只放本机
+refs/

@@ -68,6 +68,7 @@ export class RoofSurface {
 class GridBuilder {
   private pos: number[] = [];
   private idx: number[] = [];
+  private col: number[] = [];
 
   add(na: number, nb: number, fn: (a: number, b: number) => Vert) {
     const base = this.pos.length / 3;
@@ -84,18 +85,21 @@ class GridBuilder {
   }
 
   /** 沿一条路径扫出半圆形截面的筒瓦，檐口一端用瓦当封住 */
-  addRib(path: Vert[], lateral: 'x' | 'z') {
+  addRib(path: Vert[], lateral: 'x' | 'z', shade: number) {
     const base = this.pos.length / 3;
     const ring = 5;
-    for (const [x, y, z] of path) {
+    path.forEach(([x, y, z], j) => {
+      // 每垄瓦深浅略有不同，靠近檐口的地方颜色深一点，像积了灰和苔
+      const tone = shade * (0.86 + 0.14 * Math.min(1, (j / (path.length - 1)) * 2.5));
       for (let k = 0; k < ring; k++) {
+        this.col.push(tone, tone, tone);
         const a = (Math.PI * k) / (ring - 1);
         const side = TILE_R * Math.cos(a);
         const up = TILE_R * Math.sin(a);
         if (lateral === 'x') this.pos.push(x + side, y + up, z);
         else this.pos.push(x, y + up, z + side);
       }
-    }
+    });
     for (let j = 0; j < path.length - 1; j++) {
       for (let k = 0; k < ring - 1; k++) {
         const a = base + j * ring + k;
@@ -109,10 +113,17 @@ class GridBuilder {
   build(): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.pos, 3));
+    if (this.col.length) geometry.setAttribute('color', new THREE.Float32BufferAttribute(this.col, 3));
     geometry.setIndex(this.idx);
     geometry.computeVertexNormals();
     return geometry;
   }
+}
+
+/** 每垄瓦固定的深浅，拖动滑块时不会闪 */
+function ribShade(k: number, side: number) {
+  const n = Math.sin(k * 12.9898 + side * 78.233) * 43758.5453;
+  return 0.86 + 0.14 * (n - Math.floor(n));
 }
 
 export interface RoofGeometry {
@@ -219,7 +230,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
     for (const sz of [1, -1]) {
       const path: Vert[] = [];
       for (let i = 0; i <= n; i++) path.push(s.front(x, (i / n) * top, sz));
-      ribs.addRib(path, 'x');
+      ribs.addRib(path, 'x', ribShade(k, sz));
     }
   }
   // 筒瓦：两山坡面
@@ -233,7 +244,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
       for (const sx of [1, -1]) {
         const path: Vert[] = [];
         for (let i = 0; i <= n; i++) path.push(s.end((i / n) * top, z, sx));
-        ribs.addRib(path, 'z');
+        ribs.addRib(path, 'z', ribShade(k, sx * 3));
       }
     }
   }

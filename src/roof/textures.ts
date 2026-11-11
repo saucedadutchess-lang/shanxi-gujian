@@ -92,3 +92,88 @@ export function latticeWindow() {
     for (let i = 0; i < 4; i++) lattice(ctx, 13 + i * 60, 14, 50, 228, 12.5);
   });
 }
+
+/** 固定种子的随机数，保证每次打开页面纹理都一样 */
+function seeded(seed: number) {
+  let a = seed;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function tiling(texture: THREE.Texture, repeatX: number, repeatY: number) {
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(repeatX, repeatY);
+  return texture;
+}
+
+/**
+ * 木纹：浅底上的深色细纹，和构件的底色相乘。
+ * @param along 纹理走向：v 是竖向（柱子），u 是横向（枋子）
+ */
+export function woodGrain(along: 'u' | 'v', repeatX: number, repeatY: number) {
+  const rand = seeded(7);
+  const texture = canvasTexture(256, 256, (ctx) => {
+    ctx.fillStyle = '#f2ede6';
+    ctx.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 260; i++) {
+      const p = rand() * 256;
+      const wobble = (rand() - 0.5) * 6;
+      ctx.strokeStyle = `rgba(60, 30, 12, ${0.05 + rand() * 0.16})`;
+      ctx.lineWidth = 0.6 + rand() * 1.6;
+      ctx.beginPath();
+      if (along === 'v') {
+        ctx.moveTo(p, 0);
+        ctx.bezierCurveTo(p + wobble, 85, p - wobble, 170, p, 256);
+      } else {
+        ctx.moveTo(0, p);
+        ctx.bezierCurveTo(85, p + wobble, 170, p - wobble, 256, p);
+      }
+      ctx.stroke();
+    }
+  });
+  return tiling(texture, repeatX, repeatY);
+}
+
+/** 墙面：抹灰上深浅不匀的斑驳 */
+export function mottled(repeat: number) {
+  const rand = seeded(21);
+  const texture = canvasTexture(256, 256, (ctx) => {
+    ctx.fillStyle = '#efeae4';
+    ctx.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 900; i++) {
+      const r = 4 + rand() * 22;
+      const dark = rand() < 0.6;
+      ctx.fillStyle = dark ? `rgba(70, 40, 25, ${0.008 + rand() * 0.02})` : `rgba(255, 250, 240, ${0.01 + rand() * 0.03})`;
+      ctx.beginPath();
+      ctx.ellipse(rand() * 256, rand() * 256, r, r * (0.4 + rand()), rand() * 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+  return tiling(texture, repeat, repeat);
+}
+
+/** 条石或方砖：错缝砌筑，每块深浅略有不同 */
+export function masonry(cols: number, rows: number, repeatX: number, repeatY: number, stagger: boolean) {
+  const rand = seeded(cols * 31 + rows);
+  const texture = canvasTexture(256, 256, (ctx) => {
+    const w = 256 / cols;
+    const h = 256 / rows;
+    for (let r = 0; r < rows; r++) {
+      const shift = stagger && r % 2 ? w / 2 : 0;
+      for (let c = -1; c < cols; c++) {
+        const v = 226 + Math.floor(rand() * 26);
+        ctx.fillStyle = `rgb(${v}, ${v - 3}, ${v - 8})`;
+        ctx.fillRect(c * w + shift, r * h, w, h);
+        ctx.strokeStyle = 'rgba(70, 60, 45, 0.42)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(c * w + shift + 1, r * h + 1, w, h);
+      }
+    }
+  });
+  return tiling(texture, repeatX, repeatY);
+}

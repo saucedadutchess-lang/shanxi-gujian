@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { CLUSTER_WIDTH, clusterGeometry, type ClusterKind } from './brackets';
 import { buildRoof, type RoofGeometry, type Vert } from './geometry';
 import { computeDims, lerp, type HallDims, type MorphState, type RoofSpec } from './params';
-import { barWindow, latticeDoor, latticeWindow, plankDoor } from './textures';
+import { barWindow, latticeDoor, latticeWindow, masonry, mottled, plankDoor, woodGrain } from './textures';
 
 const UP = new THREE.Vector3(0, 1, 0);
 
@@ -24,15 +24,16 @@ export class Hall {
 
   private mat = {
     tile: new THREE.MeshStandardMaterial({ color: 0x62615d, roughness: 0.8, side: THREE.DoubleSide }),
-    rib: new THREE.MeshStandardMaterial({ color: 0x696864, roughness: 0.78 }),
+    rib: new THREE.MeshStandardMaterial({ color: 0x77766f, roughness: 0.78, vertexColors: true }),
     ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
     wood: new THREE.MeshStandardMaterial({ color: 0x6e4a32, roughness: 0.85, side: THREE.DoubleSide }),
     rafter: new THREE.MeshStandardMaterial({ color: 0x7a5236, roughness: 0.85 }),
-    column: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8 }),
-    bracket: new THREE.MeshStandardMaterial({ color: 0x8a5a36, roughness: 0.85 }),
-    wall: new THREE.MeshStandardMaterial({ color: 0x96392a, roughness: 0.95, side: THREE.DoubleSide }),
-    plaster: new THREE.MeshStandardMaterial({ color: 0xd9cdb8, roughness: 1 }),
-    stone: new THREE.MeshStandardMaterial({ color: 0xbdb5a6, roughness: 1 }),
+    column: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8, map: woodGrain('v', 2, 2) }),
+    beam: new THREE.MeshStandardMaterial({ color: 0x7a3a26, roughness: 0.8, map: woodGrain('u', 0.25, 1.5) }),
+    bracket: new THREE.MeshStandardMaterial({ color: 0x8a5a36, roughness: 0.85, map: woodGrain('u', 0.7, 0.7) }),
+    wall: new THREE.MeshStandardMaterial({ color: 0x96392a, roughness: 0.95, side: THREE.DoubleSide, map: mottled(0.22) }),
+    plaster: new THREE.MeshStandardMaterial({ color: 0xd9cdb8, roughness: 1, map: mottled(0.3) }),
+    stone: new THREE.MeshStandardMaterial({ color: 0xc4bcad, roughness: 1, map: masonry(2, 2, 0.4, 1.19, true) }),
     stoneDark: new THREE.MeshStandardMaterial({ color: 0xa9a192, roughness: 1 }),
     earlyDoor: new THREE.MeshStandardMaterial({ map: plankDoor(), roughness: 0.9 }),
     earlyWindow: new THREE.MeshStandardMaterial({ map: barWindow(), roughness: 0.9 }),
@@ -42,6 +43,7 @@ export class Hall {
 
   private chiwei = [earlyFinial(), lateFinial()];
   private pinnacle = pinnacleGeometry();
+  private fish = fishGeometry();
   private unitCylinder = shared(new THREE.CylinderGeometry(1, 1, 1, 8));
 
   update(state: MorphState) {
@@ -53,6 +55,7 @@ export class Hall {
     this.mat.bracket.color.set(0x8a5a36).lerp(new THREE.Color(0x3f6f6a), late);
     this.mat.rafter.color.set(0x7a5236).lerp(new THREE.Color(0x7a3326), late);
     this.mat.column.color.set(0x7a3a26).lerp(new THREE.Color(0x8f2f22), late);
+    this.mat.beam.color.copy(this.mat.column.color);
 
     this.buildBody(d, state.era);
     this.buildRoofLevel(d, d.roof, d.yEave, state.era, true);
@@ -80,7 +83,7 @@ export class Hall {
 
   private box(w: number, h: number, dz: number, x: number, y: number, z: number, material: THREE.Material) {
     if (w <= 0 || h <= 0 || dz <= 0) return;
-    this.add(new THREE.BoxGeometry(w, h, dz), material).position.set(x, y, z);
+    this.add(worldUV(new THREE.BoxGeometry(w, h, dz), w, h, dz), material).position.set(x, y, z);
   }
 
   private instanced(geometry: THREE.BufferGeometry, material: THREE.Material, matrices: THREE.Matrix4[], parent: THREE.Object3D = this.group) {
@@ -187,8 +190,8 @@ export class Hall {
     const reach = d.reach * scale;
     const eaveY = topY + d.bracketH * scale - tier * 0.3;
     for (const s of [1, -1]) {
-      this.box(w * 2, 0.36, 0.26, 0, topY - 0.18, s * dz, this.mat.column);
-      this.box(0.26, 0.36, dz * 2, s * w, topY - 0.18, 0, this.mat.column);
+      this.box(w * 2, 0.36, 0.26, 0, topY - 0.18, s * dz, this.mat.beam);
+      this.box(0.26, 0.36, dz * 2, s * w, topY - 0.18, 0, this.mat.beam);
       const len = allSides ? (w + reach) * 2 + tier * 0.5 : w * 2;
       this.box(len, tier * 0.6, tier * 0.5, 0, eaveY, s * (dz + reach), this.mat.bracket);
       if (allSides) this.box(tier * 0.5, tier * 0.6, (dz + reach) * 2 + tier * 0.5, s * (w + reach), eaveY, 0, this.mat.bracket);
@@ -275,6 +278,48 @@ export class Hall {
       beast.position.copy(tip).lerp(prev, 0.25);
       beast.position.y += 0.18;
       beast.rotation.y = Math.atan2(tip.x - prev.x, tip.z - prev.z);
+
+      // 走兽：明清官式建筑戗脊前端的一排小兽，等级越高数量越多。这里只示意
+      const count = spec.uc > 0.05 ? Math.round(lerp(-3, 5, era)) : 0;
+      const along = new THREE.Vector3();
+      for (let i = 0; i < count; i++) {
+        const p = curve.getPointAt(Math.max(0, 1 - (0.55 + i * 0.42) / curve.getLength()));
+        const figure = this.add(new THREE.ConeGeometry(0.11, 0.34, 5), this.mat.ridge, roof);
+        figure.position.copy(p).add(along.set(0, 0.3, 0));
+      }
+    }
+
+    // 悬鱼：山面三角形顶端垂下的装饰板，遮住屋脊下的槫头
+    if (isTop && spec.gable && 1 - spec.uc > 0.12) {
+      const s = geo.surface;
+      const size = lerp(1.0, 0.8, era);
+      for (const sx of [1, -1]) {
+        const fish = this.add(this.fish, this.mat.wood, roof);
+        fish.position.set(sx * (s.xg + 0.07), geo.topY - 0.18, 0);
+        fish.rotation.y = Math.PI / 2;
+        fish.scale.setScalar(size);
+      }
+      // 悬山：屋顶挑出山墙的那一段，由伸出来的槫（檩条）托着
+      if (d.gableWall && spec.eaveEnd > 0.3) {
+        const ends: THREE.Matrix4[] = [];
+        const quat = new THREE.Quaternion().setFromUnitVectors(UP, new THREE.Vector3(1, 0, 0));
+        const len = s.xg - spec.gable.xf + 0.1;
+        for (const sx of [1, -1]) {
+          for (const u of [0.42, 0.61, 0.8, 0.985]) {
+            for (const sz of u > 0.98 ? [1] : [1, -1]) {
+              const [, y, z] = s.front(sx * s.xg, u, sz, -spec.tau - 0.16);
+              ends.push(
+                new THREE.Matrix4().compose(
+                  new THREE.Vector3(sx * (spec.gable.xf + len / 2), y, z),
+                  quat,
+                  new THREE.Vector3(0.15, len, 0.15),
+                ),
+              );
+            }
+          }
+        }
+        this.instanced(this.unitCylinder, this.mat.rafter, ends, roof);
+      }
     }
     if (!isTop) return;
 
@@ -285,6 +330,12 @@ export class Hall {
       const ridge = this.add(new THREE.BoxGeometry(xg * 2 + 0.2, 0.52, 0.3), this.mat.ridge, roof);
       ridge.position.y = geo.topY + 0.2 * k;
       ridge.scale.y = k;
+      // 正脊上下的线脚
+      for (const [dy, w] of [[-0.02, 0.42], [0.47, 0.38]] as const) {
+        const band = this.add(new THREE.BoxGeometry(xg * 2 + 0.3, 0.08, w), this.mat.ridge, roof);
+        band.position.y = geo.topY + dy * k;
+        band.scale.y = k;
+      }
       const size = lerp(1.05, 0.9, era) * k;
       for (const sx of [1, -1]) {
         const finial = this.add(this.chiwei[era < 0.5 ? 0 : 1], this.mat.ridge, roof);
@@ -313,16 +364,33 @@ export class Hall {
     const quat = new THREE.Quaternion();
     const dy = -tau - r;
 
-    const segment = (p: Vert, q: Vert) => {
+    const segment = (p: Vert, q: Vert, radius = r) => {
       a.set(...p);
       b.set(...q);
       const len = dir.subVectors(b, a).length();
       if (len < 0.05) return;
       quat.setFromUnitVectors(UP, dir.normalize());
       matrices.push(
-        new THREE.Matrix4().compose(a.add(b).multiplyScalar(0.5), quat, new THREE.Vector3(r, len, r)),
+        new THREE.Matrix4().compose(a.add(b).multiplyScalar(0.5), quat, new THREE.Vector3(radius, len, radius)),
       );
     };
+
+    // 角梁：翼角下面沿 45° 斜出的大木，托着转角的屋面
+    if (s.spec.uc > 1e-3) {
+      const top = Math.min(s.spec.uc, (eave + 0.6) / D);
+      for (const sx of [1, -1]) {
+        for (const sz of [1, -1]) {
+          const at = (u: number) => s.end(u, sz * D * (1 - u), sx, dy - 0.12);
+          const tip = at(0);
+          const mid = at(top / 2);
+          // 端头略伸出檐口
+          tip[0] += sx * 0.06;
+          tip[2] += sz * 0.06;
+          segment(tip, mid, r * 2);
+          segment(mid, at(top), r * 2);
+        }
+      }
+    }
 
     const kx = Math.floor((W - 0.12) / spacing);
     for (let k = -kx; k <= kx; k++) {
@@ -398,4 +466,31 @@ function pinnacleGeometry() {
     [0.4, 1.02], [0.14, 1.25], [0.06, 1.7], [0, 1.78],
   ];
   return shared(new THREE.LatheGeometry(profile.map(([x, y]) => new THREE.Vector2(x, y)), 24));
+}
+
+/** 悬鱼的轮廓：上宽下尖的垂饰 */
+function fishGeometry() {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.32, 0);
+  shape.lineTo(0.32, 0);
+  shape.quadraticCurveTo(0.42, -0.5, 0.16, -0.72);
+  shape.quadraticCurveTo(0.2, -1.0, 0, -1.3);
+  shape.quadraticCurveTo(-0.2, -1.0, -0.16, -0.72);
+  shape.quadraticCurveTo(-0.42, -0.5, -0.32, 0);
+  const geometry = new THREE.ExtrudeGeometry(shape, { depth: 0.06, bevelEnabled: false, curveSegments: 8 });
+  geometry.translate(0, 0, -0.03);
+  return shared(geometry);
+}
+
+/** 把方块的贴图坐标换成以米为单位，这样纹理在大小不同的构件上疏密一致 */
+function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): THREE.BoxGeometry {
+  const uv = geometry.getAttribute('uv');
+  const sizes: [number, number][] = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
+  for (let face = 0; face < 6; face++) {
+    for (let i = 0; i < 4; i++) {
+      const k = face * 4 + i;
+      uv.setXY(k, uv.getX(k) * sizes[face][0], uv.getY(k) * sizes[face][1]);
+    }
+  }
+  return geometry;
 }
