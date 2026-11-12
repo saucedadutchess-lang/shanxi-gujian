@@ -76,12 +76,23 @@ function render() {
   }
 }
 
+/** 一帧里不管有几处要求重画，模型只重新生成一次 */
+let renderQueued = false;
+function requestRender() {
+  if (renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(() => {
+    renderQueued = false;
+    render();
+  });
+}
+
 // 拖动滑块时如果正在攒尖，先退出攒尖
 formSlider.addEventListener('input', () => {
   if (branchTarget.zj === 1) setBranch('zj', 0);
-  render();
+  requestRender();
 });
-eraSlider.addEventListener('input', render);
+eraSlider.addEventListener('input', requestRender);
 
 function ease(k: number) {
   return k * k * (3 - 2 * k);
@@ -93,66 +104,7 @@ function animate(duration: number, step: (k: number) => void) {
   const tick = (now: number) => {
     const k = Math.min(1, (now - start) / duration);
     step(ease(k));
-    /** 把三个参照点的尺寸列成表，每个数字标出是实测、换算还是假定 */
-function buildRefTable() {
-  const rows: [string, Exclude<keyof EraRef, 'at' | 'name' | 'basis'>, (v: number) => string][] = [
-    ['开间', 'bay', (v) => `${v.toFixed(2)} 米`],
-    ['檐柱高', 'colH', (v) => `${v.toFixed(2)} 米`],
-    ['柱径', 'colD', (v) => `${Math.round(v * 100)} 厘米`],
-    ['斗拱每层高', 'tier', (v) => `${Math.round(v * 100)} 厘米`],
-    ['斗拱出跳', 'jumps', (v) => `${v} 跳`],
-    ['每跳长', 'jump', (v) => `${Math.round(v * 100)} 厘米`],
-    ['出檐', 'eave', (v) => `${v.toFixed(2)} 米`],
-    ['其中飞椽', 'fly', (v) => (v ? `${v.toFixed(2)} 米` : '无')],
-    ['檐口坡度', 'slopeEave', (v) => v.toFixed(2)],
-    ['屋脊坡度', 'slopeRidge', (v) => v.toFixed(2)],
-    ['悬山出际', 'chuji', (v) => `${v.toFixed(2)} 米`],
-    ['台基高', 'platformH', (v) => `${v.toFixed(2)} 米`],
-    ['椽径', 'rafterD', (v) => `${Math.round(v * 100)} 厘米`],
-    ['鸱尾、正吻高', 'finialH', (v) => `${v.toFixed(2)} 米`],
-  ];
-  const cls = { liang1944: 'src-solid', yzfs: 'src-solid', qing: 'src-solid', derived: 'src-derived', assumed: 'src-assumed' };
-  const table = $<HTMLTableElement>('#ref-table');
-  const head = table.createTHead().insertRow();
-  for (const text of ['', ...ERA_REFS.map((ref) => ref.name)]) {
-    const th = document.createElement('th');
-    th.textContent = text;
-    head.append(th);
-  }
-  const body = table.createTBody();
-  for (const [label, key, format] of rows) {
-    const tr = body.insertRow();
-    tr.insertCell().textContent = label;
-    for (const ref of ERA_REFS) {
-      const span = document.createElement('span');
-      span.textContent = format(ref[key].v);
-      span.className = cls[ref[key].src];
-      span.title = `${ref[key].note}\n（${SOURCES[ref[key].src]}）`;
-      tr.insertCell().append(span);
-    }
-  }
-}
-
-// 点基本形：清掉已加的变化，再变到那个形制
-for (const button of formButtons) {
-  button.addEventListener('click', () => {
-    for (const key of ['dbl', 'jp'] as const) {
-      if (branchTarget[key] === 1) setBranch(key, 0);
-    }
-    const form = button.dataset.form;
-    if (form === 'zj') {
-      if (branchTarget.zj !== 1) setBranch('zj', 1);
-      return;
-    }
-    if (branchTarget.zj === 1) setBranch('zj', 0);
-    const from = Number(formSlider.value);
-    const to = Number(form);
-    animate(700, (k) => (formSlider.value = String(from + (to - from) * k)));
-  });
-}
-
-buildRefTable();
-render();
+    requestRender();
     if (k < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
