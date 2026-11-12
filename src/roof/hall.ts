@@ -2,9 +2,12 @@ import * as THREE from 'three';
 import { CLUSTER_WIDTH, clusterGeometry, levelY, type ClusterKind } from './brackets';
 import { buildRoof, type RoofGeometry, type Vert } from './geometry';
 import { computeDims, lerp, type HallDims, type MorphState, type RoofSpec } from './params';
-import { barWindow, latticeDoor, latticeWindow, masonry, mottled, plankDoor, woodGrain } from './textures';
+import { barWindow, latticeDoor, latticeWindow, photo, plankDoor } from './textures';
 
 const UP = new THREE.Vector3(0, 1, 0);
+const WOOD_GAIN = 2.6;
+/** 红墙：照片本身偏橙，往土红里压一点 */
+const WALL_TINT = new THREE.Color(1.0, 0.62, 0.55);
 
 /** 一圈柱子和它上面的斗拱 */
 interface Level {
@@ -28,14 +31,14 @@ export class Hall {
     ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
     wood: new THREE.MeshStandardMaterial({ color: 0x5f3f2b, roughness: 0.9, side: THREE.DoubleSide }),
     rafter: new THREE.MeshStandardMaterial({ color: 0x6f4630, roughness: 0.85 }),
-    column: wooden(0x6e3423, woodGrain('v', 2, 2)),
-    beam: wooden(0x6e3423, woodGrain('u', 0.25, 1.5)),
-    bracket: wooden(0x7d4c30, woodGrain('u', 0.7, 0.7)),
-    dou: new THREE.MeshStandardMaterial({ color: 0x70442a, roughness: 0.85 }),
-    wall: plastered(0x8f3a2b, mottled(0.22), false),
-    wallShaded: plastered(0x8f3a2b, mottled(0.22), true),
-    plaster: plastered(0xd6c9b2, mottled(0.3), false),
-    stone: new THREE.MeshStandardMaterial({ color: 0xa9a59b, roughness: 1, map: masonry(4, 6, 0.42, 1.0, true), vertexColors: true }),
+    column: new THREE.MeshStandardMaterial(photo('rough_wood', 1, 2.5)),
+    beam: new THREE.MeshStandardMaterial(photo('rough_wood', 0.8, 0.8, true)),
+    bracket: new THREE.MeshStandardMaterial(photo('rough_wood', 0.7, 0.7, true)),
+    dou: new THREE.MeshStandardMaterial(photo('rough_wood', 0.9, 0.9)),
+    wall: plastered(WALL_TINT, 'red_plaster_weathered', 0.4, false),
+    wallShaded: plastered(WALL_TINT, 'red_plaster_weathered', 0.4, true),
+    plaster: plastered(new THREE.Color(1.75, 1.68, 1.5), 'plastered_wall_04', 0.5, false),
+    stone: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 1.1, 1.1), color: new THREE.Color(1.5, 1.52, 1.55), vertexColors: true }),
     stoneDark: new THREE.MeshStandardMaterial({ color: 0x9a958a, roughness: 1 }),
     earlyDoor: new THREE.MeshStandardMaterial({ map: plankDoor(), roughness: 0.85 }),
     earlyWindow: new THREE.MeshStandardMaterial({ map: barWindow(), roughness: 0.85 }),
@@ -56,10 +59,11 @@ export class Hall {
     // 早期木构多为土红刷饰，明清官式檐下用青绿彩画
     const late = THREE.MathUtils.smoothstep(state.era, 0.55, 0.95);
     // 明清彩画里栱多用青、斗多用绿，这里只取个大意
-    this.mat.bracket.color.set(0x7d4c30).lerp(new THREE.Color(0x35608a), late);
-    this.mat.dou.color.set(0x70442a).lerp(new THREE.Color(0x3f7a5c), late);
+    // 木构件的照片贴图本身是灰色的旧木头，颜色乘上去会变暗，所以整体提亮
+    this.mat.bracket.color.set(0x7d4c30).lerp(new THREE.Color(0x35608a), late).multiplyScalar(WOOD_GAIN);
+    this.mat.dou.color.set(0x70442a).lerp(new THREE.Color(0x3f7a5c), late).multiplyScalar(WOOD_GAIN);
     this.mat.rafter.color.set(0x6f4630).lerp(new THREE.Color(0x7a3326), late);
-    this.mat.column.color.set(0x6e3423).lerp(new THREE.Color(0x8c2c20), late);
+    this.mat.column.color.set(0x6e3423).lerp(new THREE.Color(0x8c2c20), late).multiplyScalar(WOOD_GAIN);
     // 山西明清建筑的屋脊和吻兽常用琉璃，这里取绿琉璃的大意：颜色发绿，表面有光泽
     this.mat.ridge.color.set(0x5c5a55).lerp(new THREE.Color(0x4f7a52), late);
     this.mat.ridge.roughness = lerp(0.85, 0.3, late);
@@ -552,17 +556,9 @@ function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): 
   return geometry;
 }
 
-/** 木构件的材质：木纹既影响颜色，也让表面有细微的起伏 */
-function wooden(color: number, grain: THREE.Texture) {
-  return new THREE.MeshStandardMaterial({ color, roughness: 0.82, map: grain, bumpMap: grain, bumpScale: 1.2 });
-}
-
 /** 抹灰墙面的材质 */
-function plastered(color: number, texture: THREE.Texture, shaded: boolean) {
-  return new THREE.MeshStandardMaterial({
-    color, roughness: 0.96, map: texture, bumpMap: texture, bumpScale: 0.8,
-    side: THREE.DoubleSide, vertexColors: shaded,
-  });
+function plastered(color: THREE.Color, name: string, repeat: number, shaded: boolean) {
+  return new THREE.MeshStandardMaterial({ ...photo(name, repeat, repeat), color, side: THREE.DoubleSide, vertexColors: shaded });
 }
 
 /** 给方块加顶点色：底边深，往上 1.6 米以内渐渐变浅 */

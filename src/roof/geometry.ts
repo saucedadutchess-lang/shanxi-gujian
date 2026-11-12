@@ -131,9 +131,15 @@ class GridBuilder {
     }
   }
 
-  build(): THREE.BufferGeometry {
+  /** @param planarUV 按进深和高度（米）生成贴图坐标，用于直立的山面 */
+  build(planarUV = false): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.pos, 3));
+    if (planarUV) {
+      const uv: number[] = [];
+      for (let i = 0; i < this.pos.length; i += 3) uv.push(this.pos[i + 2], this.pos[i + 1]);
+      geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    }
     if (this.col.length) geometry.setAttribute('color', new THREE.Float32BufferAttribute(this.col, 3));
     geometry.setIndex(this.idx);
     geometry.computeVertexNormals();
@@ -233,7 +239,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
         return v;
       });
     }
-    gable = fill.build();
+    gable = fill.build(true);
   }
 
   // 筒瓦。一节瓦长约 0.42 米；各垄的接缝对齐，连成一道道横线

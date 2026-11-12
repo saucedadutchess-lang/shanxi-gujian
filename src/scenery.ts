@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { masonry } from './roof/textures';
+import { photo } from './roof/textures';
 
 /**
  * 环境：天空、院子、柏树和远山。
@@ -149,7 +149,7 @@ export function createScenery(): THREE.Group {
   // 远处是土地和草，近处是铺了方砖的院子
   const earth = new THREE.Mesh(
     new THREE.CircleGeometry(330, 96),
-    new THREE.MeshStandardMaterial({ color: 0x8f8a66, roughness: 1 }),
+    new THREE.MeshStandardMaterial({ ...photo('dry_ground_01', 110, 110), color: new THREE.Color(1.15, 1.12, 0.9) }),
   );
   earth.rotation.x = -Math.PI / 2;
   earth.position.y = -0.03;
@@ -160,8 +160,7 @@ export function createScenery(): THREE.Group {
   const yardD = 84;
   const yard = new THREE.Mesh(
     new THREE.PlaneGeometry(yardW, yardD),
-    // 方砖每块约 0.45 米
-    new THREE.MeshStandardMaterial({ color: 0xa9a294, roughness: 1, map: masonry(4, 4, yardW / 1.8, yardD / 1.8, true, 0.2) }),
+    new THREE.MeshStandardMaterial({ ...photo('brick_floor_003', yardW / 5, yardD / 5), color: new THREE.Color(1.75, 1.9, 2.0) }),
   );
   yard.rotation.x = -Math.PI / 2;
   yard.position.z = 6;

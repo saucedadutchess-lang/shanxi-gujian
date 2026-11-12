@@ -177,3 +177,24 @@ export function masonry(cols: number, rows: number, repeatX: number, repeatY: nu
   });
   return tiling(texture, repeatX, repeatY);
 }
+
+/**
+ * 照片贴图：颜色、法线、粗糙度三张一套，来自 Poly Haven（CC0 授权），文件在 public/textures/。
+ * 出处清单见 docs/sources.md。
+ * @param repeatX 横向每个贴图坐标单位里重复几次（方块的贴图坐标以米为单位）
+ * @param rotate 把纹理转 90°，让木纹顺着构件的长向
+ */
+export function photo(name: string, repeatX: number, repeatY: number, rotate = false) {
+  const load = (kind: 'diff' | 'nor' | 'arm') => {
+    const texture = new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}textures/${name}_${kind}.jpg`);
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(repeatX, repeatY);
+    if (rotate) texture.rotation = Math.PI / 2;
+    texture.anisotropy = 8;
+    if (kind === 'diff') texture.colorSpace = THREE.SRGBColorSpace;
+    return texture;
+  };
+  const arm = load('arm');
+  // arm 一张图里红色通道是缝隙里的暗部，绿色通道是粗糙度
+  return { map: load('diff'), normalMap: load('nor'), roughnessMap: arm, aoMap: arm, roughness: 1 };
+}
