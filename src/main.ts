@@ -150,7 +150,7 @@ function buildRefTable() {
     ['椽径', 'rafterD', (v) => `${Math.round(v * 100)} 厘米`],
     ['鸱尾、正吻高', 'finialH', (v) => `${v.toFixed(2)} 米`],
   ];
-  const cls = { liang1944: 'src-solid', yzfs: 'src-solid', qing: 'src-solid', derived: 'src-derived', assumed: 'src-assumed' };
+  const cls = { liang1944: 'src-solid', qinghua2011: 'src-solid', yzfs: 'src-solid', qing: 'src-solid', derived: 'src-derived', assumed: 'src-assumed' };
   const table = $<HTMLTableElement>('#ref-table');
   const head = table.createTHead().insertRow();
   for (const text of ['', ...ERA_REFS.map((ref) => ref.name)]) {

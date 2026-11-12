@@ -9,10 +9,11 @@
  * 单位：米。详细的出处和换算过程见 docs/sources.md。
  */
 
-export type SourceKey = 'liang1944' | 'yzfs' | 'qing' | 'derived' | 'assumed';
+export type SourceKey = 'liang1944' | 'qinghua2011' | 'yzfs' | 'qing' | 'derived' | 'assumed';
 
 export const SOURCES: Record<SourceKey, string> = {
   liang1944: '梁思成《记五台山佛光寺建筑》，1944',
+  qinghua2011: '清华大学《佛光寺东大殿建筑勘察研究报告》，2011（转引自肖旻《佛光寺东大殿尺度规律探讨》，《建筑学报》2017 年第 6 期）',
   yzfs: '李诫《营造法式》卷四、卷五，1103',
   qing: '清工部《工程做法》《营造算例》的大式通则',
   derived: '由上面的数字换算',
@@ -60,7 +61,7 @@ export interface EraRef {
   finialH: RefValue;
 }
 
-const TANG_FEN = 0.02; // 佛光寺材高 30 厘米，合 15 分，每分 2 厘米
+const TANG_FEN = 0.021; // 佛光寺东大殿材厚 210 毫米，合 10 份，每份 21 毫米（清华 2011 报告）
 const SONG_CHI = 0.312; // 宋营造尺的长度，学界取值约 0.31 米
 const SONG_FEN = (7.5 * SONG_CHI) / 10 / 15; // 三等材广七寸五分，分为十五分
 const DOUKOU = 0.08; // 斗口二寸五分，清营造尺一尺 0.32 米
@@ -74,9 +75,9 @@ export const ERA_REFS: EraRef[] = [
     sideBay: { v: 4.42, src: 'derived', note: '进深四间 17.66 米，平均每间 4.42 米（进深数字来自二手资料）' },
     colH: { v: 5.0, src: 'liang1944', note: '檐柱高约为柱径的 9.25 倍；内柱高约 5 米' },
     colD: { v: 0.54, src: 'liang1944', note: '檐柱径约 54 厘米' },
-    tier: { v: 0.43, src: 'liang1944', note: '材高约 30 厘米，栔高约 13 厘米，合为足材 43 厘米' },
+    tier: { v: 21 * TANG_FEN, src: 'qinghua2011', note: '足材实测均值 431 毫米，报告考虑受压变形后推定为 21 份，合 441 毫米' },
     jumps: { v: 4, src: 'liang1944', note: '柱头铺作七铺作，双抄双下昂，出四跳' },
-    jump: { v: 25 * TANG_FEN, src: 'assumed', note: '每跳长没有查到实测值。按《营造法式》“传跳虽多不过一百五十分”的上限折减，取 25 分' },
+    jump: { v: (94 / 4) * TANG_FEN, src: 'qinghua2011', note: '柱头铺作从柱心到橑檐槫共出 94 份（1974 毫米），四跳平均每跳 23.5 份。实际第一跳 26 份，各跳不完全相等，模型取平均' },
     eave: { v: 3.9, src: 'assumed', note: '二手资料称“出檐近 4 米”“出挑 3.69 米”，没有查到实测原文，取 3.9 米' },
     fly: { v: 0, src: 'liang1944', note: '檐部只用一层椽，没有飞椽' },
     slopeEave: { v: 0.28, src: 'derived', note: '总举高按 1:4.77，各段坡度的分配参照《营造法式》折屋之法的比例' },
