@@ -130,6 +130,19 @@
 | brick_floor_003 | 院子铺地 |
 | dry_ground_01 | 院外土地 |
 | grey_roof_tiles | 底瓦面；每节筒瓦从照片里取一块瓦的范围。照片是欧洲的灰陶瓦，形状和中国板瓦不同，只取它的颜色、斑驳和起伏；黄色地衣过多，饱和度降到 0.2 |
-| brick_wall_08（复用） | 正脊（示意一层层垒起的瓦条） |
+| brick_wall_08（复用） | 正脊、垂脊、戗脊、博脊（示意一层层垒起的瓦条） |
+| plastered_wall_04（复用） | 吻兽、走兽、宝顶（示意灰陶、琉璃的斑驳）；压阑石、踏道、柱础（示意石面） |
+| rough_wood（复用） | 椽子、槫头；门窗只借用它的起伏和粗糙度，图案仍是画的 |
 
-垂脊、戗脊、吻兽、门窗没有用照片贴图，仍是程序生成。
+门窗的图案（门钉、直棂、格心）仍是程序画的。
+
+## 外观参照照片（只看，不放进仓库）
+
+调颜色和细节时参照的公开照片。只用眼睛对照，没有下载或用作贴图。
+
+- 维基共享资源「East Great Hall of Foguang Temple」分类：https://commons.wikimedia.org/wiki/Category:East_Great_Hall_of_Foguang_Temple
+  - 转角铺作近景（作者 G41rn8，CC BY-SA 4.0）：File:Wutai_2009_492.jpg
+  - 檐下仰视（作者 G41rn8，CC BY-SA 4.0）：File:Wutai_2009_496.jpg
+  - 檐角与直棂窗（作者 Zhangzhugang，CC BY-SA 3.0）：File:Wutai_Foguang_Si_2013.08.28_10-55-56.jpg
+
+从这些照片得到的调整（唐一端）：斗拱、枋子、椽子是风化的灰褐色木头，只残留少量土朱；柱子、阑额、直棂窗是褪色的土红；栱眼壁是米白灰泥；门钉是暗铁色。

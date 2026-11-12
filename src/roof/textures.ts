@@ -13,8 +13,9 @@ function canvasTexture(w: number, h: number, draw: (ctx: CanvasRenderingContext2
   return texture;
 }
 
-const FRAME = '#5a2318';
-const PANEL = '#7d2e22';
+// 颜色参照佛光寺东大殿现状：板门和直棂窗的土红已经褪色发灰
+const FRAME = '#5e2f22';
+const PANEL = '#83432e';
 const DARK = '#1b1410';
 
 /** 板门：两扇实心木板门，成排的门钉 */
@@ -27,7 +28,7 @@ export function plankDoor() {
     ctx.fillRect(130, 34, 114, 338);
     ctx.fillStyle = 'rgba(0,0,0,0.18)';
     for (let x = 12; x < 244; x += 28) ctx.fillRect(x, 34, 2, 338);
-    ctx.fillStyle = '#c2a05a';
+    ctx.fillStyle = '#8a7a5c';
     for (let row = 0; row < 5; row++) {
       for (let col = 0; col < 8; col++) {
         const x = 26 + col * 28 + (col >= 4 ? 6 : 0);

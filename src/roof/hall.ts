@@ -31,11 +31,13 @@ export class Hall {
     // 底瓦面和筒瓦都用同一张灰瓦照片。照片上的黄色地衣比山西实物多，颜色往青灰里压
     tile: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: TILE_TINT, side: THREE.DoubleSide }),
     rib: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: RIB_TINT, vertexColors: true }),
-    ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
+    // 吻兽、走兽、宝顶、脊上的线脚：灰陶或琉璃烧成的构件，用表面斑驳的灰泥照片示意
+    ridge: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 1, 1), side: THREE.DoubleSide }),
     // 正脊由一层层瓦条和砖垒成，用灰砖照片示意
     ridgeBody: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.55, 0.55) }),
-    wood: new THREE.MeshStandardMaterial({ color: 0x5f3f2b, roughness: 0.9, side: THREE.DoubleSide }),
-    rafter: new THREE.MeshStandardMaterial({ color: 0x6f4630, roughness: 0.85 }),
+    // 望板、檐口：从下面看到的是风化的灰褐色木头
+    wood: new THREE.MeshStandardMaterial({ color: 0x4f4034, roughness: 0.95, side: THREE.DoubleSide }),
+    rafter: new THREE.MeshStandardMaterial(photo('rough_wood', 0.35, 1.2)),
     column: new THREE.MeshStandardMaterial(photo('rough_wood', 1, 2.5)),
     beam: new THREE.MeshStandardMaterial(photo('rough_wood', 0.8, 0.8, true)),
     bracket: new THREE.MeshStandardMaterial(photo('rough_wood', 0.7, 0.7, true)),
@@ -44,11 +46,13 @@ export class Hall {
     wallShaded: plastered(WALL_TINT, 'red_plaster_weathered', 0.4, true),
     plaster: plastered(new THREE.Color(1.75, 1.68, 1.5), 'plastered_wall_04', 0.5, false),
     stone: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 1.1, 1.1), color: new THREE.Color(1.5, 1.52, 1.55), vertexColors: true }),
-    stoneDark: new THREE.MeshStandardMaterial({ color: 0x9a958a, roughness: 1 }),
-    earlyDoor: new THREE.MeshStandardMaterial({ map: plankDoor(), roughness: 0.85 }),
-    earlyWindow: new THREE.MeshStandardMaterial({ map: barWindow(), roughness: 0.85 }),
-    lateDoor: new THREE.MeshStandardMaterial({ map: latticeDoor(), roughness: 0.85 }),
-    lateWindow: new THREE.MeshStandardMaterial({ map: latticeWindow(), roughness: 0.85 }),
+    // 压阑石、踏道、柱础：灰色石料，用灰泥照片的斑驳示意石面
+    stoneDark: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 0.6, 0.6), color: new THREE.Color(0.92, 0.9, 0.86) }),
+    // 门窗的图案是画出来的，表面的木纹起伏和粗糙度借用木头照片
+    earlyDoor: joinery(plankDoor()),
+    earlyWindow: joinery(barWindow()),
+    lateDoor: joinery(latticeDoor()),
+    lateWindow: joinery(latticeWindow()),
   };
 
   private drip = dripGeometry();
@@ -64,15 +68,17 @@ export class Hall {
     // 早期木构多为土红刷饰，明清官式檐下用青绿彩画
     const late = THREE.MathUtils.smoothstep(state.era, 0.55, 0.95);
     // 明清彩画里栱多用青、斗多用绿，这里只取个大意
-    // 木构件的照片贴图本身是灰色的旧木头，颜色乘上去会变暗，所以整体提亮
-    this.mat.bracket.color.set(0x7d4c30).lerp(new THREE.Color(0x35608a), late).multiplyScalar(WOOD_GAIN);
-    this.mat.dou.color.set(0x70442a).lerp(new THREE.Color(0x3f7a5c), late).multiplyScalar(WOOD_GAIN);
-    this.mat.rafter.color.set(0x6f4630).lerp(new THREE.Color(0x7a3326), late);
-    this.mat.column.color.set(0x6e3423).lerp(new THREE.Color(0x8c2c20), late).multiplyScalar(WOOD_GAIN);
+    // 木构件的照片贴图本身是灰色的旧木头，颜色乘上去会变暗，所以整体提亮。
+    // 早期一端参照佛光寺东大殿的现状照片：斗拱、椽子是风化的灰褐色，只残留一点土朱；
+    // 柱子和阑额是褪了色的土红
+    this.mat.bracket.color.set(0x6c5646).lerp(new THREE.Color(0x35608a), late).multiplyScalar(WOOD_GAIN);
+    this.mat.dou.color.set(0x67544a).lerp(new THREE.Color(0x3f7a5c), late).multiplyScalar(WOOD_GAIN);
+    this.mat.rafter.color.set(0x6a5646).lerp(new THREE.Color(0x7a3326), late).multiplyScalar(WOOD_GAIN);
+    this.mat.column.color.set(0x84452f).lerp(new THREE.Color(0x8c2c20), late).multiplyScalar(WOOD_GAIN);
     // 山西明清建筑的屋脊和吻兽常用琉璃，这里取绿琉璃的大意：颜色发绿，表面有光泽
-    this.mat.ridge.color.set(0x5c5a55).lerp(new THREE.Color(0x4f7a52), late);
-    this.mat.ridge.roughness = lerp(0.85, 0.3, late);
-    this.mat.ridgeBody.color.copy(this.mat.ridge.color).multiplyScalar(2.2);
+    this.mat.ridge.color.set(0x5c5a55).lerp(new THREE.Color(0x4f7a52), late).multiplyScalar(2.1);
+    this.mat.ridge.roughness = lerp(1, 0.35, late);
+    this.mat.ridgeBody.color.set(0x5c5a55).lerp(new THREE.Color(0x4f7a52), late).multiplyScalar(2.2);
     this.mat.ridgeBody.roughness = lerp(1, 0.45, late);
     this.mat.beam.color.copy(this.mat.column.color);
 
@@ -177,8 +183,8 @@ export class Hall {
       // 博脊：下檐屋面和殿身相接处的脊
       const y = d.lower.topY + 0.12;
       for (const s of [1, -1]) {
-        this.box(Wb * 2 + 0.5, 0.42, 0.3, 0, y, s * (Db + 0.02), this.mat.ridge);
-        this.box(0.3, 0.42, Db * 2 + 0.5, s * (Wb + 0.02), y, 0, this.mat.ridge);
+        this.box(Wb * 2 + 0.5, 0.42, 0.3, 0, y, s * (Db + 0.02), this.mat.ridgeBody);
+        this.box(0.3, 0.42, Db * 2 + 0.5, s * (Wb + 0.02), y, 0, this.mat.ridgeBody);
       }
     }
   }
@@ -333,7 +339,12 @@ export class Hall {
     for (const pts of geo.hipRidges) {
       if (pts.length < 2) continue;
       const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
-      this.add(new THREE.TubeGeometry(curve, pts.length * 3, 0.17, 6, false), this.mat.ridge, roof);
+      // 垂脊和戗脊也是瓦条一层层垒起来的，和正脊一样用灰砖照片；贴图坐标换成米，砖缝顺着脊的走向
+      const tube = new THREE.TubeGeometry(curve, pts.length * 3, 0.17, 6, false);
+      const uv = tube.getAttribute('uv');
+      const length = curve.getLength();
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * length, uv.getY(i) * Math.PI * 0.34);
+      this.add(tube, this.mat.ridgeBody, roof);
       // 脊端的兽头（简化成一个小方块）
       const tip = pts[pts.length - 1];
       const prev = pts[pts.length - 2];
@@ -561,6 +572,12 @@ function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): 
     }
   }
   return geometry;
+}
+
+/** 门窗：图案画在画布上，表面起伏和粗糙度用木头照片 */
+function joinery(pattern: THREE.Texture) {
+  const wood = photo('rough_wood', 1, 1.5);
+  return new THREE.MeshStandardMaterial({ map: pattern, normalMap: wood.normalMap, roughnessMap: wood.roughnessMap, roughness: 1 });
 }
 
 /** 抹灰墙面的材质 */
