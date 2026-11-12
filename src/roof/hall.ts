@@ -56,6 +56,8 @@ export class Hall {
   };
 
   private drip = dripGeometry();
+  private tileEnd = tileEndGeometry();
+  private beastHead = beastHeadGeometry();
   private chiwei = [earlyFinial(), lateFinial()];
   private pinnacle = pinnacleGeometry();
   private fish = fishGeometry();
@@ -320,6 +322,22 @@ export class Hall {
     if (geo.gable) this.add(geo.gable, this.mat.wall, roof);
     this.buildRafters(geo, roof, d.rafterR);
 
+    // 瓦当：每垄筒瓦檐口一端的圆形封头，比筒瓦略大，下半截垂在檐口外。
+    // 现场照片里檐口一排圆瓦当非常醒目
+    {
+      const quat = new THREE.Quaternion();
+      const matrices = geo.tileEnds.map(({ pos, facing, sign }) => {
+        quat.setFromAxisAngle(UP, facing === 'z' ? (sign > 0 ? 0 : Math.PI) : (sign * Math.PI) / 2);
+        const out = new THREE.Vector3(0, 0, 0.015).applyQuaternion(quat);
+        return new THREE.Matrix4().compose(
+          new THREE.Vector3(pos[0], pos[1] + 0.03, pos[2]).add(out),
+          quat,
+          new THREE.Vector3(1, 1, 1),
+        );
+      });
+      this.instanced(this.tileEnd, this.mat.rib, matrices, roof);
+    }
+
     // 滴水。佛光寺东大殿这样的早期建筑檐口没有这种尖舌，所以随时代渐渐长出来
     const dripSize = THREE.MathUtils.smoothstep(era, 0.15, 0.5);
     if (dripSize > 0.05) {
@@ -345,13 +363,13 @@ export class Hall {
       const length = curve.getLength();
       for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * length, uv.getY(i) * Math.PI * 0.34);
       this.add(tube, this.mat.ridgeBody, roof);
-      // 脊端的兽头（简化成一个小方块）
+      // 脊端的兽头：张口朝外，头上一只角
       const tip = pts[pts.length - 1];
       const prev = pts[pts.length - 2];
-      const beast = this.add(new THREE.BoxGeometry(0.3, 0.42, 0.3), this.mat.ridge, roof);
-      beast.position.copy(tip).lerp(prev, 0.25);
-      beast.position.y += 0.18;
-      beast.rotation.y = Math.atan2(tip.x - prev.x, tip.z - prev.z);
+      const beast = this.add(this.beastHead, this.mat.ridge, roof);
+      beast.position.copy(tip).lerp(prev, 0.6);
+      beast.position.y += 0.08;
+      beast.rotation.y = Math.atan2(tip.x - prev.x, tip.z - prev.z) - Math.PI / 2;
 
       // 走兽：明清官式建筑戗脊前端的一排小兽，等级越高数量越多。这里只示意
       const count = spec.uc > 0.05 ? Math.round(lerp(-3, 5, era)) : 0;
@@ -512,30 +530,81 @@ function silhouette(draw: (shape: THREE.Shape) => void): THREE.BufferGeometry {
   return shared(new THREE.ExtrudeGeometry(shape, { depth: 0.36, bevelEnabled: false, curveSegments: 10 }));
 }
 
-/** 鸱尾：早期正脊两端的构件，像一条向内翘起的鱼尾。x 正方向朝向屋脊中央 */
+/**
+ * 鸱尾：早期正脊两端的构件。x 正方向朝向屋脊中央。
+ * 下部是张开的兽口，咬住正脊；身子向上收，尾部向内（朝屋脊中央）卷回；外侧边缘是一排鳍。
+ * 轮廓参照现场照片的大意，不是测绘
+ */
 function earlyFinial() {
   return silhouette((s) => {
-    s.moveTo(-0.28, 0);
-    s.lineTo(0.8, 0);
-    s.lineTo(0.8, 0.45);
-    s.quadraticCurveTo(0.5, 1.0, 0.98, 1.72);
-    s.bezierCurveTo(0.45, 1.74, -0.28, 1.45, -0.28, 0.75);
-    s.closePath();
+    s.moveTo(-0.3, 0);
+    s.lineTo(0.62, 0);
+    // 兽口：下颌、张开的口、上颌
+    s.lineTo(0.86, 0.1);
+    s.lineTo(0.6, 0.24);
+    s.lineTo(0.9, 0.42);
+    s.quadraticCurveTo(0.7, 0.62, 0.42, 0.66);
+    // 身子内侧向上，尾尖向内卷回
+    s.quadraticCurveTo(0.3, 1.0, 0.5, 1.36);
+    s.quadraticCurveTo(0.72, 1.62, 0.96, 1.6);
+    s.quadraticCurveTo(0.86, 1.78, 0.56, 1.76);
+    // 外侧边缘：一排锯齿状的鳍，从尾尖往下
+    const fins: [number, number][] = [
+      [0.3, 1.74], [0.12, 1.62], [0.02, 1.58], [-0.12, 1.42], [-0.18, 1.34],
+      [-0.3, 1.14], [-0.32, 1.04], [-0.4, 0.84], [-0.38, 0.74], [-0.42, 0.52], [-0.36, 0.44],
+    ];
+    for (const [x, y] of fins) s.lineTo(x, y);
+    s.quadraticCurveTo(-0.32, 0.2, -0.3, 0);
   });
 }
 
-/** 正吻：明清正脊两端的构件，龙头吞脊，尾部向外卷 */
+/**
+ * 正吻：明清正脊两端的构件。下部龙头张口吞脊，尾部向外卷，背上插一把剑柄。
+ */
 function lateFinial() {
   return silhouette((s) => {
     s.moveTo(-0.3, 0);
-    s.lineTo(0.72, 0);
-    s.lineTo(0.72, 0.56);
-    s.lineTo(0.46, 0.62);
-    s.quadraticCurveTo(0.34, 1.0, 0.6, 1.14);
-    s.quadraticCurveTo(0.78, 1.36, 0.48, 1.5);
-    s.quadraticCurveTo(0.08, 1.6, -0.3, 1.2);
-    s.closePath();
+    s.lineTo(0.6, 0);
+    s.lineTo(0.8, 0.12);
+    s.lineTo(0.56, 0.26);
+    s.lineTo(0.78, 0.44);
+    s.quadraticCurveTo(0.64, 0.62, 0.42, 0.62);
+    s.quadraticCurveTo(0.34, 0.96, 0.6, 1.12);
+    s.quadraticCurveTo(0.8, 1.34, 0.5, 1.5);
+    s.quadraticCurveTo(0.1, 1.62, -0.18, 1.36);
+    // 剑柄：从背上斜插出来
+    s.lineTo(-0.24, 1.52);
+    s.lineTo(-0.36, 1.48);
+    s.lineTo(-0.3, 1.26);
+    s.quadraticCurveTo(-0.34, 0.6, -0.3, 0);
   });
+}
+
+/** 戗脊、垂脊端头的兽头：张口朝前（x 正方向），头上一只角 */
+function beastHeadGeometry() {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.3, 0);
+  shape.lineTo(0.2, 0);
+  shape.lineTo(0.36, 0.08);
+  shape.lineTo(0.18, 0.15);
+  shape.lineTo(0.38, 0.24);
+  shape.quadraticCurveTo(0.3, 0.38, 0.14, 0.4);
+  shape.lineTo(0.04, 0.6);
+  shape.lineTo(-0.04, 0.42);
+  shape.quadraticCurveTo(-0.3, 0.44, -0.3, 0.2);
+  shape.closePath();
+  const geometry = new THREE.ExtrudeGeometry(shape, { depth: 0.24, bevelEnabled: false, curveSegments: 6 });
+  geometry.translate(0, 0, -0.12);
+  return shared(geometry);
+}
+
+/** 瓦当：圆形的瓦头，比筒瓦略大，面朝 z 正方向 */
+function tileEndGeometry() {
+  const geometry = new THREE.CylinderGeometry(0.115, 0.115, 0.05, 18);
+  geometry.rotateX(Math.PI / 2);
+  const count = geometry.getAttribute('position').count;
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Array(count * 3).fill(0.72), 3));
+  return shared(geometry);
 }
 
 /** 宝顶：攒尖顶最高处的构件 */

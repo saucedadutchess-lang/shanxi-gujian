@@ -165,6 +165,13 @@ class GridBuilder {
   }
 }
 
+/** 檐口上的一个点和它朝外的方向 */
+export interface EaveMark {
+  pos: Vert;
+  facing: 'x' | 'z';
+  sign: number;
+}
+
 export interface RoofGeometry {
   surface: RoofSurface;
   /** 底瓦面 */
@@ -178,7 +185,9 @@ export interface RoofGeometry {
   /** 垂脊和戗脊的走向 */
   hipRidges: THREE.Vector3[][];
   /** 檐口每块滴水的位置和朝向 */
-  drips: { pos: Vert; facing: 'x' | 'z'; sign: number }[];
+  drips: EaveMark[];
+  /** 每垄筒瓦檐口一端的瓦当 */
+  tileEnds: EaveMark[];
   /** 屋面最高处的高度 */
   topY: number;
 }
@@ -274,12 +283,16 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
   // 筒瓦。一节瓦长约 0.42 米；各垄的接缝对齐，连成一道道横线
   const ribs = new GridBuilder();
   const du = TILE_LEN / (D * SLOPE_K);
+  const tileEnds: EaveMark[] = [];
   const kx = Math.floor((W - 0.08) / TILE_ROW);
   for (let k = -kx; k <= kx; k++) {
     const x = k * TILE_ROW;
     const top = s.frontTop(Math.abs(x));
     if (top < 0.02) continue;
-    for (const sz of [1, -1]) ribs.addRib((u) => s.front(x, u, sz), top, du, 'x', k + sz * 1000);
+    for (const sz of [1, -1]) {
+      ribs.addRib((u) => s.front(x, u, sz), top, du, 'x', k + sz * 1000);
+      tileEnds.push({ pos: s.front(x, 0, sz), facing: 'z', sign: sz });
+    }
   }
   if (hasSkirt) {
     const kz = Math.floor((D - 0.08) / TILE_ROW);
@@ -287,12 +300,15 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
       const z = k * TILE_ROW;
       const top = s.endTop(Math.abs(z));
       if (top < 0.02) continue;
-      for (const sx of [1, -1]) ribs.addRib((u) => s.end(u, z, sx), top, du, 'z', k + sx * 3000);
+      for (const sx of [1, -1]) {
+        ribs.addRib((u) => s.end(u, z, sx), top, du, 'z', k + sx * 3000);
+        tileEnds.push({ pos: s.end(0, z, sx), facing: 'x', sign: sx });
+      }
     }
   }
 
   // 滴水：两垄筒瓦之间、檐口最下面一块板瓦垂下的尖舌
-  const drips: { pos: Vert; facing: 'x' | 'z'; sign: number }[] = [];
+  const drips: EaveMark[] = [];
   for (let k = -kx; k < kx; k++) {
     const x = (k + 0.5) * TILE_ROW;
     if (s.frontTop(Math.abs(x)) < 0.02) continue;
@@ -339,6 +355,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
     gable,
     hipRidges,
     drips,
+    tileEnds,
     topY: s.height(uTop, 0),
   };
 }
