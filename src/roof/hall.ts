@@ -6,6 +6,8 @@ import { barWindow, latticeDoor, latticeWindow, photo, plankDoor } from './textu
 
 const UP = new THREE.Vector3(0, 1, 0);
 const WOOD_GAIN = 2.6;
+const TILE_TINT = new THREE.Color(0.95, 0.94, 0.92);
+const RIB_TINT = new THREE.Color(1.15, 1.13, 1.1);
 /** 红墙：照片本身偏橙，往土红里压一点 */
 const WALL_TINT = new THREE.Color(1.0, 0.62, 0.55);
 
@@ -26,9 +28,12 @@ export class Hall {
   readonly group = new THREE.Group();
 
   private mat = {
-    tile: new THREE.MeshStandardMaterial({ color: 0x4f4e4a, roughness: 0.85, side: THREE.DoubleSide }),
-    rib: new THREE.MeshStandardMaterial({ color: 0x7d7b72, roughness: 0.82, vertexColors: true }),
+    // 底瓦面和筒瓦都用同一张灰瓦照片。照片上的黄色地衣比山西实物多，颜色往青灰里压
+    tile: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: TILE_TINT, side: THREE.DoubleSide }),
+    rib: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: RIB_TINT, vertexColors: true }),
     ridge: new THREE.MeshStandardMaterial({ color: 0x5c5a55, roughness: 0.85, side: THREE.DoubleSide }),
+    // 正脊由一层层瓦条和砖垒成，用灰砖照片示意
+    ridgeBody: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.55, 0.55) }),
     wood: new THREE.MeshStandardMaterial({ color: 0x5f3f2b, roughness: 0.9, side: THREE.DoubleSide }),
     rafter: new THREE.MeshStandardMaterial({ color: 0x6f4630, roughness: 0.85 }),
     column: new THREE.MeshStandardMaterial(photo('rough_wood', 1, 2.5)),
@@ -67,6 +72,8 @@ export class Hall {
     // 山西明清建筑的屋脊和吻兽常用琉璃，这里取绿琉璃的大意：颜色发绿，表面有光泽
     this.mat.ridge.color.set(0x5c5a55).lerp(new THREE.Color(0x4f7a52), late);
     this.mat.ridge.roughness = lerp(0.85, 0.3, late);
+    this.mat.ridgeBody.color.copy(this.mat.ridge.color).multiplyScalar(2.2);
+    this.mat.ridgeBody.roughness = lerp(1, 0.45, late);
     this.mat.beam.color.copy(this.mat.column.color);
 
     this.buildBody(d, state.era);
@@ -383,7 +390,7 @@ export class Hall {
     const xg = geo.surface.xg;
     const k = d.ridgeScale;
     if (k > 0.02) {
-      const ridge = this.add(new THREE.BoxGeometry(xg * 2 + 0.2, 0.52, 0.3), this.mat.ridge, roof);
+      const ridge = this.add(worldUV(new THREE.BoxGeometry(xg * 2 + 0.2, 0.52, 0.3), xg * 2 + 0.2, 0.52, 0.3), this.mat.ridgeBody, roof);
       ridge.position.y = geo.topY + 0.2 * k;
       ridge.scale.y = k;
       // 正脊上下的线脚

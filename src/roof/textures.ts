@@ -93,100 +93,16 @@ export function latticeWindow() {
   });
 }
 
-/** 固定种子的随机数，保证每次打开页面纹理都一样 */
-function seeded(seed: number) {
-  let a = seed;
-  return () => {
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function tiling(texture: THREE.Texture, repeatX: number, repeatY: number) {
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(repeatX, repeatY);
-  return texture;
-}
-
-/**
- * 木纹：浅底上的深色细纹，和构件的底色相乘。
- * @param along 纹理走向：v 是竖向（柱子），u 是横向（枋子）
- */
-export function woodGrain(along: 'u' | 'v', repeatX: number, repeatY: number) {
-  const rand = seeded(7);
-  const texture = canvasTexture(256, 256, (ctx) => {
-    ctx.fillStyle = '#f2ede6';
-    ctx.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 260; i++) {
-      const p = rand() * 256;
-      const wobble = (rand() - 0.5) * 6;
-      ctx.strokeStyle = `rgba(60, 30, 12, ${0.05 + rand() * 0.16})`;
-      ctx.lineWidth = 0.6 + rand() * 1.6;
-      ctx.beginPath();
-      if (along === 'v') {
-        ctx.moveTo(p, 0);
-        ctx.bezierCurveTo(p + wobble, 85, p - wobble, 170, p, 256);
-      } else {
-        ctx.moveTo(0, p);
-        ctx.bezierCurveTo(85, p + wobble, 170, p - wobble, 256, p);
-      }
-      ctx.stroke();
-    }
-  });
-  return tiling(texture, repeatX, repeatY);
-}
-
-/** 墙面：抹灰上深浅不匀的斑驳 */
-export function mottled(repeat: number) {
-  const rand = seeded(21);
-  const texture = canvasTexture(256, 256, (ctx) => {
-    ctx.fillStyle = '#efeae4';
-    ctx.fillRect(0, 0, 256, 256);
-    for (let i = 0; i < 900; i++) {
-      const r = 4 + rand() * 22;
-      const dark = rand() < 0.6;
-      ctx.fillStyle = dark ? `rgba(70, 40, 25, ${0.008 + rand() * 0.02})` : `rgba(255, 250, 240, ${0.01 + rand() * 0.03})`;
-      ctx.beginPath();
-      ctx.ellipse(rand() * 256, rand() * 256, r, r * (0.4 + rand()), rand() * 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  });
-  return tiling(texture, repeat, repeat);
-}
-
-/** 条石或方砖：错缝砌筑，每块深浅略有不同 */
-export function masonry(cols: number, rows: number, repeatX: number, repeatY: number, stagger: boolean, joint = 0.42) {
-  const rand = seeded(cols * 31 + rows);
-  const texture = canvasTexture(256, 256, (ctx) => {
-    const w = 256 / cols;
-    const h = 256 / rows;
-    for (let r = 0; r < rows; r++) {
-      const shift = stagger && r % 2 ? w / 2 : 0;
-      for (let c = -1; c < cols; c++) {
-        const v = 232 + Math.floor(rand() * 20);
-        ctx.fillStyle = `rgb(${v}, ${v - 3}, ${v - 8})`;
-        ctx.fillRect(c * w + shift, r * h, w, h);
-        ctx.strokeStyle = `rgba(70, 60, 45, ${joint})`;
-        ctx.lineWidth = 2;
-        ctx.strokeRect(c * w + shift + 1, r * h + 1, w, h);
-      }
-    }
-  });
-  return tiling(texture, repeatX, repeatY);
-}
-
 /**
  * 照片贴图：颜色、法线、粗糙度三张一套，来自 Poly Haven（CC0 授权），文件在 public/textures/。
  * 出处清单见 docs/sources.md。
  * @param repeatX 横向每个贴图坐标单位里重复几次（方块的贴图坐标以米为单位）
  * @param rotate 把纹理转 90°，让木纹顺着构件的长向
  */
-export function photo(name: string, repeatX: number, repeatY: number, rotate = false) {
+export function photo(name: string, repeatX: number, repeatY: number, rotate = false, saturation = 1) {
   const load = (kind: 'diff' | 'nor' | 'arm') => {
-    const texture = new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}textures/${name}_${kind}.jpg`);
+    const url = `${import.meta.env.BASE_URL}textures/${name}_${kind}.jpg`;
+    const texture = kind === 'diff' && saturation < 1 ? desaturated(url, saturation) : new THREE.TextureLoader().load(url);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(repeatX, repeatY);
     if (rotate) texture.rotation = Math.PI / 2;
@@ -197,4 +113,27 @@ export function photo(name: string, repeatX: number, repeatY: number, rotate = f
   const arm = load('arm');
   // arm 一张图里红色通道是缝隙里的暗部，绿色通道是粗糙度
   return { map: load('diff'), normalMap: load('nor'), roughnessMap: arm, aoMap: arm, roughness: 1 };
+}
+
+/** 读入一张照片，降低饱和度后作为纹理（比如把瓦上过多的黄色地衣压成灰色） */
+function desaturated(url: string, saturation: number) {
+  // 照片读完、处理好之后再把画布交给纹理：纹理一旦按某个尺寸上传到显卡就不能再改尺寸
+  const texture = new THREE.Texture();
+  new THREE.ImageLoader().load(url, (image) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(image, 0, 0);
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const px = data.data;
+    for (let i = 0; i < px.length; i += 4) {
+      const grey = 0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2];
+      for (let c = 0; c < 3; c++) px[i + c] = grey + (px[i + c] - grey) * saturation;
+    }
+    ctx.putImageData(data, 0, 0);
+    texture.image = canvas;
+    texture.needsUpdate = true;
+  });
+  return texture;
 }

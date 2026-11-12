@@ -8,6 +8,11 @@ const EPS = 1e-3;
 export const TILE_ROW = 0.3;
 const TILE_LEN = 0.42;
 const TILE_R = 0.095;
+/** 瓦面照片（grey_roof_tiles）里有 16 列、10 行瓦 */
+const PHOTO_COLS = 16;
+const PHOTO_ROWS = 10;
+/** 沿坡长的米数大致等于 u × 进深 × 1.15 */
+const SLOPE_K = 1.15;
 
 /**
  * 屋面的数学描述。坐标原点在檐口高度、平面中心。
@@ -68,11 +73,16 @@ class GridBuilder {
   private pos: number[] = [];
   private idx: number[] = [];
   private col: number[] = [];
+  private uv: number[] = [];
 
-  add(na: number, nb: number, fn: (a: number, b: number) => Vert) {
+  /** @param uvFn 可选：给出每个点的贴图坐标（米） */
+  add(na: number, nb: number, fn: (a: number, b: number) => Vert, uvFn?: (a: number, b: number) => [number, number]) {
     const base = this.pos.length / 3;
     for (let j = 0; j <= nb; j++) {
-      for (let i = 0; i <= na; i++) this.pos.push(...fn(i / na, j / nb));
+      for (let i = 0; i <= na; i++) {
+        this.pos.push(...fn(i / na, j / nb));
+        if (uvFn) this.uv.push(...uvFn(i / na, j / nb));
+      }
     }
     for (let j = 0; j < nb; j++) {
       for (let i = 0; i < na; i++) {
@@ -95,7 +105,8 @@ class GridBuilder {
     const base = this.pos.length / 3;
     const ring = 4;
     let rings = 0;
-    const pushRing = ([x, y, z]: Vert, radius: number, lift: number, tone: number) => {
+    // 每节筒瓦从瓦面照片里取一块瓦的范围贴上去：照片是 16 列 × 10 行的瓦
+    const pushRing = ([x, y, z]: Vert, radius: number, lift: number, tone: number, cell: [number, number], end: number) => {
       for (let k = 0; k < ring; k++) {
         const a = (Math.PI * k) / (ring - 1);
         const side = radius * Math.cos(a);
@@ -103,18 +114,24 @@ class GridBuilder {
         if (lateral === 'x') this.pos.push(x + side, y + up, z);
         else this.pos.push(x, y + up, z + side);
         this.col.push(tone, tone, tone);
+        this.uv.push((cell[0] + 0.1 + (0.8 * k) / (ring - 1)) / PHOTO_COLS, (cell[1] + 0.12 + 0.76 * end) / PHOTO_ROWS);
       }
       rings++;
+    };
+    const hash = (v: number) => {
+      const n = Math.sin(v * 12.9898 + seed * 78.233) * 43758.5453;
+      return n - Math.floor(n);
     };
     const count = Math.max(1, Math.ceil(top / du));
     for (let k = 0; k < count; k++) {
       const u0 = k * du;
       const u1 = Math.min(top, u0 + du);
-      const n = Math.sin((k + 1) * 12.9898 + seed * 78.233) * 43758.5453;
       // 每节瓦深浅略有不同，靠近檐口的地方颜色深一点，像积了灰和苔
-      const tone = (0.92 + 0.08 * (n - Math.floor(n))) * (0.9 + 0.1 * Math.min(1, u0 * 3));
-      pushRing(at(u0), TILE_R, 0.012, tone);
-      pushRing(at(u1), TILE_R * 0.84, -0.01, tone);
+      const tone = (0.92 + 0.08 * hash(k + 1)) * (0.9 + 0.1 * Math.min(1, u0 * 3));
+      // 一垄瓦取照片里同一列，一节节往上取，相邻两节颜色相近
+      const cell: [number, number] = [Math.floor(hash(101) * PHOTO_COLS), (k + Math.floor(hash(201) * PHOTO_ROWS)) % PHOTO_ROWS];
+      pushRing(at(u0), TILE_R, 0.012, tone, cell, 0);
+      pushRing(at(u1), TILE_R * 0.84, -0.01, tone, cell, (u1 - u0) / du);
     }
     for (let j = 0; j < rings - 1; j++) {
       // 相邻两节之间不连面，留出台阶
@@ -135,7 +152,8 @@ class GridBuilder {
   build(planarUV = false): THREE.BufferGeometry {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(this.pos, 3));
-    if (planarUV) {
+    if (this.uv.length) geometry.setAttribute('uv', new THREE.Float32BufferAttribute(this.uv, 2));
+    else if (planarUV) {
       const uv: number[] = [];
       for (let i = 0; i < this.pos.length; i += 3) uv.push(this.pos[i + 2], this.pos[i + 1]);
       geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
@@ -176,26 +194,37 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
   const skirtRows = Math.max(2, Math.ceil(16 * uc));
   const mainRows = Math.max(2, Math.ceil(18 * uTop));
 
+  // 底瓦面的贴图坐标：横向是面阔（或进深）方向的米数，纵向是沿坡的米数。
+  // 照片里一列瓦正好落在两垄筒瓦之间
+  const slope = (u: number) => u * D * SLOPE_K;
+  const lateralUV = (v: Vert, u: number): [number, number] => [v[0] / TILE_ROW / PHOTO_COLS + 0.5 / PHOTO_COLS, slope(u) / TILE_LEN / PHOTO_ROWS];
   for (const [builder, dy] of [[base, 0], [wood, -tau]] as const) {
+    const withUV = builder === base;
     for (const sz of [1, -1]) {
       // 前后坡的主体
-      builder.add(32, mainRows, (a, b) => s.front((a * 2 - 1) * xg, b * uTop, sz, dy));
+      const main = (a: number, b: number) => s.front((a * 2 - 1) * xg, b * uTop, sz, dy);
+      builder.add(32, mainRows, main, withUV ? (a, b) => lateralUV(main(a, b), b * uTop) : undefined);
       if (!hasSkirt) continue;
       // 前后坡伸到翼角的部分
       for (const sx of [1, -1]) {
-        builder.add(8, skirtRows, (a, b) => {
+        const skirt = (a: number, b: number) => {
           const u = b * uc;
           return s.front(sx * (xg + a * (W - u * D - xg)), u, sz, dy);
-        });
+        };
+        builder.add(8, skirtRows, skirt, withUV ? (a, b) => lateralUV(skirt(a, b), b * uc) : undefined);
       }
     }
     if (hasSkirt) {
       // 两山坡面
       for (const sx of [1, -1]) {
-        builder.add(24, skirtRows, (a, b) => {
+        const side = (a: number, b: number) => {
           const u = b * uc;
           return s.end(u, (a * 2 - 1) * D * (1 - u), sx, dy);
-        });
+        };
+        builder.add(24, skirtRows, side, withUV ? (a, b) => {
+          const v = side(a, b);
+          return lateralUV([v[2], 0, 0], b * uc);
+        } : undefined);
       }
     }
   }
@@ -244,7 +273,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
 
   // 筒瓦。一节瓦长约 0.42 米；各垄的接缝对齐，连成一道道横线
   const ribs = new GridBuilder();
-  const du = TILE_LEN / (D * 1.15);
+  const du = TILE_LEN / (D * SLOPE_K);
   const kx = Math.floor((W - 0.08) / TILE_ROW);
   for (let k = -kx; k <= kx; k++) {
     const x = k * TILE_ROW;
