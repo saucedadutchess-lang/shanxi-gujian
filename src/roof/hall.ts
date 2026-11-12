@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CLUSTER_WIDTH, clusterGeometry, levelY, type ClusterKind } from './brackets';
 import { buildRoof, type RoofGeometry, type Vert } from './geometry';
 import { computeDims, lerp, type HallDims, type MorphState, type RoofSpec } from './params';
@@ -33,6 +34,9 @@ export class Hall {
     rib: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: RIB_TINT, vertexColors: true }),
     // 吻兽、走兽、宝顶、脊上的线脚：灰陶或琉璃烧成的构件，用表面斑驳的灰泥照片示意
     ridge: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 1, 1), side: THREE.DoubleSide }),
+    // 鸱吻的琉璃：主体绿釉，龙等装饰用黄釉；表面借用灰泥照片的斑驳，像釉面剥落
+    glaze: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 1.2, 1.2), color: new THREE.Color(0.3, 0.62, 0.36), roughness: 0.45, side: THREE.DoubleSide }),
+    glazeGold: new THREE.MeshStandardMaterial({ color: 0xb8862e, roughness: 0.4 }),
     // 正脊由一层层瓦条和砖垒成，用灰砖照片示意
     ridgeBody: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.55, 0.55) }),
     // 望板、檐口：从下面看到的是风化的灰褐色木头
@@ -59,6 +63,8 @@ export class Hall {
   private tileEnd = tileEndGeometry();
   private beastHead = beastHeadGeometry();
   private chiwei = [earlyFinial(), lateFinial()];
+  private chiweiFin = chiweiFin();
+  private chiweiDragon = chiweiDragon();
   private pinnacle = pinnacleGeometry();
   private fish = fishGeometry();
   private unitCylinder = shared(new THREE.CylinderGeometry(1, 1, 1, 8));
@@ -430,9 +436,16 @@ export class Hall {
       }
       const size = (d.finialH / 1.72) * k;
       for (const sx of [1, -1]) {
-        const finial = this.add(this.chiwei[era < 0.5 ? 0 : 1], this.mat.ridge, roof);
-        finial.position.set(sx * xg, geo.topY - 0.05, -0.18 * size);
-        finial.scale.set(-sx * size, size, size);
+        const early = era < 0.5;
+        // 现存的鸱吻（包括佛光寺东大殿的）都是绿琉璃，所以两个时代都用绿琉璃
+        const parts: [THREE.BufferGeometry, THREE.Material][] = early
+          ? [[this.chiwei[0], this.mat.glaze], [this.chiweiFin, this.mat.glaze], [this.chiweiDragon, this.mat.glazeGold]]
+          : [[this.chiwei[1], this.mat.glaze]];
+        for (const [geometry, material] of parts) {
+          const finial = this.add(geometry, material, roof);
+          finial.position.set(sx * xg, geo.topY - 0.05, -0.18 * size);
+          finial.scale.set(-sx * size, size, size);
+        }
       }
     }
     // 攒尖的宝顶
@@ -531,31 +544,127 @@ function silhouette(draw: (shape: THREE.Shape) => void): THREE.BufferGeometry {
 }
 
 /**
- * 鸱尾：早期正脊两端的构件。x 正方向朝向屋脊中央。
- * 下部是张开的兽口，咬住正脊；身子向上收，尾部向内（朝屋脊中央）卷回；外侧边缘是一排鳍。
- * 轮廓参照现场照片的大意，不是测绘
+ * 鸱尾：早期正脊两端的构件。x 正方向朝向屋脊中央，高 1.72 个单位（摆放时按实测高度缩放）。
+ * 轮廓参照佛光寺东大殿现存鸱吻的照片：
+ * 外侧是一道高大的鳍，顶上一丛鳍尖向内斜；内侧是一弯修长的尾巴，像弯月一样向内上翘，没有明清的卷涡；
+ * 下部是张口的兽头，把正脊吞在口里。
  */
+const CHIWEI_OUTLINE: [number, number][] = [
+  [-0.42, 0],
+  [0.55, 0],
+  // 下颌：向前伸出再向下卷，托在正脊下面
+  [0.95, 0],
+  [1.12, 0.07],
+  [1.02, 0.14],
+  [0.84, 0.12],
+  // 口的深处，正脊从这里穿过
+  [0.72, 0.3],
+  // 上颌向前伸，鼻头向上卷
+  [1.12, 0.32],
+  [1.3, 0.4],
+  [1.34, 0.52],
+  [1.22, 0.55],
+  [1.14, 0.5],
+  // 鼻梁、鼓起的眼睛、额头
+  [1.02, 0.62],
+  [0.98, 0.74],
+  [0.86, 0.76],
+  [0.8, 0.86],
+];
+
 function earlyFinial() {
   return silhouette((s) => {
-    s.moveTo(-0.3, 0);
-    s.lineTo(0.62, 0);
-    // 兽口：下颌、张开的口、上颌
-    s.lineTo(0.86, 0.1);
-    s.lineTo(0.6, 0.24);
-    s.lineTo(0.9, 0.42);
-    s.quadraticCurveTo(0.7, 0.62, 0.42, 0.66);
-    // 身子内侧向上，尾尖向内卷回
-    s.quadraticCurveTo(0.3, 1.0, 0.5, 1.36);
-    s.quadraticCurveTo(0.72, 1.62, 0.96, 1.6);
-    s.quadraticCurveTo(0.86, 1.78, 0.56, 1.76);
-    // 外侧边缘：一排锯齿状的鳍，从尾尖往下
-    const fins: [number, number][] = [
-      [0.3, 1.74], [0.12, 1.62], [0.02, 1.58], [-0.12, 1.42], [-0.18, 1.34],
-      [-0.3, 1.14], [-0.32, 1.04], [-0.4, 0.84], [-0.38, 0.74], [-0.42, 0.52], [-0.36, 0.44],
+    const [first, ...rest] = CHIWEI_OUTLINE;
+    s.moveTo(...first);
+    for (const p of rest) s.lineTo(...p);
+    // 内侧：弯月形的尾巴。先向外凹进去，再向内上方挑出一个尖
+    s.quadraticCurveTo(0.42, 1.06, 1.02, 1.47);
+    s.lineTo(0.86, 1.45);
+    // 顶边向外，接到鳍尖
+    s.lineTo(0.52, 1.42);
+    // 顶上一丛鳍尖，向内斜
+    const crest: [number, number][] = [
+      [0.64, 1.7], [0.5, 1.6], [0.5, 1.69], [0.36, 1.58], [0.34, 1.66],
+      [0.2, 1.55], [0.17, 1.62], [0.05, 1.5], [0.0, 1.55], [-0.04, 1.46],
     ];
-    for (const [x, y] of fins) s.lineTo(x, y);
-    s.quadraticCurveTo(-0.32, 0.2, -0.3, 0);
+    for (const p of crest) s.lineTo(...p);
+    // 外侧：鳍的外缘向外鼓，一直落到底
+    s.quadraticCurveTo(-0.34, 1.34, -0.4, 0.9);
+    s.lineTo(-0.42, 0);
   });
+}
+
+/** 鸱尾外侧那道鳍：比身子厚一点，凸出来一层，表面一道道竖棱 */
+function chiweiFin() {
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.42, 0.05);
+  shape.lineTo(-0.4, 0.9);
+  shape.quadraticCurveTo(-0.34, 1.34, -0.04, 1.46);
+  shape.lineTo(0.1, 1.42);
+  shape.quadraticCurveTo(-0.16, 1.2, -0.2, 0.8);
+  shape.lineTo(-0.22, 0.05);
+  shape.closePath();
+  const fin = new THREE.ExtrudeGeometry(shape, { depth: 0.42, bevelEnabled: false, curveSegments: 10 });
+  fin.translate(0, 0, -0.03);
+  // 竖棱：几根细条沿鳍的走向排开
+  const ribs: THREE.BufferGeometry[] = [fin];
+  for (let i = 0; i < 5; i++) {
+    const t = i / 4;
+    const x0 = -0.4 + 0.15 * t;
+    const curve = new THREE.QuadraticBezierCurve3(
+      new THREE.Vector3(x0, 0.1, 0),
+      new THREE.Vector3(x0 + 0.02, 1.1 - 0.1 * t, 0),
+      new THREE.Vector3(x0 + 0.3 - 0.06 * t, 1.38 - 0.12 * t, 0),
+    );
+    for (const z of [-0.035, 0.395]) {
+      const rib = new THREE.TubeGeometry(curve, 16, 0.014, 4, false);
+      rib.translate(0, 0, z);
+      ribs.push(rib);
+    }
+  }
+  return shared(mergeGeometries(ribs.map((g) => g.index ? g.toNonIndexed() : g), false)!);
+}
+
+/** 鸱尾身上盘绕的一条小金龙：身子盘成 S 形，四条短腿，尾巴打一个卷，凸出在两面 */
+function chiweiDragon() {
+  const body = new THREE.CatmullRomCurve3(
+    [
+      [0.6, 1.28], [0.46, 1.2], [0.34, 1.08], [0.38, 0.96], [0.52, 0.9], [0.6, 0.8],
+      [0.52, 0.68], [0.36, 0.66], [0.24, 0.74], [0.24, 0.84], [0.32, 0.86], [0.34, 0.8],
+    ].map(([x, y]) => new THREE.Vector3(x, y, 0)),
+  );
+  const parts: THREE.BufferGeometry[] = [];
+  for (const [z, side] of [[-0.03, -1], [0.39, 1]] as const) {
+    // 身子从头到尾渐细：分三段，半径逐段减小
+    for (let i = 0; i < 3; i++) {
+      const piece = new THREE.CatmullRomCurve3(
+        Array.from({ length: 9 }, (_, k) => body.getPointAt((i + k / 8) / 3)),
+      );
+      const tube = new THREE.TubeGeometry(piece, 16, 0.06 - i * 0.015, 6, false);
+      tube.translate(0, 0, z);
+      parts.push(tube.toNonIndexed());
+    }
+    // 龙头：一个前伸的头，两只向后的角
+    const head = new THREE.SphereGeometry(0.08, 8, 6);
+    head.scale(1.5, 0.9, 0.7);
+    head.translate(0.66, 1.3, z);
+    parts.push(head.toNonIndexed());
+    for (const dy of [0.03, 0.07]) {
+      const horn = new THREE.CylinderGeometry(0.008, 0.016, 0.16, 4);
+      horn.rotateZ(-1.1);
+      horn.translate(0.56, 1.36 + dy, z);
+      parts.push(horn.toNonIndexed());
+    }
+    // 四条腿：从身子上斜伸出去的短爪
+    for (const [t, angle] of [[0.18, 2.4], [0.3, -0.6], [0.55, 2.6], [0.68, -0.4]] as const) {
+      const p = body.getPointAt(t);
+      const leg = new THREE.CylinderGeometry(0.012, 0.022, 0.13, 4);
+      leg.rotateZ(angle);
+      leg.translate(p.x + Math.cos(angle + Math.PI / 2) * 0.06, p.y + Math.sin(angle + Math.PI / 2) * 0.06, z + side * 0.01);
+      parts.push(leg.toNonIndexed());
+    }
+  }
+  return shared(mergeGeometries(parts, false)!);
 }
 
 /**

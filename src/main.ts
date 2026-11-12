@@ -13,6 +13,8 @@ const $ = <T extends HTMLElement>(selector: string) => {
 const stage = createStage($<HTMLCanvasElement>('#stage'));
 const hall = new Hall();
 stage.scene.add(hall.group);
+// 开发时把舞台挂到 window 上，方便在控制台里摆相机、对照照片检查模型
+if (import.meta.env.DEV) Object.assign(window, { __stage: stage });
 
 const formSlider = $<HTMLInputElement>('#form');
 const eraSlider = $<HTMLInputElement>('#era');
