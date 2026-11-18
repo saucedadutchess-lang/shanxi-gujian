@@ -4,7 +4,7 @@ import { ERA_GROUPS, type EraGroup } from './era';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
 import { renderThumb, thumbFor } from './thumbs';
-import { REGION_COLOR, shortName, type MapView, type PointState } from './view';
+import { RANK_LABEL, REGION_COLOR, rankOf, shortName, type MapView, type PointState } from './view';
 import {
   BATCH_DATES,
   FORMS,
@@ -65,11 +65,24 @@ function syncView() {
   labelsVersion = -1;
 }
 
+for (const b of document.querySelectorAll<HTMLButtonElement>('[data-rotate]')) {
+  b.addEventListener('click', () => view.rotate?.(Number(b.dataset.rotate)));
+}
+const tiltBtn = $<HTMLButtonElement>('#tilt');
+tiltBtn.addEventListener('click', () => {
+  const top = view.toggleTilt?.() ?? false;
+  tiltBtn.setAttribute('aria-pressed', String(top));
+  tiltBtn.textContent = top ? '斜看' : '俯视';
+});
 for (const b of document.querySelectorAll<HTMLButtonElement>('[data-zoom]')) {
   b.addEventListener('click', () => {
     if (b.dataset.zoom === 'in') view.zoom(0.7);
     else if (b.dataset.zoom === 'out') view.zoom(1 / 0.7);
-    else view.reset();
+    else {
+      view.reset();
+      tiltBtn.setAttribute('aria-pressed', 'false');
+      tiltBtn.textContent = '俯视';
+    }
   });
 }
 
@@ -295,7 +308,7 @@ function select(id: string | null) {
     : '暂无坐标，图上没有标出';
   card.innerHTML = `
     <button type="button" class="close" aria-label="关闭">×</button>
-    <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${c?.tier ? ` · <span class="badge">${esc(c.tier)} 级</span>` : ''}</p>
+    <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${rankOf(u) !== 'B' ? ` · <span class="badge${c?.tier ? '' : ' soft'}">${esc(RANK_LABEL[rankOf(u)])}</span>` : ''}</p>
     <h2>${esc(u.name)}</h2>
     ${thumbBlock(u, 'card-thumb')}
     ${three}
@@ -376,7 +389,7 @@ function hover(id: string | null, x: number, y: number) {
       ${thumbBlock(u, 'hover-thumb')}
       <p class="hc-kicker"><i style="background:${REGION_COLOR[u.region]}"></i>${esc(u.region)} · ${esc(u.record.county)} · ${esc(u.record.category)}</p>
       <h4>${esc(u.name)}</h4>
-      <p class="hc-era">${esc(u.record.era)}${u.curated?.tier ? ` · ${esc(u.curated.tier)} 级` : ''}</p>
+      <p class="hc-era">${esc(u.record.era)}${rankOf(u) !== 'B' ? ` · ${esc(RANK_LABEL[rankOf(u)])}` : ''}</p>
       ${what ? `<p class="hc-what">${esc(what)}</p>` : '<p class="hc-todo">名片还没写，点开看名录信息</p>'}
       <p class="hc-hint">点击看详情</p>`;
     fillThumbs(hoverEl);
@@ -399,7 +412,8 @@ function hover(id: string | null, x: number, y: number) {
 // 写了名片的一直显示名字；放大到片区以后显示全部；悬浮和选中的总是显示。互相压住的，按优先级藏掉
 const labelsEl = $<HTMLElement>('#labels');
 const labelEls = new Map<string, HTMLElement>();
-const priority = (u: Unit) => (u.id === selected ? 0 : u.id === hovered ? 1 : u.curated?.tier === 'S' ? 2 : u.curated?.card ? 3 : 4);
+const RANK_PRIORITY = { S: 2, 'S?': 2.5, A: 3, B: 4 } as const;
+const priority = (u: Unit) => (u.id === selected ? 0 : u.id === hovered ? 1 : RANK_PRIORITY[rankOf(u)]);
 const ordered = [...located].sort((a, b) => priority(a) - priority(b));
 function layoutLabels() {
   requestAnimationFrame(layoutLabels);
@@ -423,19 +437,30 @@ function layoutLabels() {
     let el = labelEls.get(u.id);
     if (!el) {
       el = document.createElement('span');
-      el.className = 'label';
+      const rk0 = rankOf(u);
+      el.className = `label${rk0 === 'S' ? ' rank-s' : rk0 === 'S?' ? ' rank-ss' : ''}${rk0 === 'B' ? '' : ' strong'}`;
       el.textContent = shortName(u.name);
       labelEls.set(u.id, el);
       labelsEl.append(el);
       el.style.display = 'none';
     }
     const w = el.dataset.w ? Number(el.dataset.w) : measure(el);
-    const h = 16;
-    const x = p.x + p.r + 4;
-    const y = p.y - h / 2;
-    const box: [number, number, number, number] = [x - 2, y, x + w + 2, y + h];
-    if (pr > 1 && placed.some((b) => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) continue;
-    placed.push(box);
+    const pill = el.classList.contains('rank-s') || el.classList.contains('rank-ss');
+    const h = pill ? 22 : 16;
+    const gap = p.r + (pill ? 6 : 4);
+    // 依次试右边、左边、上边、下边，都被压住就藏起来（选中和悬浮的总是显示在右边）
+    const spots: [number, number][] = [
+      [p.x + gap, p.y - h / 2],
+      [p.x - gap - w, p.y - h / 2],
+      [p.x - w / 2, p.y - gap - h],
+      [p.x - w / 2, p.y + gap],
+    ];
+    const hits = (b: number[]) => placed.some((o) => b[0] < o[2] && b[2] > o[0] && b[1] < o[3] && b[3] > o[1]);
+    let spot: [number, number] | undefined = spots[0];
+    if (pr > 1) spot = spots.find(([sx, sy]) => !hits([sx - 2, sy, sx + w + 2, sy + h]));
+    if (!spot) continue;
+    const [x, y] = spot;
+    placed.push([x - 2, y, x + w + 2, y + h]);
     used.add(u.id);
     el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
     el.classList.toggle('strong', pr <= 3);
@@ -453,6 +478,6 @@ function measure(el: HTMLElement) {
 
 // ---------- 图例 ----------
 $<HTMLElement>('#lg-regions').innerHTML = REGIONS.map((r) => `<li><i class="pt mid" style="background:${REGION_COLOR[r]}"></i>${esc(r)}</li>`).join('');
-$<HTMLElement>('#lg-note').innerHTML = `<span class="credit-3d">地形高度放大 ${EXAGGERATION} 倍；</span>名字显示在写了名片的点旁，放大后显示全部`;
+$<HTMLElement>('#lg-note').innerHTML = `<span class="credit-3d">地形高度放大 ${EXAGGERATION} 倍；</span>S 级、A 级的名字一直显示，放大后显示全部`;
 // 地图区域矮的时候图例先收起来，免得挡住晋南
 if (wrap.clientHeight < 700) $<HTMLDetailsElement>('#legend').open = false;

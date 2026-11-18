@@ -33,12 +33,12 @@
     "note": "Overpass 查询见 scripts/rivers.overpass，由 scripts/import-rivers.mjs 拼接简化，示意。"
   },
   "terrain-tiles": {
-    "title": "Terrain Tiles（terrarium 编码，z8）",
+    "title": "Terrain Tiles（terrarium 编码，z9）",
     "publisher": "Mapzen / AWS 开放数据",
     "url": "https://registry.opendata.aws/terrain-tiles/",
     "accessed": "2026-11-18",
     "license": "多来源，须署名；本区域主要来自 SRTM（公有领域）",
-    "note": "由 scripts/build-dem.swift 拼接重采样为 public/terrain/shanxi-dem.png，约 900 米一格，示意。署名要求见 https://github.com/tilezen/joerd/blob/master/docs/attribution.md"
+    "note": "由 scripts/build-terrain.swift 拼接重采样为 public/terrain/dem.png（约 1 公里一格）和 relief.jpg（约 250 米一像素的晕渲底图），示意。署名要求见 https://github.com/tilezen/joerd/blob/master/docs/attribution.md"
   },
   "gov-batch6": {
     "title": "国务院关于核定并公布第六批全国重点文物保护单位的通知（国发〔2006〕19号）",

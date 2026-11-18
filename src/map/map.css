@@ -70,11 +70,15 @@
 .dot.r-se { fill: var(--r-se); }
 .dot.r-s { fill: var(--r-s); }
 
-.dot.tier-S,
-.dot.tier-A,
-.dot.has-card {
+.dot.rank-A {
   stroke: var(--ink);
   stroke-width: calc(1.2px * var(--s, 1));
+}
+
+.dot.rank-S,
+.dot.rank-Ss {
+  stroke: var(--accent);
+  stroke-width: calc(2px * var(--s, 1));
 }
 
 .dot.unlit {
@@ -203,8 +207,58 @@
   color: var(--ink);
 }
 
-.label.sel {
+.label.rank-s,
+.label.rank-ss {
+  padding: 2px 8px;
+  font-size: 14px;
+  line-height: 18px;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  text-shadow: none;
+  box-shadow: 0 2px 6px rgb(60 40 25 / 0.25);
+}
+
+.label.rank-s {
+  color: #fff;
+  background: var(--accent);
+}
+
+.label.rank-ss {
   color: var(--accent);
+  background: rgb(255 252 246 / 0.95);
+  border: 1.5px solid var(--accent);
+}
+
+.label.sel:not(.rank-s, .rank-ss) {
+  color: var(--accent);
+}
+
+.label.sel.rank-ss {
+  color: #fff;
+  background: var(--accent);
+}
+
+.lg-s {
+  margin: 0 2px;
+  padding: 0 4px;
+  font-size: 11px;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.lg-s.soft {
+  color: var(--accent);
+  background: #fff;
+  border: 1px solid var(--accent);
+}
+
+.badge.soft {
+  border-style: dashed;
+}
+
+.map-wrap:not(.mode-3d) .only-3d {
+  display: none;
 }
 
 /* ---------- 悬浮卡 ---------- */
@@ -372,7 +426,7 @@
 .pt.big {
   width: 13px;
   height: 13px;
-  box-shadow: 0 0 0 1.5px var(--ink);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
 .pt.mid {

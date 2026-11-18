@@ -50,6 +50,8 @@ for (const [id, c] of Object.entries(curated)) {
   const w = `curated ${id}`;
   if (!ids.has(id)) err(w, '在 units.json 里找不到这个单位');
   if (c.tier && !TIERS.includes(c.tier)) err(w, `层级 ${c.tier} 不对`);
+  if (c.suggested && !TIERS.includes(c.suggested)) err(w, `建议层级 ${c.suggested} 不对`);
+  if (c.tier && c.suggested) err(w, '最终层级定了就不要再写建议层级');
   if (c.card) {
     for (const k of ['what', 'feature', 'value']) {
       fact(`${w} 名片.${k}`, c.card[k]);

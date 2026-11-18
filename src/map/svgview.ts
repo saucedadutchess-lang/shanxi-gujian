@@ -1,6 +1,6 @@
 // 平面示意图：OSM 边界简化的轮廓加圆点。立体地形加载不了（比如显卡不支持 WebGL）时也用它。
 import { REGIONS, REGION_CITIES, boundaries, units, type Region, type Unit } from './data';
-import { pointRadius, type MapView, type PointState } from './view';
+import { pointRadius, rankOf, type MapView, type PointState } from './view';
 
 const SVG = 'http://www.w3.org/2000/svg';
 const svgEl = <K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number> = {}) => {
@@ -64,8 +64,8 @@ export function createSvgView(map: SVGSVGElement): MapView {
   };
   for (const u of located) {
     const [x, y] = project(u.location!.lng, u.location!.lat);
-    const tier = u.curated?.tier ?? 'B';
-    const dot = svgEl('circle', { cx: x.toFixed(2), cy: y.toFixed(2), class: `dot ${REGION_CLASS[u.region]} tier-${tier}${u.curated?.card ? ' has-card' : ''}`, tabindex: 0 });
+    const rank = rankOf(u);
+    const dot = svgEl('circle', { cx: x.toFixed(2), cy: y.toFixed(2), class: `dot ${REGION_CLASS[u.region]} rank-${rank === 'S?' ? 'Ss' : rank}`, tabindex: 0 });
     dot.setAttribute('aria-label', u.name);
     dot.addEventListener('click', (e) => {
       e.stopPropagation();

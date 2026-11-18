@@ -3,15 +3,14 @@
     "terrain-tiles"
   ],
   "precision": "示意",
-  "note": "高程图：经纬度等间距，R*256+G-1000 为高程（米）",
-  "file": "terrain/shanxi-dem.png",
-  "width": 601,
-  "height": 814,
-  "lng0": 110,
-  "lng1": 114.8,
-  "lat0": 34.4,
-  "lat1": 40.9,
-  "step": 0.008,
-  "min": 0,
-  "max": 2992
+  "note": "dem.png：R*256+G-1000 为高程（米），给网格起伏；relief.jpg：分层设色加山体阴影的底图。两张都按经纬度等间距，范围相同",
+  "dem": "terrain/dem.png",
+  "relief": "terrain/relief.jpg",
+  "demWidth": 801,
+  "demHeight": 901,
+  "lng0": 108.4,
+  "lng1": 116.4,
+  "lat0": 33.2,
+  "lat1": 42.2,
+  "max": 3003
 }

@@ -110,7 +110,7 @@
 |---|---|---|
 | 0 骨架 | Vite + TypeScript + three.js，目录结构，Git LFS，自动部署到 GitHub Pages | 已完成 |
 | 1 屋顶变形器 | 三步面板：定基本形（五个按钮加滑块，攒尖另有一根“正脊长度”滑块，从庑殿缩成攒尖）、加变化（重檐、卷棚）、换时代 | 第五版已完成：斗拱按《营造法式》构件尺寸重做，瓦面、光线、环境升级 |
-| 2 地图层 | 531 处国保的数据整理，地图、时间轴、片区、筛选 | 第二版已完成：立体地形（高度放大 6 倍）、河流、点位名字标签、悬浮卡、示意小图、图例，保留平面图切换；候选清单 23 处写了名片三句话，其余还没写 |
+| 2 地图层 | 531 处国保的数据整理，地图、时间轴、片区、筛选 | 第三版已完成：山西和四周的立体地形（晕渲底图、四周渐隐、省外淡化压低）、河流、点位名字标签、悬浮卡、示意小图、图例、转视角按钮，保留平面图切换；S/A 按候选清单的建议层级显示；候选清单 23 处写了名片三句话，其余还没写 |
 | 3 第一座 S 级 | 先用南禅寺试建模流程，再做佛光寺东大殿的完整建筑页 | |
 | 4 古建入门 | 三把钥匙，复用屋顶变形器和 S 级模型 | |
 | 5 铺开 | 应县木塔、晋祠圣母殿，A 级批量，勘误入口，请研究者审核 | |
@@ -119,7 +119,7 @@
 
 地图页是 `map.html`，代码在 `src/map/`。数据在 `data/`：`units.json`（531 处国保加 6 项合并，由 `scripts/import-guobao.mjs` 从山西省文物局名录和 Wikidata 生成，不要手改）、`curated.json`（人工整理的名片、单体、形制、看点）、`boundaries.json`（OSM 边界简化的示意底图）、`sources.json`（出处登记）。`npm run build` 先跑 `scripts/check-data.mjs`，缺出处就失败。底图是自绘示意图，页面上标“非标准地图”并署名 OpenStreetMap。片区划法和数据来源的说明在 `docs/sources.md`。
 
-地图默认是 three.js 立体地形（`src/map/terrain3d.ts`），高程图 `public/terrain/shanxi-dem.png` 由 `scripts/build-dem.swift` 从 Mapzen Terrain Tiles 拼出，河流 `data/rivers.json` 由 `scripts/import-rivers.mjs` 从 OSM 生成；平面示意图在 `src/map/svgview.ts`，两种画法共用 `src/map/view.ts` 的接口，筛选、名片、标签、悬浮卡在 `main.ts`。悬浮卡和名片的小图由 `src/map/thumbs.ts` 用屋顶变形器按形制和年代渲染，标“示意”。
+地图默认是 three.js 立体地形（`src/map/terrain3d.ts`），高程图 `public/terrain/dem.png` 和晕渲底图 `relief.jpg` 由 `scripts/build-terrain.swift` 从 Mapzen Terrain Tiles 做出，河流 `data/rivers.json` 由 `scripts/import-rivers.mjs` 从 OSM 生成；平面示意图在 `src/map/svgview.ts`，两种画法共用 `src/map/view.ts` 的接口，筛选、名片、标签、悬浮卡在 `main.ts`。悬浮卡和名片的小图由 `src/map/thumbs.ts` 用屋顶变形器按形制和年代渲染，标“示意”。点位大小按层级：`curated.json` 里 `tier` 是候选清单定下的最终层级，没定的写 `suggested`（表里按总分算出的建议层级），地图按它显示；层级在表格里改了，要同步改这里。`curated.json` 现在手工维护。
 
 屋顶变形器的代码在 `src/roof/`：`references.ts` 是三个时代参照点的尺寸和出处（唐取佛光寺东大殿，宋取《营造法式》，清取《工程做法》），`params.ts` 由它算出模型尺寸，`geometry.ts` 生成屋面和筒瓦，`brackets.ts` 生成斗拱，`textures.ts` 画门窗，`hall.ts` 组装。页面上的说法、核实情况和已知的简化登记在 `docs/sources.md`。查不到可靠出处的数字不写到页面上。
 

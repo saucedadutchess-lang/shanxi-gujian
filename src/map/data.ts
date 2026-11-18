@@ -23,7 +23,10 @@ export interface Building {
   highlights?: Fact & { value: string[] };
 }
 export interface Curated {
+  /** 候选清单里定下的最终层级 */
   tier?: 'S' | 'A' | 'B';
+  /** 最终层级未定时，候选清单按加权总分算出的建议层级 */
+  suggested?: 'S' | 'A' | 'B';
   card?: { what: TextFact; feature: TextFact; value: TextFact };
   /** 不落到某座单体上的看点（如双林寺各殿的彩塑） */
   highlights?: Fact & { value: string[] };
