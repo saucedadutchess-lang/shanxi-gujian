@@ -6,7 +6,8 @@
   "description": "观晋｜看懂山西古建筑",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "node scripts/check-data.mjs && tsc --noEmit && vite build",
+    "check:data": "node scripts/check-data.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,0 +1,62 @@
+{
+  "_说明": "人工整理的内容，按 data/units.json 里的单位 id 挂上去。每条事实都要有 src（data/sources.json 里的条目）和 kind（史料记载 / 民间传说）。check 写还没核对的地方。",
+  "units": {
+    "1-0080-3-033": {
+      "tier": "S",
+      "card": {
+        "what": { "text": "五台县豆村镇的一座寺院，东大殿建于唐大中十一年（857）。", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" },
+        "feature": { "text": "东大殿面阔七间，单檐庑殿顶，斗拱硕大；殿内唐代的彩塑、壁画和题记保存在一处。", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" },
+        "value": { "text": "1937 年中国营造学社梁思成、林徽因等人调查时找到，是当时所知中国最早的木构建筑。", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" }
+      },
+      "buildings": [
+        {
+          "id": "dongdadian",
+          "name": "东大殿",
+          "year": { "value": 857, "label": "唐大中十一年", "src": ["liang-1944"], "kind": "史料记载" },
+          "form": { "value": ["庑殿"], "src": ["liang-1944"], "kind": "史料记载" },
+          "highlights": { "value": ["彩塑", "壁画", "斗拱"], "src": ["liang-1944"], "kind": "史料记载" }
+        },
+        {
+          "id": "wenshudian",
+          "name": "文殊殿",
+          "year": { "value": 1137, "label": "金天会十五年", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" },
+          "form": { "value": ["悬山"], "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" }
+        }
+      ]
+    },
+    "1-0079-3-032": {
+      "tier": "A",
+      "card": {
+        "what": { "text": "五台县李家庄的一座小佛殿，梁下有唐建中三年（782）重修的题记。", "src": ["qi-chai-1980"], "kind": "史料记载", "check": "原文页码待补" },
+        "feature": { "text": "面阔、进深各三间，单檐歇山顶，殿内没有柱子；佛坛上是唐代彩塑。", "src": ["qi-chai-1980"], "kind": "史料记载", "check": "原文页码待补" },
+        "value": { "text": "现存最早的木构建筑，比佛光寺东大殿早 75 年。", "src": ["qi-chai-1980", "liang-1944"], "kind": "史料记载", "check": "原文页码待补" }
+      },
+      "buildings": [
+        {
+          "id": "dadian",
+          "name": "大殿",
+          "year": { "value": 782, "label": "唐建中三年（重修题记）", "src": ["qi-chai-1980"], "kind": "史料记载" },
+          "form": { "value": ["歇山"], "src": ["qi-chai-1980"], "kind": "史料记载" },
+          "highlights": { "value": ["彩塑"], "src": ["qi-chai-1980"], "kind": "史料记载" }
+        }
+      ]
+    },
+    "1-0071-3-024": {
+      "tier": "S",
+      "card": {
+        "what": { "text": "应县佛宫寺里的木塔，建于辽清宁二年（1056）。", "src": ["chen-mingda"], "kind": "史料记载", "check": "原书页码待补" },
+        "feature": { "text": "平面八角，外观五层六檐，层与层之间还夹着暗层；整座塔用木构，斗拱做法多变。", "src": ["chen-mingda"], "kind": "史料记载", "check": "原书页码待补" },
+        "value": { "text": "现存最高、最古老的木构楼阁式塔。到现场看，塔身有倾斜。", "src": ["chen-mingda"], "kind": "史料记载", "check": "原书页码待补" }
+      },
+      "buildings": [
+        {
+          "id": "shijiata",
+          "name": "释迦塔",
+          "year": { "value": 1056, "label": "辽清宁二年", "src": ["chen-mingda"], "kind": "史料记载" },
+          "form": { "value": ["塔"], "src": ["chen-mingda"], "kind": "史料记载" },
+          "highlights": { "value": ["斗拱", "彩塑"], "src": ["chen-mingda"], "kind": "史料记载", "check": "彩塑一项待核对" }
+        }
+      ]
+    }
+  }
+}

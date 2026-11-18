@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>山西国保地图｜观晋</title>
+    <meta name="description" content="山西全国重点文物保护单位的地图：按年代、片区、类别筛选，点开看名录信息和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html" aria-current="page">地图</a>
+        <a href="./index.html">屋顶变形器</a>
+      </nav>
+    </header>
+    <main>
+      <div class="map-wrap">
+        <svg id="map" role="img" aria-label="山西全国重点文物保护单位分布示意图"></svg>
+        <div class="map-zoom" role="group" aria-label="缩放">
+          <button type="button" data-zoom="in" aria-label="放大">＋</button>
+          <button type="button" data-zoom="out" aria-label="缩小">－</button>
+          <button type="button" data-zoom="reset" aria-label="回到全省">全省</button>
+        </div>
+        <p class="map-credit">
+          示意图，非标准地图。边界据 <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap 贡献者</a>（ODbL）简化；点位坐标来自 Wikidata（CC0），未逐一核实。
+        </p>
+      </div>
+
+      <aside class="panel map-panel">
+        <section id="card" class="card" hidden aria-live="polite"></section>
+
+        <div id="filters">
+          <h2>山西国保地图</h2>
+          <p class="lead"><span id="count"></span></p>
+
+          <section>
+            <h3>时间轴</h3>
+            <div class="row">
+              <span class="label">拖到</span>
+              <output id="year-name" for="year"></output>
+            </div>
+            <input id="year" type="range" min="600" max="1912" step="1" value="1912" aria-label="时间轴：从唐拖到清" />
+            <div class="era-ticks" id="era-ticks"></div>
+            <div class="play-row">
+              <button type="button" id="play" class="chip">▶ 从唐开始播放</button>
+            </div>
+            <p class="how">亮着的点是这个年份已经有遗存的单位，按名录“年代”里最早的时代算，取那个朝代的开始年；整理过单体年代的（如佛光寺东大殿 857 年）用确切年份。唐以前的一直亮着，民国以后的拖到最右端才亮。</p>
+          </section>
+
+          <section>
+            <h3>片区</h3>
+            <div class="chips" id="f-region"></div>
+            <p class="how" id="region-note">四个片区按地级市划分，也是推荐路线的分组。路线本身还在整理。</p>
+          </section>
+
+          <section>
+            <h3>朝代 <span class="sub">按最早的遗存</span></h3>
+            <div class="chips" id="f-era"></div>
+          </section>
+
+          <section>
+            <h3>类别</h3>
+            <div class="chips" id="f-cat"></div>
+          </section>
+
+          <section>
+            <h3>形制和看点 <span class="sub">只有已整理的单位有</span></h3>
+            <div class="chips" id="f-form"></div>
+            <div class="chips" id="f-hl"></div>
+          </section>
+
+          <section id="list-section" hidden>
+            <h3 id="list-title"></h3>
+            <ol id="list" class="unit-list"></ol>
+          </section>
+
+          <footer class="sources">
+            <p>名录：山西省文物局《山西省全国重点文物保护单位名录》（2017）。531 处，另有 6 项与已有单位合并，一并列出。年代、类别照录原文。</p>
+            <p id="unlocated"></p>
+          </footer>
+        </div>
+      </aside>
+    </main>
+    <script type="module" src="/src/map/main.ts"></script>
+  </body>
+</html>

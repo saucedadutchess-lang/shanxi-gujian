@@ -44,6 +44,30 @@ body {
   color: var(--muted);
 }
 
+.site-nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.site-nav a {
+  padding: 4px 12px;
+  font-size: 15px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.site-nav a:hover {
+  color: var(--accent);
+}
+
+.site-nav a[aria-current='page'] {
+  color: var(--ink);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
 main {
   flex: 1;
   min-height: 0;

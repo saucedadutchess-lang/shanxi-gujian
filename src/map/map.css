@@ -1,0 +1,379 @@
+/* 地图页。配色沿用屋顶变形器的纸色和朱红；四个片区各一种淡色 */
+:root {
+  --r-n: #5f7d8c;
+  --r-c: #a0763a;
+  --r-se: #6f8a4e;
+  --r-s: #9c3b2e;
+}
+
+.map-wrap {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: #efe8db;
+}
+
+#map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+#map:active {
+  cursor: grabbing;
+}
+
+.city {
+  stroke: #fbf8f2;
+  stroke-width: calc(1px * var(--s, 1));
+  fill-opacity: 0.16;
+  transition: fill-opacity 0.2s;
+}
+
+.city.dim {
+  fill-opacity: 0.04;
+}
+
+.city.r-n { fill: var(--r-n); }
+.city.r-c { fill: var(--r-c); }
+.city.r-se { fill: var(--r-se); }
+.city.r-s { fill: var(--r-s); }
+
+.province-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-opacity: 0.55;
+  stroke-width: calc(1.2px * var(--s, 1));
+  stroke-linejoin: round;
+}
+
+.city-label {
+  font-size: calc(13px * var(--s, 1));
+  fill: var(--muted);
+  text-anchor: middle;
+  letter-spacing: 0.15em;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.dot {
+  stroke: #fffaf0;
+  stroke-width: calc(0.8px * var(--s, 1));
+  cursor: pointer;
+  transition: fill 0.25s, opacity 0.25s;
+}
+
+.dot.r-n { fill: var(--r-n); }
+.dot.r-c { fill: var(--r-c); }
+.dot.r-se { fill: var(--r-se); }
+.dot.r-s { fill: var(--r-s); }
+
+.dot.tier-S,
+.dot.tier-A {
+  stroke: var(--ink);
+  stroke-width: calc(1.2px * var(--s, 1));
+}
+
+.dot.unlit {
+  fill: #c9bfae;
+  opacity: 0.45;
+}
+
+.dot.hidden {
+  display: none;
+}
+
+.dot.selected {
+  stroke: var(--ink);
+  stroke-width: calc(2.4px * var(--s, 1));
+}
+
+.dot:focus-visible {
+  outline: none;
+  stroke: var(--accent);
+  stroke-width: calc(3px * var(--s, 1));
+}
+
+.map-zoom {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.map-zoom button {
+  min-width: 40px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.map-credit {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 10px;
+  margin: 0;
+  padding: 4px 8px;
+  font-size: 12px;
+  background: rgb(239 232 219 / 0.85);
+  border-radius: 4px;
+  color: var(--muted);
+}
+
+.map-credit a {
+  color: inherit;
+}
+
+/* ---------- 面板 ---------- */
+.map-panel h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.map-panel h3 .sub {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chips + .chips {
+  margin-top: 8px;
+}
+
+.chip {
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip .n {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.chip[aria-pressed='true'] {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.chip[aria-pressed='true'] .n {
+  color: #f3dcd5;
+}
+
+.era-ticks {
+  position: relative;
+  height: 22px;
+  margin: 2px 9px 0;
+}
+
+.era-ticks button {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.era-ticks button:hover {
+  color: var(--accent);
+}
+
+.play-row {
+  margin: 8px 0;
+}
+
+.unit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 320px;
+  overflow-y: auto;
+  border-top: 1px solid var(--line);
+}
+
+.unit-list button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 2px;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.unit-list button:hover .nm {
+  color: var(--accent);
+}
+
+.unit-list .meta {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------- 名片 ---------- */
+.card {
+  position: relative;
+  margin: -4px 0 20px;
+  padding: 16px 16px 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.card h2 {
+  margin: 2px 0 10px;
+  font-size: 22px;
+}
+
+.card h4 {
+  margin: 14px 0 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.card .close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 2px 8px;
+  font-size: 20px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.card-kicker {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.three {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.three li {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+.three .q {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0 6px;
+  font-size: 12px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+}
+
+.fact-meta {
+  display: block;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.fact-meta a {
+  color: inherit;
+}
+
+.fact-meta .kind {
+  margin-right: 6px;
+  padding: 0 4px;
+  background: var(--paper);
+  border-radius: 3px;
+}
+
+.fact-meta .check {
+  margin-left: 6px;
+  color: #b0682c;
+}
+
+.fact-meta .check::before {
+  content: '· ';
+}
+
+.todo {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.buildings {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.info {
+  display: grid;
+  grid-template-columns: 4.5em 1fr;
+  gap: 4px 8px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.info dt {
+  color: var(--muted);
+}
+
+.info dd {
+  margin: 0;
+}
+
+.info a {
+  color: inherit;
+}
+
+.fact-src {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .map-wrap {
+    height: 60vh;
+  }
+}

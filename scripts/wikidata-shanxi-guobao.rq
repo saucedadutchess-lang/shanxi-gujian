@@ -1,0 +1,14 @@
+# Wikidata 查询：山西境内带“全国重点文物保护单位”(Q1188574) 的条目。
+# 在 https://query.wikidata.org/ 运行，结果存成 JSON，交给 scripts/import-guobao.mjs。
+SELECT ?s ?label ?inv ?on ?t ?coord ?county ?countyLabel ?pref ?prefLabel WHERE {
+  ?s p:P1435 ?st . ?st ps:P1435 wd:Q1188574 .
+  ?s wdt:P131* wd:Q46913 .
+  OPTIONAL { ?st pq:P217 ?inv }
+  OPTIONAL { ?st pq:P1448 ?on }
+  OPTIONAL { ?st pq:P580 ?t }
+  OPTIONAL { ?s wdt:P625 ?coord }
+  OPTIONAL { ?s wdt:P131 ?county }
+  OPTIONAL { ?s wdt:P131* ?pref . ?pref wdt:P31 wd:Q748149 . ?pref wdt:P131 wd:Q46913 }
+  OPTIONAL { ?s rdfs:label ?label FILTER(LANG(?label)="zh") }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "zh-cn,zh,en". ?county rdfs:label ?countyLabel . ?pref rdfs:label ?prefLabel }
+}

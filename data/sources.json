@@ -1,0 +1,61 @@
+{
+  "sxwwj-2017": {
+    "title": "山西省全国重点文物保护单位名录",
+    "publisher": "山西省文物局",
+    "date": "2017-05-19",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/zh/202109/t20210908_1981994.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "取批次、所在市县、类别、名称、年代、备注。531 处，另有 6 项与已有单位合并。年代照录原文（个别有错字，如“旧石器世道”）。"
+  },
+  "wikidata": {
+    "title": "Wikidata：山西境内的全国重点文物保护单位条目",
+    "publisher": "Wikidata 贡献者",
+    "url": "https://query.wikidata.org/",
+    "accessed": "2026-11-18",
+    "license": "CC0",
+    "note": "只取坐标。按名称和批次与省文物局名录对上，查询语句在 scripts/wikidata-shanxi-guobao.rq。坐标没有逐一核实，有的是寺院中心，有的是村镇。"
+  },
+  "osm": {
+    "title": "OpenStreetMap：山西省及地级市行政边界",
+    "publisher": "© OpenStreetMap 贡献者",
+    "url": "https://www.openstreetmap.org/copyright",
+    "accessed": "2026-11-18",
+    "license": "ODbL 1.0",
+    "note": "由 scripts/import-boundaries.mjs 简化后画成示意底图，不是标准地图。"
+  },
+  "gov-batch6": {
+    "title": "国务院关于核定并公布第六批全国重点文物保护单位的通知（国发〔2006〕19号）",
+    "publisher": "国务院",
+    "url": "https://www.gov.cn/zhengce/content/2008-03/28/content_5910.htm",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息"
+  },
+  "gov-batch8": {
+    "title": "国务院关于核定并公布第八批全国重点文物保护单位的通知（国发〔2019〕22号）",
+    "publisher": "国务院",
+    "url": "https://www.gov.cn/zhengce/content/2019-10/16/content_5440577.htm",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息"
+  },
+  "liang-1944": {
+    "title": "记五台山佛光寺建筑",
+    "author": "梁思成",
+    "publisher": "《中国营造学社汇刊》第七卷第一、二期",
+    "date": "1944",
+    "note": "读的是网上转载，没有对照汇刊原件，页码待补。"
+  },
+  "qi-chai-1980": {
+    "title": "南禅寺大殿修复",
+    "author": "祁英涛、柴泽俊",
+    "publisher": "《文物》",
+    "date": "1980",
+    "note": "出版信息转自候选清单，待核对期号、页码。"
+  },
+  "chen-mingda": {
+    "title": "应县木塔",
+    "author": "陈明达",
+    "publisher": "文物出版社",
+    "note": "出版信息转自候选清单，待核对版次、页码。"
+  }
+}
