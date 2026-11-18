@@ -1,0 +1,4 @@
+[out:json][timeout:120];
+area["ISO3166-2"="CN-SX"][admin_level=4]->.sx;
+way(area.sx)[waterway=river][name~"^(黄河|汾河|沁河|桑干河|滹沱河|漳河|浊漳河|清漳河|涑水河|丹河|昕水河|三川河|御河)$"];
+out geom qt;

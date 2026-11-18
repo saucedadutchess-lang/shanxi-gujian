@@ -16,15 +16,37 @@
       </nav>
     </header>
     <main>
-      <div class="map-wrap">
+      <div class="map-wrap" id="map-wrap">
         <svg id="map" role="img" aria-label="山西全国重点文物保护单位分布示意图"></svg>
-        <div class="map-zoom" role="group" aria-label="缩放">
-          <button type="button" data-zoom="in" aria-label="放大">＋</button>
-          <button type="button" data-zoom="out" aria-label="缩小">－</button>
-          <button type="button" data-zoom="reset" aria-label="回到全省">全省</button>
+        <div class="labels" id="labels" aria-hidden="true"></div>
+        <div class="hover-card" id="hover" hidden></div>
+        <div class="map-tools">
+          <div class="seg" role="group" aria-label="地图画法">
+            <button type="button" data-mode="3d" aria-pressed="true">立体</button>
+            <button type="button" data-mode="2d" aria-pressed="false">平面</button>
+          </div>
+          <div class="map-zoom" role="group" aria-label="缩放">
+            <button type="button" data-zoom="in" aria-label="放大">＋</button>
+            <button type="button" data-zoom="out" aria-label="缩小">－</button>
+            <button type="button" data-zoom="reset" aria-label="回到全省">全省</button>
+          </div>
         </div>
-        <p class="map-credit">
-          示意图，非标准地图。边界据 <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap 贡献者</a>（ODbL）简化；点位坐标来自 Wikidata（CC0），未逐一核实。
+        <p class="map-hint" id="map-hint">左键拖动平移，滚轮缩放，右键拖动转视角</p>
+        <details class="legend" id="legend" open>
+          <summary>图例</summary>
+          <p class="lg-title">颜色：片区</p>
+          <ul class="lg-regions" id="lg-regions"></ul>
+          <p class="lg-title">大小：整理程度</p>
+          <ul class="lg-sizes">
+            <li><i class="pt big"></i>S 级旗舰（首批 3 座）</li>
+            <li><i class="pt mid"></i>已写名片（候选清单 23 处）</li>
+            <li><i class="pt small"></i>其余国保</li>
+            <li><i class="pt unlit"></i>时间轴上还没到它的年代</li>
+          </ul>
+          <p class="lg-note" id="lg-note"></p>
+        </details>
+        <p class="map-credit" id="map-credit">
+          示意图，非标准地图。边界、河流据 <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap 贡献者</a>（ODbL）简化；<span class="credit-3d">地形据 <a href="https://registry.opendata.aws/terrain-tiles/" target="_blank" rel="noopener">Mapzen Terrain Tiles</a>（SRTM 等，<a href="https://github.com/tilezen/joerd/blob/master/docs/attribution.md" target="_blank" rel="noopener">署名</a>），高度放大 <span id="exag"></span> 倍；</span>点位坐标来自 Wikidata（CC0），未逐一核实。
         </p>
       </div>
 

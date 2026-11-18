@@ -8,6 +8,8 @@ const sources = read('sources.json');
 const units = read('units.json');
 const curated = read('curated.json').units;
 const boundaries = read('boundaries.json');
+const rivers = read('rivers.json');
+const terrain = read('terrain.json');
 
 const KINDS = ['史料记载', '民间传说'];
 const FORMS = ['庑殿', '歇山', '悬山', '硬山', '攒尖', '重檐', '塔'];
@@ -77,6 +79,11 @@ for (const [id, c] of Object.entries(curated)) {
 }
 
 fact('boundaries', boundaries, { needKind: false });
+fact('rivers', rivers, { needKind: false });
+fact('terrain', terrain, { needKind: false });
+for (const [where, d] of [['boundaries', boundaries], ['rivers', rivers], ['terrain', terrain]]) {
+  if (!d.precision) err(where, '缺精度标注');
+}
 
 // 坐标落在名录所写地级市之外的，只提醒、不算失败（跨界的单位和省界上的点会这样）
 const inside = ([x, y], ring) => {

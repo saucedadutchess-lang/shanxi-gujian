@@ -1,13 +1,15 @@
 import '../style.css';
 import './map.css';
 import { ERA_GROUPS, type EraGroup } from './era';
+import { createSvgView } from './svgview';
+import { EXAGGERATION, createTerrainView } from './terrain3d';
+import { renderThumb, thumbFor } from './thumbs';
+import { REGION_COLOR, shortName, type MapView, type PointState } from './view';
 import {
   BATCH_DATES,
   FORMS,
   HIGHLIGHTS,
   REGIONS,
-  REGION_CITIES,
-  boundaries,
   sources,
   units,
   type Fact,
@@ -20,162 +22,55 @@ const $ = <T extends Element>(selector: string) => {
   if (!el) throw new Error(`找不到 ${selector}`);
   return el;
 };
-const SVG = 'http://www.w3.org/2000/svg';
-const svgEl = <K extends keyof SVGElementTagNameMap>(tag: K, attrs: Record<string, string | number> = {}) => {
-  const el = document.createElementNS(SVG, tag);
-  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
-  return el;
-};
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
-// ---------- 投影：等距圆柱，经度按山西中部纬度压缩 ----------
-const K = Math.cos((37.6 * Math.PI) / 180);
-const project = (lng: number, lat: number): [number, number] => [lng * K * 100, -lat * 100];
-
-const map = $<SVGSVGElement>('#map');
-const gCities = svgEl('g', { class: 'cities' });
-const gProvince = svgEl('g', { class: 'province' });
-const gLabels = svgEl('g', { class: 'city-labels' });
-const gPoints = svgEl('g', { class: 'points' });
-map.append(gCities, gProvince, gLabels, gPoints);
-
-const ringPath = (rings: [number, number][][]) =>
-  rings.map((r) => 'M' + r.map(([x, y]) => project(x, y).map((v) => v.toFixed(1)).join(',')).join('L') + 'Z').join('');
-
-const regionOfCity = (city: string) => REGIONS.find((r) => REGION_CITIES[r].includes(city))!;
-const REGION_CLASS: Record<Region, string> = { 晋北: 'r-n', 晋中: 'r-c', 晋东南: 'r-se', 晋南: 'r-s' };
-
-const cityPaths = new Map<string, SVGPathElement>();
-for (const [name, c] of Object.entries(boundaries.cities)) {
-  const path = svgEl('path', { d: ringPath(c.rings), class: `city ${REGION_CLASS[regionOfCity(name)]}` });
-  cityPaths.set(name, path);
-  gCities.append(path);
-  // 标签放在外环顶点的平均位置
-  const pts = c.rings[0];
-  const [cx, cy] = project(pts.reduce((s, p) => s + p[0], 0) / pts.length, pts.reduce((s, p) => s + p[1], 0) / pts.length);
-  const label = svgEl('text', { x: cx.toFixed(1), y: cy.toFixed(1), class: 'city-label' });
-  label.textContent = name.replace(/市$/, '');
-  gLabels.append(label);
-}
-gProvince.append(svgEl('path', { d: ringPath(boundaries.province.rings), class: 'province-line' }));
-
-// 视图范围取省界外包框
-const all = boundaries.province.rings.flat().map(([x, y]) => project(x, y));
-const xs = all.map((p) => p[0]);
-const ys = all.map((p) => p[1]);
-const PAD = 12;
-const FULL = {
-  x: Math.min(...xs) - PAD,
-  y: Math.min(...ys) - PAD,
-  w: Math.max(...xs) - Math.min(...xs) + PAD * 2,
-  h: Math.max(...ys) - Math.min(...ys) + PAD * 2,
-};
-let view = { ...FULL };
-
-// ---------- 点位 ----------
-const dots = new Map<string, SVGCircleElement>();
+// ---------- 两种画法 ----------
+const wrap = $<HTMLElement>('#map-wrap');
+const svgView = createSvgView($<SVGSVGElement>('#map'));
+let terrainView: MapView | null = null;
+let view: MapView = svgView;
 const located = units.filter((u) => u.location);
-// 整理过的画在最上面
-located.sort((a, b) => Number(!!a.curated) - Number(!!b.curated));
-for (const u of located) {
-  const [x, y] = project(u.location!.lng, u.location!.lat);
-  const tier = u.curated?.tier ?? 'B';
-  const dot = svgEl('circle', { cx: x.toFixed(2), cy: y.toFixed(2), class: `dot ${REGION_CLASS[u.region]} tier-${tier}${u.curated?.card ? ' has-card' : ''}`, tabindex: 0 });
-  dot.dataset.id = u.id;
-  const title = svgEl('title');
-  title.textContent = `${u.name}（${u.record.era}）`;
-  dot.append(title);
-  dot.addEventListener('click', (e) => {
-    e.stopPropagation();
-    select(u.id);
-  });
-  dot.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      select(u.id);
-    }
-  });
-  dots.set(u.id, dot);
-  gPoints.append(dot);
+const byId = new Map(units.map((u) => [u.id, u]));
+$<HTMLElement>('#exag').textContent = String(EXAGGERATION);
+/** 标签和悬浮卡的状态：最近一次的筛选结果、悬浮的点；labelsVersion 设成 -1 表示要重排 */
+let lastStates = new Map<string, PointState>();
+let labelsVersion = -1;
+let hovered: string | null = null;
+
+const modeButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-mode]')];
+function setMode(mode: '3d' | '2d') {
+  const next = mode === '3d' && terrainView ? terrainView : svgView;
+  for (const b of modeButtons) b.setAttribute('aria-pressed', String(b.dataset.mode === (next === svgView ? '2d' : '3d')));
+  wrap.classList.toggle('mode-3d', next !== svgView);
+  if (next === view) return;
+  view.show(false);
+  view = next;
+  view.show(true);
+  wireView(view);
+  syncView();
+}
+for (const b of modeButtons) b.addEventListener('click', () => setMode(b.dataset.mode as '3d' | '2d'));
+
+function wireView(v: MapView) {
+  v.onPick((id) => select(id));
+  v.onHover((id, x, y) => hover(id, x, y));
+}
+/** 换画法后把筛选、选中、片区都同步过去 */
+function syncView() {
+  view.setPoints(pointStates());
+  view.setRegions(state.region);
+  view.setSelected(selected);
+  const picked = units.filter((u) => state.region.has(u.region));
+  if (picked.length) view.fitTo(picked);
+  labelsVersion = -1;
 }
 
-function applyView() {
-  map.setAttribute('viewBox', `${view.x} ${view.y} ${view.w} ${view.h}`);
-  // 点和字在屏幕上保持大小不变
-  const s = view.w / FULL.w;
-  map.style.setProperty('--s', String(s));
-  for (const [id, dot] of dots) {
-    const tier = dot.classList.contains('tier-S') ? 2 : dot.classList.contains('tier-A') || dot.classList.contains('has-card') ? 1.5 : 1;
-    dot.setAttribute('r', (2.6 * tier * s * (id === selected ? 1.4 : 1)).toFixed(3));
-  }
-}
-
-// ---------- 缩放和拖动 ----------
-function zoomAt(factor: number, cx = view.x + view.w / 2, cy = view.y + view.h / 2) {
-  const w = Math.min(FULL.w * 1.2, Math.max(FULL.w / 12, view.w * factor));
-  const f = w / view.w;
-  view = { x: cx - (cx - view.x) * f, y: cy - (cy - view.y) * f, w, h: view.h * f };
-  applyView();
-}
-const toMap = (e: { clientX: number; clientY: number }) => {
-  const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(map.getScreenCTM()!.inverse());
-  return [pt.x, pt.y] as const;
-};
-map.addEventListener(
-  'wheel',
-  (e) => {
-    e.preventDefault();
-    const [x, y] = toMap(e);
-    zoomAt(Math.exp(e.deltaY * 0.0015), x, y);
-  },
-  { passive: false },
-);
-let drag: { x: number; y: number; moved: boolean } | null = null;
-map.addEventListener('pointerdown', (e) => {
-  if ((e.target as Element).classList.contains('dot')) return;
-  const [x, y] = toMap(e);
-  drag = { x, y, moved: false };
-  map.setPointerCapture(e.pointerId);
-});
-map.addEventListener('pointermove', (e) => {
-  if (!drag) return;
-  const [x, y] = toMap(e);
-  view.x -= x - drag.x;
-  view.y -= y - drag.y;
-  drag.moved = true;
-  applyView();
-});
-map.addEventListener('pointerup', () => {
-  if (drag && !drag.moved) select(null);
-  drag = null;
-});
 for (const b of document.querySelectorAll<HTMLButtonElement>('[data-zoom]')) {
   b.addEventListener('click', () => {
-    if (b.dataset.zoom === 'in') zoomAt(0.7);
-    else if (b.dataset.zoom === 'out') zoomAt(1 / 0.7);
-    else {
-      view = { ...FULL };
-      applyView();
-    }
+    if (b.dataset.zoom === 'in') view.zoom(0.7);
+    else if (b.dataset.zoom === 'out') view.zoom(1 / 0.7);
+    else view.reset();
   });
-}
-
-function fitTo(list: Unit[]) {
-  const pts = list.filter((u) => u.location).map((u) => project(u.location!.lng, u.location!.lat));
-  if (!pts.length) return;
-  const px = pts.map((p) => p[0]);
-  const py = pts.map((p) => p[1]);
-  const pad = 15;
-  let w = Math.max(...px) - Math.min(...px) + pad * 2;
-  let h = Math.max(...py) - Math.min(...py) + pad * 2;
-  // 保持和全省视图相同的长宽比
-  const ratio = FULL.w / FULL.h;
-  if (w / h > ratio) h = w / ratio;
-  else w = h * ratio;
-  const cx = (Math.max(...px) + Math.min(...px)) / 2;
-  const cy = (Math.max(...py) + Math.min(...py)) / 2;
-  view = { x: cx - w / 2, y: cy - h / 2, w, h };
-  applyView();
 }
 
 // ---------- 筛选 ----------
@@ -209,11 +104,9 @@ function chips<T extends string>(container: string, options: readonly T[], set: 
 }
 chips('#f-region', REGIONS, state.region, (v) => units.filter((u) => u.region === v).length, () => {
   const picked = units.filter((u) => state.region.has(u.region));
-  if (picked.length) fitTo(picked);
-  else {
-    view = { ...FULL };
-    applyView();
-  }
+  view.setRegions(state.region);
+  if (picked.length) view.fitTo(picked);
+  else view.reset();
 });
 chips('#f-era', ERA_GROUPS, state.era, (v) => units.filter((u) => u.era.group === v).length);
 chips('#f-cat', CATEGORIES, state.cat, (v) => units.filter((u) => u.record.category === v).length);
@@ -298,27 +191,28 @@ playBtn.addEventListener('click', () => {
 });
 
 // ---------- 更新 ----------
+function pointStates() {
+  return new Map<string, PointState>(located.map((u) => [u.id, { shown: matches(u), lit: isLit(u) }]));
+}
 const countEl = $<HTMLElement>('#count');
 const listSection = $<HTMLElement>('#list-section');
 const listEl = $<HTMLOListElement>('#list');
 function update() {
   yearName.value = eraOfYear(state.year);
+  const states = pointStates();
   let shown = 0;
   let lit = 0;
-  for (const u of located) {
-    const dot = dots.get(u.id)!;
-    const m = matches(u);
-    const l = isLit(u);
-    dot.classList.toggle('hidden', !m);
-    dot.classList.toggle('unlit', !l);
-    if (m) shown++;
-    if (m && l) lit++;
+  for (const st of states.values()) {
+    if (st.shown) shown++;
+    if (st.shown && st.lit) lit++;
   }
+  view.setPoints(states);
+  lastStates = states;
+  labelsVersion = -1;
   const filtered = Object.values(state).some((v) => v instanceof Set && v.size);
   countEl.textContent = filtered
     ? `筛出 ${shown} 处，其中 ${lit} 处在这个年份已经亮起`
     : `共 ${units.length} 条名录，${located.length} 处标在图上；现在亮着 ${lit} 处`;
-  for (const [city, path] of cityPaths) path.classList.toggle('dim', state.region.size > 0 && !state.region.has(regionOfCity(city)));
 
   // 有筛选时列出结果，按亮起的先后排
   const list = filtered ? units.filter(matches).sort((a, b) => a.litYear - b.litYear) : [];
@@ -354,15 +248,15 @@ const factMeta = (f: Fact) =>
   `<span class="fact-meta">${f.kind ? `<span class="kind">${esc(f.kind)}</span>` : ''}${srcRefs(f)}${f.check ? `<span class="check">${esc(f.check)}</span>` : ''}</span>`;
 
 function select(id: string | null) {
-  if (selected) dots.get(selected)?.classList.remove('selected');
   selected = id;
-  applyView();
+  view.setSelected(id);
+  hover(null, 0, 0);
+  labelsVersion = -1;
   if (!id) {
     card.hidden = true;
     return;
   }
-  const u = units.find((x) => x.id === id)!;
-  dots.get(id)?.classList.add('selected');
+  const u = byId.get(id)!;
   const c = u.curated;
   const r = u.record;
   const three = c?.card
@@ -403,6 +297,7 @@ function select(id: string | null) {
     <button type="button" class="close" aria-label="关闭">×</button>
     <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${c?.tier ? ` · <span class="badge">${esc(c.tier)} 级</span>` : ''}</p>
     <h2>${esc(u.name)}</h2>
+    ${thumbBlock(u, 'card-thumb')}
     ${three}
     ${buildings}
     ${unitHighlights}
@@ -418,6 +313,7 @@ function select(id: string | null) {
     </dl>
     <p class="fact-src">名录信息出处：${factMeta(r)}</p>`;
   card.hidden = false;
+  fillThumbs(card);
   card.querySelector('.close')!.addEventListener('click', () => select(null));
   card.scrollIntoView({ block: 'nearest' });
 }
@@ -427,5 +323,136 @@ const unlocated = units.filter((u) => !u.location);
 $<HTMLElement>('#unlocated').textContent = unlocated.length
   ? `暂无坐标、图上没有标出的 ${unlocated.length} 条：${unlocated.map((u) => u.name).join('、')}。`
   : '';
-applyView();
+wireView(svgView);
 update();
+requestAnimationFrame(layoutLabels);
+
+// 立体地形要先读高程图；显卡不支持 WebGL 或读取失败时留在平面图
+createTerrainView(wrap)
+  .then((v) => {
+    terrainView = v;
+    v.show(false);
+    svgView.show(true);
+    setMode('3d');
+  })
+  .catch((e) => {
+    console.warn('立体地形没有加载成功，用平面示意图', e);
+    for (const b of modeButtons) b.disabled = b.dataset.mode === '3d';
+    $<HTMLElement>('#map-hint').textContent = '立体地形没有加载成功，现在是平面示意图';
+  });
+
+// ---------- 示意小图 ----------
+function thumbBlock(u: Unit, cls: string) {
+  const t = thumbFor(u);
+  if (!t) return '';
+  return `<figure class="${cls}"><img alt="${esc(t.caption)}（示意）" data-thumb="${esc(u.id)}" /><figcaption><span class="tag">示意</span>${esc(t.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的照片或模型</figcaption></figure>`;
+}
+function fillThumbs(root: HTMLElement) {
+  for (const img of root.querySelectorAll<HTMLImageElement>('img[data-thumb]')) {
+    const t = thumbFor(byId.get(img.dataset.thumb!)!);
+    if (!t) continue;
+    renderThumb(t.state)
+      .then((url) => {
+        if (img.isConnected) img.src = url;
+      })
+      .catch((e) => console.warn('示意小图渲染失败', e));
+  }
+}
+
+// ---------- 悬浮卡 ----------
+const hoverEl = $<HTMLElement>('#hover');
+function hover(id: string | null, x: number, y: number) {
+  if (id === selected) id = null;
+  if (id !== hovered) {
+    hovered = id;
+    labelsVersion = -1;
+    if (!id) {
+      hoverEl.hidden = true;
+      return;
+    }
+    const u = byId.get(id)!;
+    const what = u.curated?.card?.what.text;
+    hoverEl.innerHTML = `
+      ${thumbBlock(u, 'hover-thumb')}
+      <p class="hc-kicker"><i style="background:${REGION_COLOR[u.region]}"></i>${esc(u.region)} · ${esc(u.record.county)} · ${esc(u.record.category)}</p>
+      <h4>${esc(u.name)}</h4>
+      <p class="hc-era">${esc(u.record.era)}${u.curated?.tier ? ` · ${esc(u.curated.tier)} 级` : ''}</p>
+      ${what ? `<p class="hc-what">${esc(what)}</p>` : '<p class="hc-todo">名片还没写，点开看名录信息</p>'}
+      <p class="hc-hint">点击看详情</p>`;
+    fillThumbs(hoverEl);
+    hoverEl.hidden = false;
+  }
+  if (!id) return;
+  // 放在点的右边，靠边时换到左边或下边
+  const w = hoverEl.offsetWidth;
+  const h = hoverEl.offsetHeight;
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+  let left = x + 16;
+  if (left + w > W - 8) left = x - 16 - w;
+  let top = y - h / 2;
+  top = Math.max(8, Math.min(H - h - 40, top));
+  hoverEl.style.transform = `translate(${Math.round(Math.max(8, left))}px, ${Math.round(top)}px)`;
+}
+
+// ---------- 标签 ----------
+// 写了名片的一直显示名字；放大到片区以后显示全部；悬浮和选中的总是显示。互相压住的，按优先级藏掉
+const labelsEl = $<HTMLElement>('#labels');
+const labelEls = new Map<string, HTMLElement>();
+const priority = (u: Unit) => (u.id === selected ? 0 : u.id === hovered ? 1 : u.curated?.tier === 'S' ? 2 : u.curated?.card ? 3 : 4);
+const ordered = [...located].sort((a, b) => priority(a) - priority(b));
+function layoutLabels() {
+  requestAnimationFrame(layoutLabels);
+  const v = view.version();
+  if (v === labelsVersion) return;
+  labelsVersion = v;
+  const detail = view.detail();
+  const states = lastStates;
+  ordered.sort((a, b) => priority(a) - priority(b));
+  const placed: [number, number, number, number][] = [];
+  const used = new Set<string>();
+  const W = wrap.clientWidth;
+  const H = wrap.clientHeight;
+  for (const u of ordered) {
+    const pr = priority(u);
+    if (pr === 4 && detail < 0.35) continue;
+    const st = states.get(u.id);
+    if (!st?.shown || (!st.lit && pr > 1)) continue;
+    const p = view.screenPos(u.id);
+    if (!p || p.x < 0 || p.y < 0 || p.x > W || p.y > H) continue;
+    let el = labelEls.get(u.id);
+    if (!el) {
+      el = document.createElement('span');
+      el.className = 'label';
+      el.textContent = shortName(u.name);
+      labelEls.set(u.id, el);
+      labelsEl.append(el);
+      el.style.display = 'none';
+    }
+    const w = el.dataset.w ? Number(el.dataset.w) : measure(el);
+    const h = 16;
+    const x = p.x + p.r + 4;
+    const y = p.y - h / 2;
+    const box: [number, number, number, number] = [x - 2, y, x + w + 2, y + h];
+    if (pr > 1 && placed.some((b) => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) continue;
+    placed.push(box);
+    used.add(u.id);
+    el.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+    el.classList.toggle('strong', pr <= 3);
+    el.classList.toggle('sel', pr === 0);
+    el.style.display = '';
+  }
+  for (const [id, el] of labelEls) if (!used.has(id)) el.style.display = 'none';
+}
+function measure(el: HTMLElement) {
+  el.style.display = '';
+  const w = el.offsetWidth;
+  el.dataset.w = String(w);
+  return w;
+}
+
+// ---------- 图例 ----------
+$<HTMLElement>('#lg-regions').innerHTML = REGIONS.map((r) => `<li><i class="pt mid" style="background:${REGION_COLOR[r]}"></i>${esc(r)}</li>`).join('');
+$<HTMLElement>('#lg-note').innerHTML = `<span class="credit-3d">地形高度放大 ${EXAGGERATION} 倍；</span>名字显示在写了名片的点旁，放大后显示全部`;
+// 地图区域矮的时候图例先收起来，免得挡住晋南
+if (wrap.clientHeight < 700) $<HTMLDetailsElement>('#legend').open = false;

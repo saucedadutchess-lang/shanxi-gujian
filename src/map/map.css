@@ -97,13 +97,306 @@
   stroke-width: calc(3px * var(--s, 1));
 }
 
-.map-zoom {
+.map-wrap {
+  overflow: hidden;
+}
+
+.terrain {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.map-tools {
   position: absolute;
   top: 14px;
   left: 14px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+.map-zoom {
+  display: flex;
+  flex-direction: column;
   gap: 6px;
+}
+
+.seg {
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.seg button {
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.seg button + button {
+  border-left: 1px solid var(--line);
+}
+
+.seg button[aria-pressed='true'] {
+  color: #fff;
+  background: var(--accent);
+}
+
+.seg button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.map-hint {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  margin: 0;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  background: rgb(251 248 242 / 0.8);
+  border-radius: 999px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.map-wrap:not(.mode-3d) .map-hint,
+.map-wrap:not(.mode-3d) .credit-3d {
+  display: none;
+}
+
+/* ---------- 标签 ---------- */
+.labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  color: #5b5045;
+  text-shadow:
+    0 0 3px #fbf8f2,
+    0 0 3px #fbf8f2,
+    0 0 2px #fbf8f2;
+}
+
+.label.strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.label.sel {
+  color: var(--accent);
+}
+
+/* ---------- 悬浮卡 ---------- */
+.hover-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 260px;
+  padding: 10px 12px 10px;
+  background: rgb(255 255 255 / 0.96);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgb(60 45 30 / 0.16);
+  pointer-events: none;
+}
+
+.hover-card h4 {
+  margin: 2px 0 2px;
+  font-size: 17px;
+}
+
+.hc-kicker,
+.hc-era,
+.hc-hint,
+.hc-todo {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hc-kicker i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+
+.hc-what {
+  margin: 6px 0 4px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.hc-todo {
+  margin: 6px 0 4px;
+}
+
+.hc-hint {
+  color: var(--accent);
+}
+
+.hover-thumb,
+.card-thumb {
+  margin: 0 0 8px;
+}
+
+.hover-thumb img,
+.card-thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 36 / 22;
+  background: linear-gradient(#ece5d8, #f6f1e8);
+  border-radius: 5px;
+}
+
+.hover-thumb figcaption {
+  display: none;
+}
+
+.card-thumb figcaption {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.tag {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 5px;
+  font-size: 11px;
+  color: #b0682c;
+  border: 1px solid #d9a774;
+  border-radius: 3px;
+}
+
+.hover-thumb {
+  position: relative;
+}
+
+.hover-thumb::after {
+  content: '示意';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 0 5px;
+  font-size: 11px;
+  color: #b0682c;
+  background: rgb(255 255 255 / 0.85);
+  border: 1px solid #d9a774;
+  border-radius: 3px;
+}
+
+/* ---------- 图例 ---------- */
+.legend {
+  position: absolute;
+  right: 12px;
+  bottom: 52px;
+  width: 188px;
+  padding: 6px 10px;
+  font-size: 12px;
+  background: rgb(251 248 242 / 0.92);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.legend summary {
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.legend:not([open]) {
+  width: auto;
+}
+
+.legend ul {
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.lg-regions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.8;
+}
+
+.lg-title {
+  margin: 4px 0 2px;
+  color: var(--muted);
+}
+
+.lg-note {
+  margin: 4px 0 0;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.pt {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #8c7a66;
+}
+
+.pt.big {
+  width: 13px;
+  height: 13px;
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+
+.pt.mid {
+  width: 10px;
+  height: 10px;
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+
+.lg-regions .pt.mid {
+  box-shadow: none;
+}
+
+.pt.small {
+  width: 7px;
+  height: 7px;
+  margin: 0 1.5px;
+  box-shadow: 0 0 0 1px #fffaf0;
+}
+
+.pt.unlit {
+  width: 6px;
+  height: 6px;
+  margin: 0 2px;
+  background: #bdb2a0;
 }
 
 .map-zoom button {
