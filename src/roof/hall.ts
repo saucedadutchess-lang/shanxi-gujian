@@ -3,7 +3,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { CLUSTER_WIDTH, clusterGeometry, levelY, type ClusterKind } from './brackets';
 import { buildRoof, type RoofGeometry, type Vert } from './geometry';
 import { computeDims, lerp, type HallDims, type MorphState, type RoofSpec } from './params';
-import { barWindow, latticeDoor, latticeWindow, photo, plankDoor } from './textures';
+import { barWindow, chiweiGlaze, dragonScales, latticeDoor, latticeWindow, photo, plankDoor } from './textures';
 
 const UP = new THREE.Vector3(0, 1, 0);
 const WOOD_GAIN = 2.6;
@@ -36,7 +36,14 @@ export class Hall {
     ridge: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 1, 1), side: THREE.DoubleSide }),
     // 鸱吻的琉璃：主体绿釉，龙等装饰用黄釉；表面借用灰泥照片的斑驳，像釉面剥落
     glaze: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 1.2, 1.2), color: new THREE.Color(0.3, 0.62, 0.36), roughness: 0.45, side: THREE.DoubleSide }),
-    glazeGold: new THREE.MeshStandardMaterial({ color: 0xb8862e, roughness: 0.4 }),
+    glazeGold: (() => {
+      const scales = dragonScales();
+      return new THREE.MeshStandardMaterial({ map: scales, bumpMap: scales, bumpScale: 2, roughness: 0.4 });
+    })(),
+    // 东大殿鸱尾专用：拼缝、釉色斑驳、唇、团花、铁锔子都画在一张贴图上
+    glazeChiwei: new THREE.MeshStandardMaterial({
+      ...chiweiGlaze(CHIWEI_OUTLINE.slice(2, 14)), color: new THREE.Color(0.78, 0.82, 0.78), bumpScale: 3, roughness: 0.42, side: THREE.DoubleSide,
+    }),
     // 正脊由一层层瓦条和砖垒成，用灰砖照片示意
     ridgeBody: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.55, 0.55) }),
     // 望板、檐口：从下面看到的是风化的灰褐色木头
@@ -439,7 +446,7 @@ export class Hall {
         const early = era < 0.5;
         // 现存的鸱吻（包括佛光寺东大殿的）都是绿琉璃，所以两个时代都用绿琉璃
         const parts: [THREE.BufferGeometry, THREE.Material][] = early
-          ? [[this.chiwei[0], this.mat.glaze], [this.chiweiFin, this.mat.glaze], [this.chiweiDragon, this.mat.glazeGold]]
+          ? [[this.chiwei[0], this.mat.glazeChiwei], [this.chiweiFin, this.mat.glazeChiwei], [this.chiweiDragon, this.mat.glazeGold]]
           : [[this.chiwei[1], this.mat.glaze]];
         for (const [geometry, material] of parts) {
           const finial = this.add(geometry, material, roof);
@@ -660,8 +667,17 @@ function chiweiDragon() {
       const p = body.getPointAt(t);
       const leg = new THREE.CylinderGeometry(0.012, 0.022, 0.13, 4);
       leg.rotateZ(angle);
-      leg.translate(p.x + Math.cos(angle + Math.PI / 2) * 0.06, p.y + Math.sin(angle + Math.PI / 2) * 0.06, z + side * 0.01);
+      const dx = -Math.sin(angle);
+      const dy = Math.cos(angle);
+      leg.translate(p.x + dx * 0.06, p.y + dy * 0.06, z + side * 0.01);
       parts.push(leg.toNonIndexed());
+      // 三爪：腿端张开的三个尖
+      for (const spread of [-0.6, 0, 0.6]) {
+        const claw = new THREE.ConeGeometry(0.012, 0.05, 4);
+        claw.rotateZ(angle + spread);
+        claw.translate(p.x + dx * 0.135 - Math.sin(angle + spread) * 0.02, p.y + dy * 0.135 + Math.cos(angle + spread) * 0.02, z + side * 0.01);
+        parts.push(claw.toNonIndexed());
+      }
     }
   }
   return shared(mergeGeometries(parts, false)!);
