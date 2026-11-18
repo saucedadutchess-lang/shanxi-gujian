@@ -17,21 +17,43 @@ stage.scene.add(hall.group);
 if (import.meta.env.DEV) Object.assign(window, { __stage: stage });
 
 const formSlider = $<HTMLInputElement>('#form');
+const formTrack = $<HTMLElement>('.form-track');
 const eraSlider = $<HTMLInputElement>('#era');
 
 /** 三个分支开关：目标值是 0 或 1，当前值平滑地追过去 */
 type Branch = 'dbl' | 'jp' | 'zj';
 const branchTarget: Record<Branch, number> = { dbl: 0, jp: 0, zj: 0 };
 const branchValue: Record<Branch, number> = { dbl: 0, jp: 0, zj: 0 };
+/** 每个开关的动画用一个独立的对象做标识，新动画开始时停掉同一开关上的旧动画 */
+const branchOwner: Record<Branch, object> = { dbl: {}, jp: {}, zj: {} };
 const branchButtons = [...document.querySelectorAll<HTMLButtonElement>('.switch')];
 const formButtons = [...document.querySelectorAll<HTMLButtonElement>('.forms button')];
 
-/** 形制滑块 0–100 是庑殿到悬山，100–130 是把两端出挑收回，变成硬山 */
+/**
+ * 形制滑块 0、1、2、3 正对着庑殿、歇山、悬山、硬山四个按钮。
+ * t 是山面从多高开始变成三角形（0 庑殿，1 悬山），g 是两端出挑收回多少（1 硬山）。
+ * 分段折线让每个形制的名字正好在两个按钮的半路上切换：
+ * 庑殿和歇山的分界 t = 0.12 落在 0.5，歇山和悬山的分界 t = 0.9 落在 1.5，悬山和硬山的分界 g = 0.5 落在 2.5。
+ */
+const T_KNOTS: [number, number][] = [[0, 0], [0.5, 0.12], [1, 0.45], [1.5, 0.9], [2, 1]];
+function sliderToShape(v: number) {
+  let t = 1;
+  for (let i = 1; i < T_KNOTS.length; i++) {
+    const [v0, t0] = T_KNOTS[i - 1];
+    const [v1, t1] = T_KNOTS[i];
+    if (v <= v1) {
+      t = t0 + ((t1 - t0) * (v - v0)) / (v1 - v0);
+      break;
+    }
+  }
+  return { t: Math.max(0, t), g: Math.min(1, Math.max(0, v - 2)) };
+}
+
 function readState(): MorphState {
-  const v = Number(formSlider.value);
+  const { t, g } = sliderToShape(Number(formSlider.value));
   return {
-    t: Math.min(v, 100) / 100,
-    g: Math.max(0, v - 100) / 30,
+    t,
+    g,
     era: Number(eraSlider.value) / 100,
     ...branchValue,
   };
@@ -65,6 +87,9 @@ function render() {
   for (const button of formButtons) {
     button.setAttribute('aria-pressed', String(button.textContent === current));
   }
+  // 攒尖不在滑块的连续变化上：这时滑块的圆钮变灰；读屏软件读出当前形制
+  formTrack.classList.toggle('idle', isSpire);
+  formSlider.setAttribute('aria-valuetext', current);
   for (const button of branchButtons) {
     const key = button.dataset.branch as Branch;
     if (!allowed[key] && branchTarget[key] === 1) setBranch(key, 0);
@@ -89,21 +114,50 @@ function requestRender() {
   });
 }
 
-// 拖动滑块时如果正在攒尖，先退出攒尖
+// 拖动滑块时：停掉这个滑块上正在播的动画，免得动画和手抢；如果正在攒尖，先退出攒尖
 formSlider.addEventListener('input', () => {
+  stopSlide(formSlider);
   if (branchTarget.zj === 1) setBranch('zj', 0);
   requestRender();
 });
-eraSlider.addEventListener('input', requestRender);
+eraSlider.addEventListener('input', () => {
+  stopSlide(eraSlider);
+  requestRender();
+});
+// 用键盘时，方向键一次跳到相邻的形制，不必按几十下
+formSlider.addEventListener('keydown', (event) => {
+  const v = Number(formSlider.value);
+  const next: Record<string, number> = {
+    ArrowRight: Math.floor(v + 1e-6) + 1,
+    ArrowUp: Math.floor(v + 1e-6) + 1,
+    ArrowLeft: Math.ceil(v - 1e-6) - 1,
+    ArrowDown: Math.ceil(v - 1e-6) - 1,
+    Home: 0,
+    End: 3,
+  };
+  if (!(event.key in next)) return;
+  event.preventDefault();
+  if (branchTarget.zj === 1) setBranch('zj', 0);
+  slideTo(formSlider, Math.min(3, Math.max(0, next[event.key])));
+});
+// 按下滑块时也停：按住不动时还没有 input 事件
+for (const slider of [formSlider, eraSlider]) slider.addEventListener('pointerdown', () => stopSlide(slider));
 
 function ease(k: number) {
   return k * k * (3 - 2 * k);
 }
 
-/** 在一段时间里反复调用 step(0→1)，每一帧重新生成模型 */
-function animate(duration: number, step: (k: number) => void) {
+/**
+ * 在一段时间里反复调用 step(0→1)，每一帧重新生成模型。
+ * 同一个对象上再开一段动画时，先停掉旧的，避免两段动画轮流改同一个值、来回抖。
+ */
+const running = new Map<object, number>();
+function animate(owner: object, duration: number, step: (k: number) => void) {
   const start = performance.now();
+  const token = (running.get(owner) ?? 0) + 1;
+  running.set(owner, token);
   const tick = (now: number) => {
+    if (running.get(owner) !== token) return;
     const k = Math.min(1, (now - start) / duration);
     step(ease(k));
     requestRender();
@@ -112,21 +166,30 @@ function animate(duration: number, step: (k: number) => void) {
   requestAnimationFrame(tick);
 }
 
-/** 点刻度标签时，滑块平滑地滑过去，让人看到变形的过程 */
+function stopSlide(slider: HTMLInputElement) {
+  running.set(slider, (running.get(slider) ?? 0) + 1);
+}
+
+/** 滑块平滑地滑到某个值，让人看到变形的过程。距离越远用时越长 */
+function slideTo(slider: HTMLInputElement, value: number) {
+  const from = Number(slider.value);
+  const span = Number(slider.max) - Number(slider.min);
+  const duration = 300 + 500 * Math.min(1, Math.abs(value - from) / span);
+  animate(slider, duration, (k) => (slider.value = String(from + (value - from) * k)));
+}
+
+/** 时代刻度：放在滑块对应的位置上，点了滑过去 */
 for (const button of document.querySelectorAll<HTMLButtonElement>('.ticks button')) {
   const slider = $<HTMLInputElement>(`#${button.dataset.for}`);
   const value = Number(button.dataset.value);
   button.style.left = `${(value / Number(slider.max)) * 100}%`;
-  button.addEventListener('click', () => {
-    const from = Number(slider.value);
-    animate(700, (k) => (slider.value = String(from + (value - from) * k)));
-  });
+  button.addEventListener('click', () => slideTo(slider, value));
 }
 
 function setBranch(key: Branch, to: number) {
   branchTarget[key] = to;
   const from = branchValue[key];
-  animate(900, (k) => (branchValue[key] = from + (to - from) * k));
+  animate(branchOwner[key], 900, (k) => (branchValue[key] = from + (to - from) * k));
 }
 
 for (const button of branchButtons) {
@@ -186,9 +249,7 @@ for (const button of formButtons) {
       return;
     }
     if (branchTarget.zj === 1) setBranch('zj', 0);
-    const from = Number(formSlider.value);
-    const to = Number(form);
-    animate(700, (k) => (formSlider.value = String(from + (to - from) * k)));
+    slideTo(formSlider, Number(form));
   });
 }
 

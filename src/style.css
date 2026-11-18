@@ -127,16 +127,84 @@ main {
   color: var(--accent);
 }
 
+/* 滑块统一画成细轨道加 18 像素的圆钮，圆钮宽度固定，刻度和按钮才能和它对齐 */
 input[type='range'] {
+  --thumb: 18px;
+  display: block;
   width: 100%;
+  height: 24px;
   margin: 10px 0 0;
-  accent-color: var(--accent);
+  background: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+}
+
+input[type='range']::-webkit-slider-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  margin-top: -7px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: var(--thumb);
+  height: var(--thumb);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+input[type='range']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/*
+ * 形制滑块只管前四个基本形，要让圆钮的 0、1、2、3 四个位置正好落在前四个按钮的中线下面。
+ * 轨道放在和按钮一样的五列网格里，占前四列；四列三缝宽 A，每列宽 (A - 3 × 缝) / 4，
+ * 两端各收进半列减半个圆钮。
+ */
+.form-track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.form-track input[type='range'] {
+  grid-column: 1 / 5;
+  width: auto;
+  margin-left: calc((100% - 3 * 6px) / 8 - var(--thumb) / 2);
+  margin-right: calc((100% - 3 * 6px) / 8 - var(--thumb) / 2);
+}
+
+.form-track.idle input[type='range']::-webkit-slider-thumb {
+  background: var(--muted);
 }
 
 .ticks {
   position: relative;
   height: 30px;
-  margin: 2px 8px 0;
+  /* 圆钮中心离轨道两端各 9 像素 */
+  margin: 2px 9px 0;
 }
 
 .ticks button {
@@ -151,14 +219,6 @@ input[type='range'] {
   color: var(--muted);
   white-space: nowrap;
   cursor: pointer;
-}
-
-.ticks button:first-child {
-  transform: translateX(-8px);
-}
-
-.ticks button:last-child {
-  transform: translateX(calc(-100% + 8px));
 }
 
 .ticks button:hover,
@@ -455,4 +515,29 @@ input[type='range']:disabled {
   border-color: var(--accent);
   background: var(--accent);
   color: #fff;
+}
+
+/* 窄屏（以后再专门做手机）：三维视图在上，面板在下，整页滚动 */
+@media (max-width: 760px) {
+  html,
+  body {
+    height: auto;
+  }
+
+  main {
+    flex: none;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 62vh auto;
+  }
+
+  .panel {
+    overflow: visible;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .hint {
+    left: 16px;
+    right: 16px;
+  }
 }
