@@ -25,6 +25,8 @@ export interface Building {
 export interface Curated {
   tier?: 'S' | 'A' | 'B';
   card?: { what: TextFact; feature: TextFact; value: TextFact };
+  /** 不落到某座单体上的看点（如双林寺各殿的彩塑） */
+  highlights?: Fact & { value: string[] };
   buildings?: Building[];
 }
 export interface Source {
@@ -75,7 +77,7 @@ export const REGION_CITIES: Record<Region, string[]> = {
   晋东南: ['长治市', '晋城市'],
   晋南: ['临汾市', '运城市'],
 };
-export const FORMS = ['庑殿', '歇山', '悬山', '硬山', '攒尖', '塔'];
+export const FORMS = ['庑殿', '歇山', '悬山', '硬山', '攒尖', '重檐', '塔'];
 export const HIGHLIGHTS = ['彩塑', '壁画', '斗拱', '琉璃'];
 
 /** 各批公布的日期（国务院通知的发文日期） */
@@ -103,7 +105,7 @@ export const units: Unit[] = (unitsJson as unknown as Omit<Unit, 'era' | 'litYea
     era,
     litYear: years.length ? Math.min(...years) : era.year,
     forms: new Set((c?.buildings ?? []).flatMap((b) => b.form?.value ?? [])),
-    highlights: new Set((c?.buildings ?? []).flatMap((b) => b.highlights?.value ?? [])),
+    highlights: new Set([...(c?.highlights?.value ?? []), ...(c?.buildings ?? []).flatMap((b) => b.highlights?.value ?? [])]),
   };
 });
 

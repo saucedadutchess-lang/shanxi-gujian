@@ -80,7 +80,7 @@ located.sort((a, b) => Number(!!a.curated) - Number(!!b.curated));
 for (const u of located) {
   const [x, y] = project(u.location!.lng, u.location!.lat);
   const tier = u.curated?.tier ?? 'B';
-  const dot = svgEl('circle', { cx: x.toFixed(2), cy: y.toFixed(2), class: `dot ${REGION_CLASS[u.region]} tier-${tier}`, tabindex: 0 });
+  const dot = svgEl('circle', { cx: x.toFixed(2), cy: y.toFixed(2), class: `dot ${REGION_CLASS[u.region]} tier-${tier}${u.curated?.card ? ' has-card' : ''}`, tabindex: 0 });
   dot.dataset.id = u.id;
   const title = svgEl('title');
   title.textContent = `${u.name}（${u.record.era}）`;
@@ -105,7 +105,7 @@ function applyView() {
   const s = view.w / FULL.w;
   map.style.setProperty('--s', String(s));
   for (const [id, dot] of dots) {
-    const tier = dot.classList.contains('tier-S') ? 2 : dot.classList.contains('tier-A') ? 1.5 : 1;
+    const tier = dot.classList.contains('tier-S') ? 2 : dot.classList.contains('tier-A') || dot.classList.contains('has-card') ? 1.5 : 1;
     dot.setAttribute('r', (2.6 * tier * s * (id === selected ? 1.4 : 1)).toFixed(3));
   }
 }
@@ -372,15 +372,27 @@ function select(id: string | null) {
         <li><span class="q">价值</span>${esc(c.card.value.text)}${factMeta(c.card.value)}</li>
       </ol>`
     : `<p class="todo">名片三句话还没写。下面是名录里的信息。</p>`;
+  // 一座单体的几项事实可能出处不同，合在一起列，待核的地方逐条带上
+  const mergedMeta = (facts: (Fact | undefined)[]) => {
+    const fs = facts.filter((x): x is Fact => !!x);
+    return factMeta({
+      src: [...new Set(fs.flatMap((x) => x.src))],
+      kind: fs.every((x) => x.kind === fs[0]?.kind) ? fs[0]?.kind : undefined,
+      check: fs.map((x) => x.check).filter(Boolean).join('；') || undefined,
+    });
+  };
   const buildings = c?.buildings?.length
     ? `<h4>单体</h4><ul class="buildings">${c.buildings
         .map(
           (b) =>
-            `<li><b>${esc(b.name)}</b>${b.year ? `　${esc(b.year.label)}（${b.year.value}）` : ''}${b.form ? `　${esc(b.form.value.join('、'))}` : ''}${
+            `<li><b>${esc(b.name)}</b>${b.year ? `　${esc(b.year.label)}${/\d/.test(b.year.label) ? '' : `（${b.year.value}）`}` : ''}${b.form ? `　${esc(b.form.value.join('、'))}` : ''}${
               b.highlights ? `　看点：${esc(b.highlights.value.join('、'))}` : ''
-            }${factMeta(b.year ?? b.form ?? b.highlights ?? { src: [] })}</li>`,
+            }${mergedMeta([b.year, b.form, b.highlights])}</li>`,
         )
         .join('')}</ul>`
+    : '';
+  const unitHighlights = c?.highlights
+    ? `<p class="unit-hl">看点：${esc(c.highlights.value.join('、'))}${factMeta(c.highlights)}</p>`
     : '';
   const loc = u.location
     ? `${u.location.lat.toFixed(4)}, ${u.location.lng.toFixed(4)}（<a href="https://www.wikidata.org/wiki/${esc(u.location.wikidata)}" target="_blank" rel="noopener">Wikidata ${esc(
@@ -393,6 +405,7 @@ function select(id: string | null) {
     <h2>${esc(u.name)}</h2>
     ${three}
     ${buildings}
+    ${unitHighlights}
     <h4>名录信息</h4>
     <dl class="info">
       <dt>批次</dt><dd>第${'一二三四五六七八'[r.batch - 1]}批（${BATCH_DATES[r.batch]}公布）</dd>

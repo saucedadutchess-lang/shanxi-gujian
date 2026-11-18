@@ -57,5 +57,234 @@
     "author": "陈明达",
     "publisher": "文物出版社",
     "note": "出版信息转自候选清单，待核对版次、页码。"
+  },
+  "sxwwj-foguangsi": {
+    "title": "佛光寺（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1981369.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-nanchansi": {
+    "title": "南禅寺大殿（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1981360.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-muta": {
+    "title": "佛宫寺释迦塔（应县木塔）（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1980823.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-jinci": {
+    "title": "晋祠（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1984152.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-huayansi": {
+    "title": "华严寺（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1981173.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-shanhuasi": {
+    "title": "善化寺（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1981165.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-yonglegong": {
+    "title": "永乐宫（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1984448.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-guangshengsi": {
+    "title": "广胜寺（第一批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dypgb/202109/t20210908_1981908.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-wutaishan": {
+    "title": "五台山建筑群（第二批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/depgb/202109/t20210908_1981516.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-xuankongsi": {
+    "title": "悬空寺（第二批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/depgb/202109/t20210908_1981236.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-dayunyuan": {
+    "title": "大云院（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1980907.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-tiantaian": {
+    "title": "天台庵（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1980900.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-chongfusi": {
+    "title": "崇福寺（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1980813.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-yuhuangmiao": {
+    "title": "玉皇庙（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1984841.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-shuanglinsi": {
+    "title": "双林寺（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1984630.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-pingyao": {
+    "title": "平遥城墙（平遥古城）（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1984623.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-zhenguosi": {
+    "title": "镇国寺（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1984614.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-guandimiao": {
+    "title": "解州关帝庙（第三批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb/202109/t20210908_1984273.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-qianfoan": {
+    "title": "千佛庵（第四批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb_31163/202109/t20210908_1981935.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-longmensi": {
+    "title": "龙门寺（第四批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dspgb_31163/202109/t20210908_1980915.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-kaihuasi": {
+    "title": "开化寺（第五批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dwpgb/202109/t20210908_1980644.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-jiwangmiao": {
+    "title": "万荣稷王庙（第五批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dwpgb/202109/t20210908_1984492.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "sxwwj-guangrenwang": {
+    "title": "广仁王庙（第五批国保）",
+    "publisher": "山西省文物局网站",
+    "url": "https://wwj.shanxi.gov.cn/wwzy/wwlb/bkydww/qgzdwwbhdw/dwpgb/202109/t20210908_1984464.shtml",
+    "accessed": "2026-11-18",
+    "license": "政府公开信息",
+    "note": "省文物局为每处国保写的介绍。"
+  },
+  "pku-2011": {
+    "title": "北京大学考古文博学院发现并确认仅存的北宋庑殿顶建筑",
+    "author": "徐怡涛",
+    "publisher": "北京大学新闻中心（中国高校人文社会科学信息网转载）",
+    "date": "2011-05",
+    "url": "https://www.sinoss.net/c/2011-05-23/561628.shtml",
+    "accessed": "2026-11-18",
+    "note": "万荣稷王庙大殿“天圣元年”题记的发现报告。碳十四测年的正式论文：徐怡涛《论碳十四测年技术测定中国古代建筑建造年代的基本方法——以山西万荣稷王庙大殿年代研究为例》，《文物》2014 年第 9 期，未读原文。"
+  },
+  "jccq-tiantai": {
+    "title": "山西古建筑100问——为什么说天台庵是有争议的“唐木构”？",
+    "publisher": "晋城市城区人民政府网站",
+    "date": "2024-12-27",
+    "url": "http://www.jccq.gov.cn/cqzx/sjdt_5/szfyw_1/202412/t20241227_2080039.shtml",
+    "accessed": "2026-11-18",
+    "note": "转述“五代说”的依据（题迹推断），没有给出题记原文。"
+  },
+  "jcgov-28xiu": {
+    "title": "“古代天文艺术馆”——府城玉皇庙二十八星宿彩塑掠影",
+    "publisher": "晋城市人民政府网站",
+    "date": "2023-09-13",
+    "url": "https://www.jcgov.gov.cn/mljc/lswh/fwzwhyc/202309/t20230913_1853269.shtml",
+    "accessed": "2026-11-18"
+  },
+  "yuncheng-yonglegong": {
+    "title": "永乐宫(国家AAAA级旅游景区)",
+    "publisher": "运城市人民政府网站",
+    "date": "2020-07-21",
+    "url": "https://www.yuncheng.gov.cn/doc/2020/07/21/71097.shtml",
+    "accessed": "2026-11-18"
+  },
+  "taiyuan-shengmudian": {
+    "title": "晋祠公园 · 著名建筑 —— 圣母殿",
+    "publisher": "太原市人民政府网站",
+    "date": "2024-10-10",
+    "url": "https://www.taiyuan.gov.cn/jcgy/20241010/30167219.html",
+    "accessed": "2026-11-18"
+  },
+  "yang-1962": {
+    "title": "山西平顺县古建筑勘察记",
+    "author": "杨烈",
+    "publisher": "《文物》1962 年第 2 期",
+    "date": "1962",
+    "note": "出处转自候选清单（标“已核实”），本人未读原文。"
   }
 }

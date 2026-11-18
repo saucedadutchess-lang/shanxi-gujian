@@ -1,62 +1,1587 @@
 {
-  "_说明": "人工整理的内容，按 data/units.json 里的单位 id 挂上去。每条事实都要有 src（data/sources.json 里的条目）和 kind（史料记载 / 民间传说）。check 写还没核对的地方。",
-  "units": {
-    "1-0080-3-033": {
-      "tier": "S",
-      "card": {
-        "what": { "text": "五台县豆村镇的一座寺院，东大殿建于唐大中十一年（857）。", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" },
-        "feature": { "text": "东大殿面阔七间，单檐庑殿顶，斗拱硕大；殿内唐代的彩塑、壁画和题记保存在一处。", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" },
-        "value": { "text": "1937 年中国营造学社梁思成、林徽因等人调查时找到，是当时所知中国最早的木构建筑。", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" }
-      },
-      "buildings": [
-        {
-          "id": "dongdadian",
-          "name": "东大殿",
-          "year": { "value": 857, "label": "唐大中十一年", "src": ["liang-1944"], "kind": "史料记载" },
-          "form": { "value": ["庑殿"], "src": ["liang-1944"], "kind": "史料记载" },
-          "highlights": { "value": ["彩塑", "壁画", "斗拱"], "src": ["liang-1944"], "kind": "史料记载" }
-        },
-        {
-          "id": "wenshudian",
-          "name": "文殊殿",
-          "year": { "value": 1137, "label": "金天会十五年", "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" },
-          "form": { "value": ["悬山"], "src": ["liang-1944"], "kind": "史料记载", "check": "原书页码待补" }
-        }
-      ]
+ "_说明": "人工整理的内容，按 data/units.json 里的单位 id 挂上去。每条事实都要有 src（data/sources.json 里的条目）和 kind（史料记载 / 民间传说）。check 写还没核对的地方。tier 只写候选清单里已经定下的最终层级。",
+ "units": {
+  "1-0080-3-033": {
+   "tier": "S",
+   "card": {
+    "what": {
+     "text": "五台县佛光新村的一座寺院，东大殿建于唐大中十一年（857）。",
+     "src": [
+      "liang-1944",
+      "sxwwj-foguangsi"
+     ],
+     "kind": "史料记载",
+     "check": "原书页码待补"
     },
-    "1-0079-3-032": {
-      "tier": "A",
-      "card": {
-        "what": { "text": "五台县李家庄的一座小佛殿，梁下有唐建中三年（782）重修的题记。", "src": ["qi-chai-1980"], "kind": "史料记载", "check": "原文页码待补" },
-        "feature": { "text": "面阔、进深各三间，单檐歇山顶，殿内没有柱子；佛坛上是唐代彩塑。", "src": ["qi-chai-1980"], "kind": "史料记载", "check": "原文页码待补" },
-        "value": { "text": "现存最早的木构建筑，比佛光寺东大殿早 75 年。", "src": ["qi-chai-1980", "liang-1944"], "kind": "史料记载", "check": "原文页码待补" }
-      },
-      "buildings": [
-        {
-          "id": "dadian",
-          "name": "大殿",
-          "year": { "value": 782, "label": "唐建中三年（重修题记）", "src": ["qi-chai-1980"], "kind": "史料记载" },
-          "form": { "value": ["歇山"], "src": ["qi-chai-1980"], "kind": "史料记载" },
-          "highlights": { "value": ["彩塑"], "src": ["qi-chai-1980"], "kind": "史料记载" }
-        }
-      ]
+    "feature": {
+     "text": "东大殿面阔七间，单檐庑殿顶，斗拱硕大；殿内唐代的彩塑、壁画和题记保存在一处。",
+     "src": [
+      "liang-1944",
+      "sxwwj-foguangsi"
+     ],
+     "kind": "史料记载",
+     "check": "原书页码待补"
     },
-    "1-0071-3-024": {
-      "tier": "S",
-      "card": {
-        "what": { "text": "应县佛宫寺里的木塔，建于辽清宁二年（1056）。", "src": ["chen-mingda"], "kind": "史料记载", "check": "原书页码待补" },
-        "feature": { "text": "平面八角，外观五层六檐，层与层之间还夹着暗层；整座塔用木构，斗拱做法多变。", "src": ["chen-mingda"], "kind": "史料记载", "check": "原书页码待补" },
-        "value": { "text": "现存最高、最古老的木构楼阁式塔。到现场看，塔身有倾斜。", "src": ["chen-mingda"], "kind": "史料记载", "check": "原书页码待补" }
-      },
-      "buildings": [
-        {
-          "id": "shijiata",
-          "name": "释迦塔",
-          "year": { "value": 1056, "label": "辽清宁二年", "src": ["chen-mingda"], "kind": "史料记载" },
-          "form": { "value": ["塔"], "src": ["chen-mingda"], "kind": "史料记载" },
-          "highlights": { "value": ["斗拱", "彩塑"], "src": ["chen-mingda"], "kind": "史料记载", "check": "彩塑一项待核对" }
-        }
-      ]
+    "value": {
+     "text": "1937 年中国营造学社梁思成、林徽因等人调查时找到，是当时所知中国最早的木构建筑。",
+     "src": [
+      "liang-1944"
+     ],
+     "kind": "史料记载",
+     "check": "原书页码待补"
     }
+   },
+   "buildings": [
+    {
+     "id": "dongdadian",
+     "name": "东大殿",
+     "year": {
+      "value": 857,
+      "label": "唐大中十一年",
+      "src": [
+       "liang-1944",
+       "sxwwj-foguangsi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "liang-1944",
+       "sxwwj-foguangsi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑",
+       "壁画",
+       "斗拱"
+      ],
+      "src": [
+       "liang-1944",
+       "sxwwj-foguangsi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "wenshudian",
+     "name": "文殊殿",
+     "year": {
+      "value": 1137,
+      "label": "金天会十五年",
+      "src": [
+       "liang-1944",
+       "sxwwj-foguangsi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "liang-1944",
+       "sxwwj-foguangsi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0079-3-032": {
+   "card": {
+    "what": {
+     "text": "五台县李家庄的一座小佛殿，平梁下有唐建中三年（782）重修的题记。",
+     "src": [
+      "qi-chai-1980",
+      "sxwwj-nanchansi"
+     ],
+     "kind": "史料记载",
+     "check": "原文页码待补"
+    },
+    "feature": {
+     "text": "面阔、进深各三间，单檐歇山顶，殿内没有柱子；佛坛上是 17 尊唐代彩塑。",
+     "src": [
+      "qi-chai-1980",
+      "sxwwj-nanchansi"
+     ],
+     "kind": "史料记载",
+     "check": "原文页码待补"
+    },
+    "value": {
+     "text": "现存最早的唐代木构建筑，比佛光寺东大殿早 75 年。",
+     "src": [
+      "sxwwj-nanchansi",
+      "liang-1944"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "dadian",
+     "name": "大殿",
+     "year": {
+      "value": 782,
+      "label": "唐建中三年（重修题记）",
+      "src": [
+       "qi-chai-1980",
+       "sxwwj-nanchansi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-nanchansi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-nanchansi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0071-3-024": {
+   "tier": "S",
+   "card": {
+    "what": {
+     "text": "应县佛宫寺里的木塔，建于辽清宁二年（1056）。",
+     "src": [
+      "chen-mingda",
+      "sxwwj-muta"
+     ],
+     "kind": "史料记载",
+     "check": "原书页码待补"
+    },
+    "feature": {
+     "text": "平面八角，外观五层，夹着四级暗层，实为九层；各层斗拱按位置做法不同，有 54 种之多。",
+     "src": [
+      "sxwwj-muta",
+      "chen-mingda"
+     ],
+     "kind": "史料记载",
+     "check": "原书页码待补"
+    },
+    "value": {
+     "text": "现存最高、最古老的木构楼阁式塔。到现场看，塔身有倾斜。",
+     "src": [
+      "chen-mingda"
+     ],
+     "kind": "史料记载",
+     "check": "原书页码待补"
+    }
+   },
+   "buildings": [
+    {
+     "id": "shijiata",
+     "name": "释迦塔",
+     "year": {
+      "value": 1056,
+      "label": "辽清宁二年",
+      "src": [
+       "chen-mingda",
+       "sxwwj-muta"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "塔"
+      ],
+      "src": [
+       "sxwwj-muta"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "斗拱",
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-muta"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0085-3-038": {
+   "tier": "S",
+   "card": {
+    "what": {
+     "text": "太原西南悬瓮山下晋水源头的祠庙，主殿圣母殿是宋代建筑。年代有两种说法：一说北宋天圣年间（1023–1032）创建、崇宁元年（1102）重修；一说太平兴国九年（984）已建正殿，天圣年间才改奉圣母。",
+     "src": [
+      "sxwwj-jinci",
+      "taiyuan-shengmudian"
+     ],
+     "kind": "史料记载",
+     "check": "省文物局页面把崇宁元年误写作 1023 年"
+    },
+    "feature": {
+     "text": "圣母殿面阔七间，重檐歇山顶，四周围廊；廊柱上盘着八条木雕龙，殿内有宋代彩塑 43 尊。",
+     "src": [
+      "sxwwj-jinci",
+      "taiyuan-shengmudian"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "圣母殿用减柱法省去 12 根内柱，廊柱上的木雕盘龙是全国建筑实物中最早的一例，是研究宋代建筑的重要实例。",
+     "src": [
+      "sxwwj-jinci"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "shengmudian",
+     "name": "圣母殿",
+     "year": {
+      "value": 1023,
+      "label": "北宋天圣年间",
+      "src": [
+       "sxwwj-jinci",
+       "taiyuan-shengmudian"
+      ],
+      "kind": "史料记载",
+      "check": "另有太平兴国九年（984）说"
+     },
+     "form": {
+      "value": [
+       "歇山",
+       "重檐"
+      ],
+      "src": [
+       "sxwwj-jinci"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-jinci"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "xiandian",
+     "name": "献殿",
+     "year": {
+      "value": 1168,
+      "label": "金大定八年重建",
+      "src": [
+       "sxwwj-jinci"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-jinci"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "5-0224-3-030": {
+   "card": {
+    "what": {
+     "text": "万荣县太赵村的稷王庙，现存正殿和戏台。正殿面阔五间，单檐庑殿顶。",
+     "src": [
+      "sxwwj-jiwangmiao",
+      "pku-2011"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "殿内一列中柱直通平梁下，大梁分前后两段穿插相构，没有通长的梁，当地叫它“无量殿”。",
+     "src": [
+      "sxwwj-jiwangmiao"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "名录原把正殿定为金元建筑；2011 年北京大学师生在前檐襻间枋上发现“天圣元年”（1023）墨书题记，确认它是仅存的北宋庑殿顶建筑。",
+     "src": [
+      "pku-2011",
+      "sxwwj-jiwangmiao"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "zhengdian",
+     "name": "正殿",
+     "year": {
+      "value": 1023,
+      "label": "北宋天圣元年（墨书题记）",
+      "src": [
+       "pku-2011"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "sxwwj-jiwangmiao",
+       "pku-2011"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0091-3-044": {
+   "card": {
+    "what": {
+     "text": "大同城内的辽金寺院，坐西朝东，明代分为上下两寺。",
+     "src": [
+      "sxwwj-huayansi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "上寺大雄宝殿面阔九间，单檐庑殿顶，金天眷三年（1140）重建；下寺薄伽教藏殿建于辽重熙七年（1038），殿内有辽代壁藏、天宫楼阁和 31 尊辽代塑像。",
+     "src": [
+      "sxwwj-huayansi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "大雄宝殿是国内辽金佛寺中最大的殿堂，北面的琉璃鸱吻是金代原物；薄伽教藏殿的壁藏是全国唯一保存完好的辽代壁藏。",
+     "src": [
+      "sxwwj-huayansi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "bojiajiaozangdian",
+     "name": "薄伽教藏殿",
+     "year": {
+      "value": 1038,
+      "label": "辽重熙七年（梁上题记）",
+      "src": [
+       "sxwwj-huayansi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-huayansi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-huayansi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "daxiongbaodian",
+     "name": "大雄宝殿",
+     "year": {
+      "value": 1140,
+      "label": "金天眷三年重建",
+      "src": [
+       "sxwwj-huayansi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "sxwwj-huayansi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "琉璃",
+       "斗拱"
+      ],
+      "src": [
+       "sxwwj-huayansi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0093-3-046": {
+   "card": {
+    "what": {
+     "text": "原名大纯阳万寿宫，是保存最完整的一组元代道教宫观建筑。",
+     "src": [
+      "sxwwj-yonglegong"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "中轴线上依次是山门、龙虎殿、三清殿、纯阳殿、重阳殿，除山门是清代重建外都是元代遗物；殿内元代壁画 1000 余平方米，三清殿的一铺后世称《朝元图》。",
+     "src": [
+      "sxwwj-yonglegong",
+      "yuncheng-yonglegong"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "原址在永济县永乐镇。因修三门峡水利工程，1959 年起把全部建筑和壁画迁到芮城县城北复原保存，今天看到的不在原址。",
+     "src": [
+      "sxwwj-yonglegong",
+      "yuncheng-yonglegong"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "sanqingdian",
+     "name": "三清殿",
+     "highlights": {
+      "value": [
+       "壁画",
+       "琉璃"
+      ],
+      "src": [
+       "yuncheng-yonglegong"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0088-3-041": {
+   "card": {
+    "what": {
+     "text": "大同城南的辽金寺院，俗称南寺，是现存辽金时期布局最完整、规模最大的寺院。",
+     "src": [
+      "sxwwj-shanhuasi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "中轴线上天王殿、三圣殿、大雄宝殿层层升高，三座都是单檐庑殿顶；大雄宝殿内 33 尊佛像都是金代遗物。",
+     "src": [
+      "sxwwj-shanhuasi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "三圣殿里的金大定十六年（1176）碑由南宋使金副使朱弁撰文，记下了寺院毁于辽末兵火、金代重建的经过。",
+     "src": [
+      "sxwwj-shanhuasi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "daxiongbaodian",
+     "name": "大雄宝殿",
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "sanshengdian",
+     "name": "三圣殿",
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑",
+       "斗拱"
+      ],
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "tianwangdian",
+     "name": "天王殿",
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "puxiange",
+     "name": "普贤阁",
+     "year": {
+      "value": 1154,
+      "label": "金贞元二年重建",
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山",
+       "重檐"
+      ],
+      "src": [
+       "sxwwj-shanhuasi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "3-0107-3-055": {
+   "card": {
+    "what": {
+     "text": "平顺县王曲村的一座小殿，面阔、进深各三间，单檐歇山顶，只存正殿和一通唐碑。",
+     "src": [
+      "sxwwj-tiantaian"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "柱头斗拱只从栌斗口出一跳华拱，《营造法式》叫“斗口跳”，国内少见；当心间宽，次间只有它的一半。",
+     "src": [
+      "sxwwj-tiantaian"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "年代有争议：省文物局按形制和手法定为唐代遗构；另有人据殿内题迹推断它创立于后唐天成四年（929），长兴四年（933）创修大殿。",
+     "src": [
+      "sxwwj-tiantaian",
+      "jccq-tiantai"
+     ],
+     "kind": "史料记载",
+     "check": "题迹原文待查"
+    }
+   },
+   "buildings": [
+    {
+     "id": "zhengdian",
+     "name": "正殿",
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-tiantaian"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "斗拱"
+      ],
+      "src": [
+       "sxwwj-tiantaian"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "3-0112-3-060": {
+   "card": {
+    "what": {
+     "text": "平顺县龙耳山中的寺院，创建于后晋天福三年（938），正殿弥陀殿建于天福五年（940）。",
+     "src": [
+      "sxwwj-dayunyuan",
+      "yang-1962"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "弥陀殿面阔三间，殿内保存五代壁画 20 余平方米，用蓝、绿、赭三色，墨线勾勒；寺外南侧有后周显德元年（954）的石塔七宝塔。",
+     "src": [
+      "sxwwj-dayunyuan"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "弥陀殿是国内仅存的几座五代木构之一，殿内的壁画是少见的五代寺观壁画。",
+     "src": [
+      "sxwwj-dayunyuan",
+      "yang-1962"
+     ],
+     "kind": "史料记载",
+     "check": "“仅存三座”是省文物局页面的说法，现在的统计数不同"
+    }
+   },
+   "buildings": [
+    {
+     "id": "mituodian",
+     "name": "弥陀殿（大佛殿）",
+     "year": {
+      "value": 940,
+      "label": "后晋天福五年",
+      "src": [
+       "sxwwj-dayunyuan"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "yang-1962"
+      ],
+      "kind": "史料记载",
+      "check": "屋顶形制转自候选清单"
+     },
+     "highlights": {
+      "value": [
+       "壁画"
+      ],
+      "src": [
+       "sxwwj-dayunyuan"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "qibaota",
+     "name": "七宝塔",
+     "year": {
+      "value": 954,
+      "label": "后周显德元年",
+      "src": [
+       "sxwwj-dayunyuan"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "塔"
+      ],
+      "src": [
+       "sxwwj-dayunyuan"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "3-0111-3-059": {
+   "card": {
+    "what": {
+     "text": "平遥县郝洞村的寺院，原名京城寺，始建于五代北汉天会七年（963）。",
+     "src": [
+      "sxwwj-zhenguosi"
+     ],
+     "kind": "史料记载",
+     "check": "省文物局页面折算为 962 年，天会七年一般折作 963 年"
+    },
+    "feature": {
+     "text": "万佛殿广深各三间，殿内没有柱子；斗拱总高约合柱高的十分之七，这么小的殿用这么大的斗拱很少见。",
+     "src": [
+      "sxwwj-zhenguosi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "万佛殿的木构和殿内 11 尊泥塑保存了五代原貌；四壁的万佛图是清代画的。",
+     "src": [
+      "sxwwj-zhenguosi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "wanfodian",
+     "name": "万佛殿",
+     "year": {
+      "value": 963,
+      "label": "北汉天会七年",
+      "src": [
+       "sxwwj-zhenguosi"
+      ],
+      "kind": "史料记载",
+      "check": "页面写作 962 年"
+     },
+     "highlights": {
+      "value": [
+       "彩塑",
+       "斗拱"
+      ],
+      "src": [
+       "sxwwj-zhenguosi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "4-0092-3-014": {
+   "card": {
+    "what": {
+     "text": "平顺县龙门山麓的寺院，创建于北齐天保年间，现存后唐、宋、金、元、明、清建筑七十余间。",
+     "src": [
+      "sxwwj-longmensi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "西配殿建于后唐同光三年至清泰二年间（925–935），单檐悬山顶，是已知唯一的五代悬山建筑；大雄宝殿建于北宋绍圣五年（1098），单檐歇山顶。",
+     "src": [
+      "sxwwj-longmensi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "一座寺里集齐五代、宋、金、元、明、清六个时代的建筑，适合对照着看建筑怎样随时代变化。",
+     "src": [
+      "sxwwj-longmensi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "xipeidian",
+     "name": "西配殿",
+     "year": {
+      "value": 925,
+      "label": "后唐同光三年至清泰二年间（925–935）",
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "daxiongbaodian",
+     "name": "大雄宝殿",
+     "year": {
+      "value": 1098,
+      "label": "北宋绍圣五年",
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "shanmen",
+     "name": "山门（天王殿）",
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "houdian",
+     "name": "后殿（燃灯佛殿）",
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "dongpeidian",
+     "name": "东配殿",
+     "form": {
+      "value": [
+       "硬山"
+      ],
+      "src": [
+       "sxwwj-longmensi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "5-0269-3-075": {
+   "card": {
+    "what": {
+     "text": "高平市舍利山腰的寺院，大雄宝殿建于北宋熙宁六年（1073），檐柱上刻有当年的施柱题记。",
+     "src": [
+      "sxwwj-kaihuasi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "大殿三间见方，单檐歇山顶；梁架斗拱上的彩画是宋代原物，纹样和《营造法式》极为相似。",
+     "src": [
+      "sxwwj-kaihuasi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "殿内四壁 96 平方米壁画是北宋绍圣三年（1096）画师郭发的作品，画的是佛本生、佛经故事和当时的世俗生活。",
+     "src": [
+      "sxwwj-kaihuasi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "daxiongbaodian",
+     "name": "大雄宝殿",
+     "year": {
+      "value": 1073,
+      "label": "北宋熙宁六年（施柱题记）",
+      "src": [
+       "sxwwj-kaihuasi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-kaihuasi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "壁画"
+      ],
+      "src": [
+       "sxwwj-kaihuasi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "5-0248-3-054": {
+   "card": {
+    "what": {
+     "text": "芮城县中龙泉村的水神庙，奉“广仁王”，俗称五龙庙；正殿是唐大和五年（831）的遗构。",
+     "src": [
+      "sxwwj-guangrenwang"
+     ],
+     "kind": "史料记载",
+     "check": "页面写作“太和五年（833 年）”，大和五年一般折作 831 年"
+    },
+    "feature": {
+     "text": "正殿面宽五间，单檐歇山顶，殿内没有柱子；只有柱头斗拱，没有补间铺作。",
+     "src": [
+      "sxwwj-guangrenwang"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "国内现存四座唐代木构建筑之一；殿墙上嵌着唐元和三年（808）和大和六年（832）的两块石碣。",
+     "src": [
+      "sxwwj-guangrenwang"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "zhengdian",
+     "name": "正殿",
+     "year": {
+      "value": 831,
+      "label": "唐大和五年",
+      "src": [
+       "sxwwj-guangrenwang"
+      ],
+      "kind": "史料记载",
+      "check": "页面写作 833 年"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-guangrenwang"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "斗拱"
+      ],
+      "src": [
+       "sxwwj-guangrenwang"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "3-0117-3-065": {
+   "card": {
+    "what": {
+     "text": "朔州城内的寺院，金皇统三年（1143）增建弥陀殿和观音殿，这两座是金代遗构。",
+     "src": [
+      "sxwwj-chongfusi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "弥陀殿面宽七间，单檐歇山顶，黄绿蓝三彩琉璃剪边；隔扇棂花有十五种之多，殿内供金代塑像，四壁壁画大都是金代原作。",
+     "src": [
+      "sxwwj-chongfusi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "弥陀殿的建筑、雕刻、塑像、壁画和琉璃都在一座殿里，各项价值都很高。",
+     "src": [
+      "sxwwj-chongfusi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "mituodian",
+     "name": "弥陀殿",
+     "year": {
+      "value": 1143,
+      "label": "金皇统三年",
+      "src": [
+       "sxwwj-chongfusi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-chongfusi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑",
+       "壁画",
+       "琉璃",
+       "斗拱"
+      ],
+      "src": [
+       "sxwwj-chongfusi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "guanyindian",
+     "name": "观音殿",
+     "year": {
+      "value": 1143,
+      "label": "金皇统三年",
+      "src": [
+       "sxwwj-chongfusi"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-chongfusi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "3-0113-3-061": {
+   "card": {
+    "what": {
+     "text": "泽州县府城村的道教庙宇，北宋熙宁九年（1076）在原址重建，元代又重建，明清屡次修葺。",
+     "src": [
+      "sxwwj-yuhuangmiao"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "主殿玉皇殿建于宋，单檐悬山顶；各殿保存宋、元、明三代塑像 300 余尊。",
+     "src": [
+      "sxwwj-yuhuangmiao"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "西庑的元塑二十八宿星君像是全庙之冠，每尊都把人像和动物化身组合在一起。晋城市政府的介绍说作者是元代雕塑家刘銮。",
+     "src": [
+      "sxwwj-yuhuangmiao",
+      "jcgov-28xiu"
+     ],
+     "kind": "史料记载",
+     "check": "作者说法待核"
+    }
+   },
+   "buildings": [
+    {
+     "id": "yuhuangdian",
+     "name": "玉皇殿",
+     "year": {
+      "value": 1076,
+      "label": "北宋熙宁九年",
+      "src": [
+       "sxwwj-yuhuangmiao"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "sxwwj-yuhuangmiao"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-yuhuangmiao"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "chengtangdian",
+     "name": "成汤殿",
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "sxwwj-yuhuangmiao"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "ershibaxiudian",
+     "name": "二十八宿殿",
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-yuhuangmiao",
+       "jcgov-28xiu"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "1-0096-3-049": {
+   "card": {
+    "what": {
+     "text": "洪洞县霍山南麓的寺院，分上寺、下寺和水神庙三处。",
+     "src": [
+      "sxwwj-guangshengsi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "元大德七年（1303）大地震后重建，除上寺飞虹塔和大雄宝殿是明代重建外，其余都是元代建筑；上寺琉璃构件金碧辉煌。",
+     "src": [
+      "sxwwj-guangshengsi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "水神庙的元代戏剧壁画在国内外享有盛名；寺里原藏的金代《赵城藏》现存国家图书馆。",
+     "src": [
+      "sxwwj-guangshengsi"
+     ],
+     "kind": "史料记载",
+     "check": "页面写作“北京图书馆”，即今国家图书馆"
+    }
+   },
+   "buildings": [
+    {
+     "id": "feihongta",
+     "name": "飞虹塔（上寺）",
+     "form": {
+      "value": [
+       "塔"
+      ],
+      "src": [
+       "sxwwj-guangshengsi"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "琉璃"
+      ],
+      "src": [
+       "sxwwj-guangshengsi"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "shuishenmiao",
+     "name": "水神庙",
+     "highlights": {
+      "value": [
+       "壁画"
+      ],
+      "src": [
+       "sxwwj-guangshengsi"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "4-0134-3-056": {
+   "card": {
+    "what": {
+     "text": "隰县凤凰山顶的佛寺，又名小西天，明崇祯七年（1634）始建。",
+     "src": [
+      "sxwwj-qianfoan"
+     ],
+     "kind": "史料记载",
+     "check": "另有崇祯二年（1629）说"
+    },
+    "feature": {
+     "text": "大雄宝殿面阔五间，单檐悬山顶，殿内满堂悬塑，大小泥塑千余尊，塑于明崇祯十七年（1644）。",
+     "src": [
+      "sxwwj-qianfoan"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "大殿梁架彩画沥粉贴金，近似龙凤和玺，是山西明清彩画中的高等级装饰，民间建筑里少见。",
+     "src": [
+      "sxwwj-qianfoan"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "daxiongbaodian",
+     "name": "大雄宝殿",
+     "form": {
+      "value": [
+       "悬山"
+      ],
+      "src": [
+       "sxwwj-qianfoan"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "彩塑"
+      ],
+      "src": [
+       "sxwwj-qianfoan"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "2-0030-3-015": {
+   "card": {
+    "what": {
+     "text": "浑源县恒山金龙口西崖峭壁上的寺院。据《恒山志》，始建于北魏晚期；现存建筑都是明清遗构。",
+     "src": [
+      "sxwwj-xuankongsi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "殿阁以插进崖壁的木梁为基，下面用几根碗口粗的木柱支承，四十余间殿阁之间用栈道和楼梯相连。",
+     "src": [
+      "sxwwj-xuankongsi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "最高的三教殿里同时供奉孔子、老子和释迦牟尼，儒、释、道在一座寺里。",
+     "src": [
+      "sxwwj-xuankongsi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "sanjiaodian",
+     "name": "三教殿",
+     "form": {
+      "value": [
+       "歇山",
+       "重檐"
+      ],
+      "src": [
+       "sxwwj-xuankongsi"
+      ],
+      "kind": "史料记载",
+      "check": "页面写作“三层檐歇山顶”"
+     }
+    }
+   ]
+  },
+  "3-0120-3-068": {
+   "card": {
+    "what": {
+     "text": "平遥县桥头村的寺院，原名中都寺。据寺内北宋碑记，创建于北齐武平二年（571）；现存建筑多是明代所建。",
+     "src": [
+      "sxwwj-shuanglinsi"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "十座殿宇里满布塑像，共 2052 尊，完好的 1500 余尊，大多是明代作品。",
+     "src": [
+      "sxwwj-shuanglinsi"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "被专家誉为“东方彩塑艺术的宝库”，在中国美术史上占有重要的一页。",
+     "src": [
+      "sxwwj-shuanglinsi"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "highlights": {
+    "value": [
+     "彩塑"
+    ],
+    "src": [
+     "sxwwj-shuanglinsi"
+    ],
+    "kind": "史料记载"
+   }
+  },
+  "6-0000-3-037": {
+   "card": {
+    "what": {
+     "text": "五台山台怀镇的一组佛寺：显通寺、碧山寺、塔院寺和菩萨顶，现存建筑多为明清所建。",
+     "src": [
+      "sxwwj-wutaishan"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "显通寺有明万历年间的砖砌无量殿和青铜铸造的铜殿；塔院寺白塔高 56.3 米，是五台山的标志。",
+     "src": [
+      "sxwwj-wutaishan"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "菩萨顶在清康熙年间改住喇嘛成为黄庙，康熙、乾隆朝台时多住在这里；大佛殿用黄、绿、蓝三彩琉璃瓦，是看建筑等级的好例子。",
+     "src": [
+      "sxwwj-wutaishan"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "pusading-wenshudian",
+     "name": "菩萨顶文殊殿",
+     "form": {
+      "value": [
+       "庑殿"
+      ],
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载",
+      "check": "页面写作“单檐四阿顶”，即庑殿"
+     }
+    },
+    {
+     "id": "pusading-dafodian",
+     "name": "菩萨顶大佛殿",
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "琉璃"
+      ],
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "tongdian",
+     "name": "显通寺铜殿",
+     "year": {
+      "value": 1606,
+      "label": "明万历三十四年",
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山",
+       "重檐"
+      ],
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "baita",
+     "name": "塔院寺白塔",
+     "year": {
+      "value": 1581,
+      "label": "明万历九年",
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "塔"
+      ],
+      "src": [
+       "sxwwj-wutaishan"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
+  },
+  "3-0130-3-078": {
+   "card": {
+    "what": {
+     "text": "运城解州镇的关帝庙，创建于隋，清康熙四十一年（1702）毁于火，十余年后修复；现存建筑都是清代所建。",
+     "src": [
+      "sxwwj-guandimiao"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "北部正庙仿宫殿布局，中轴线上端门、雉门、午门、御书楼、崇宁殿依次排开；主体建筑全用黄、绿、蓝三色琉璃。",
+     "src": [
+      "sxwwj-guandimiao"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "前后有廊庑百余间围护，既像庙堂又像庭院，省文物局说这在全国关帝庙中绝无仅有。",
+     "src": [
+      "sxwwj-guandimiao"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "chongningdian",
+     "name": "崇宁殿",
+     "year": {
+      "value": 1718,
+      "label": "清康熙五十七年",
+      "src": [
+       "sxwwj-guandimiao"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山",
+       "重檐"
+      ],
+      "src": [
+       "sxwwj-guandimiao"
+      ],
+      "kind": "史料记载"
+     },
+     "highlights": {
+      "value": [
+       "琉璃"
+      ],
+      "src": [
+       "sxwwj-guandimiao"
+      ],
+      "kind": "史料记载"
+     }
+    },
+    {
+     "id": "chunqiulou",
+     "name": "春秋楼",
+     "year": {
+      "value": 1870,
+      "label": "清同治九年重建",
+      "src": [
+       "sxwwj-guandimiao"
+      ],
+      "kind": "史料记载"
+     },
+     "form": {
+      "value": [
+       "歇山"
+      ],
+      "src": [
+       "sxwwj-guandimiao"
+      ],
+      "kind": "史料记载",
+      "check": "两层三檐"
+     }
+    }
+   ]
+  },
+  "3-0060-3-008": {
+   "card": {
+    "what": {
+     "text": "平遥县城的城墙，现存是明洪武三年（1370）在旧城垣上重筑扩建的。",
+     "src": [
+      "sxwwj-pingyao"
+     ],
+     "kind": "史料记载"
+    },
+    "feature": {
+     "text": "周长 6.4 公里，墙高 12 米，开六座城门，东西门外筑瓮城；南墙顺着中都河蜿蜒，俗称“乌龟城”。",
+     "src": [
+      "sxwwj-pingyao"
+     ],
+     "kind": "史料记载"
+    },
+    "value": {
+     "text": "平遥古城 1997 年列为世界文化遗产；城里现存四合院民居 3797 处，可以和寺庙殿堂对照着看民居屋顶。",
+     "src": [
+      "sxwwj-pingyao"
+     ],
+     "kind": "史料记载"
+    }
+   },
+   "buildings": [
+    {
+     "id": "chengqiang",
+     "name": "城墙",
+     "year": {
+      "value": 1370,
+      "label": "明洪武三年",
+      "src": [
+       "sxwwj-pingyao"
+      ],
+      "kind": "史料记载"
+     }
+    }
+   ]
   }
+ }
 }

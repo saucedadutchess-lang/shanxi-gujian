@@ -10,7 +10,7 @@ const curated = read('curated.json').units;
 const boundaries = read('boundaries.json');
 
 const KINDS = ['史料记载', '民间传说'];
-const FORMS = ['庑殿', '歇山', '悬山', '硬山', '攒尖', '塔'];
+const FORMS = ['庑殿', '歇山', '悬山', '硬山', '攒尖', '重檐', '塔'];
 const HIGHLIGHTS = ['彩塑', '壁画', '斗拱', '琉璃'];
 const TIERS = ['S', 'A', 'B'];
 const errors = [];
@@ -53,6 +53,10 @@ for (const [id, c] of Object.entries(curated)) {
       fact(`${w} 名片.${k}`, c.card[k]);
       if (!c.card[k]?.text) err(w, `名片.${k} 缺文字`);
     }
+  }
+  if (c.highlights) {
+    fact(`${w} 看点`, c.highlights);
+    for (const v of c.highlights.value ?? []) if (!HIGHLIGHTS.includes(v)) err(w, `看点 ${v} 不在 ${HIGHLIGHTS.join('、')} 里`);
   }
   for (const b of c.buildings ?? []) {
     const wb = `${w} 单体 ${b.name}`;

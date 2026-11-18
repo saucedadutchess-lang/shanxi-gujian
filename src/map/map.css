@@ -71,7 +71,8 @@
 .dot.r-s { fill: var(--r-s); }
 
 .dot.tier-S,
-.dot.tier-A {
+.dot.tier-A,
+.dot.has-card {
   stroke: var(--ink);
   stroke-width: calc(1.2px * var(--s, 1));
 }
@@ -336,6 +337,11 @@
   margin: 0;
   font-size: 14px;
   color: var(--muted);
+}
+
+.unit-hl {
+  margin: 10px 0 0;
+  font-size: 14px;
 }
 
 .buildings {
