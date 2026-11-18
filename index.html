@@ -39,8 +39,16 @@
           <div class="form-track">
             <input id="form" type="range" min="0" max="3" step="any" value="0" aria-label="在庑殿、歇山、悬山、硬山之间连续变化" />
           </div>
+          <div class="ridge-track" hidden>
+            <div class="row">
+              <span class="label">正脊长度</span>
+            </div>
+            <input id="ridge" type="range" min="0" max="1" step="any" value="0" aria-label="正脊长度：从庑殿缩到攒尖" />
+            <div class="ridge-ends"><span>庑殿</span><span>攒尖</span></div>
+            <p class="how">攒尖可以看成正脊缩没了的庑殿：平面收成正方形，正脊越来越短，最后四面坡汇成一个尖，顶上换成宝顶。拖回最左端就回到庑殿。</p>
+          </div>
           <p class="how">点一个基本形会清掉已加的变化，从头再来。</p>
-          <p class="how">前四种其实是连续的：拖动滑块，两端的山面从多高开始变成直立的三角形。从屋脊开始是庑殿，从檐口开始是悬山，中间是歇山；再把两端的出挑收回，就是硬山。攒尖是把平面收成正方形，四面坡汇成一个尖。</p>
+          <p class="how">前四种其实是连续的：拖动滑块，两端的山面从多高开始变成直立的三角形。从屋脊开始是庑殿，从檐口开始是悬山，中间是歇山；再把两端的出挑收回，就是硬山。攒尖从庑殿另走一条路，点它会出现第二根滑块。</p>
         </section>
 
         <section>

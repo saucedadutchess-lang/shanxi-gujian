@@ -541,3 +541,26 @@ input[type='range']:disabled {
     right: 16px;
   }
 }
+
+/* 攒尖：从庑殿缩短正脊的第二根滑块 */
+.ridge-track {
+  margin-top: 12px;
+  padding: 10px 12px 4px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.ridge-track[hidden] {
+  display: none;
+}
+
+.ridge-track input[type='range'] {
+  width: 100%;
+}
+
+.ridge-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+}

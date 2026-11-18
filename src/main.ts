@@ -19,13 +19,17 @@ if (import.meta.env.DEV) Object.assign(window, { __stage: stage });
 const formSlider = $<HTMLInputElement>('#form');
 const formTrack = $<HTMLElement>('.form-track');
 const eraSlider = $<HTMLInputElement>('#era');
+/** 攒尖：从庑殿把正脊缩没的第二根滑块，点了攒尖才出现 */
+const ridgeSlider = $<HTMLInputElement>('#ridge');
+const ridgeTrack = $<HTMLElement>('.ridge-track');
+let spireMode = false;
 
-/** 三个分支开关：目标值是 0 或 1，当前值平滑地追过去 */
-type Branch = 'dbl' | 'jp' | 'zj';
-const branchTarget: Record<Branch, number> = { dbl: 0, jp: 0, zj: 0 };
-const branchValue: Record<Branch, number> = { dbl: 0, jp: 0, zj: 0 };
+/** 两个开关：目标值是 0 或 1，当前值平滑地追过去 */
+type Branch = 'dbl' | 'jp';
+const branchTarget: Record<Branch, number> = { dbl: 0, jp: 0 };
+const branchValue: Record<Branch, number> = { dbl: 0, jp: 0 };
 /** 每个开关的动画用一个独立的对象做标识，新动画开始时停掉同一开关上的旧动画 */
-const branchOwner: Record<Branch, object> = { dbl: {}, jp: {}, zj: {} };
+const branchOwner: Record<Branch, object> = { dbl: {}, jp: {} };
 const branchButtons = [...document.querySelectorAll<HTMLButtonElement>('.switch')];
 const formButtons = [...document.querySelectorAll<HTMLButtonElement>('.forms button')];
 
@@ -56,6 +60,7 @@ function readState(): MorphState {
     g,
     era: Number(eraSlider.value) / 100,
     ...branchValue,
+    zj: Number(ridgeSlider.value),
   };
 }
 
@@ -76,20 +81,19 @@ function render() {
 
   // 有些组合在实物中不存在：卷棚不用于庑殿和攒尖，重檐不用于悬山和硬山。
   // 用不了的开关变灰并写明原因；已经打开的自动关掉。
-  const shape = effective({ ...state, ...branchTarget, dbl: 0, jp: 0 });
-  const isSpire = branchTarget.zj === 1;
+  const shape = effective({ ...state, zj: spireMode ? 1 : 0, dbl: 0, jp: 0 });
   const allowed: Record<Branch, boolean> = {
-    zj: true,
-    jp: !isSpire && shape.t >= 0.12,
-    dbl: isSpire || shape.t < 0.9,
+    jp: !spireMode && shape.t >= 0.12,
+    dbl: spireMode || shape.t < 0.9,
   };
   const current = base === '四角攒尖' ? '攒尖' : base;
   for (const button of formButtons) {
     button.setAttribute('aria-pressed', String(button.textContent === current));
   }
-  // 攒尖不在滑块的连续变化上：这时滑块的圆钮变灰；读屏软件读出当前形制
-  formTrack.classList.toggle('idle', isSpire);
+  // 攒尖时由第二根滑块管，第一根的圆钮变灰；读屏软件读出当前形制
+  formTrack.classList.toggle('idle', spireMode);
   formSlider.setAttribute('aria-valuetext', current);
+  ridgeSlider.setAttribute('aria-valuetext', current);
   for (const button of branchButtons) {
     const key = button.dataset.branch as Branch;
     if (!allowed[key] && branchTarget[key] === 1) setBranch(key, 0);
@@ -114,11 +118,35 @@ function requestRender() {
   });
 }
 
+/** 进入或退出攒尖：进入时第一根滑块回到庑殿、正脊缩没；退出时正脊长回来 */
+function setSpire(on: boolean) {
+  spireMode = on;
+  ridgeTrack.hidden = !on;
+  if (on) {
+    slideTo(formSlider, 0);
+    slideTo(ridgeSlider, 1);
+  } else if (Number(ridgeSlider.value) > 0) {
+    slideTo(ridgeSlider, 0);
+  }
+  requestRender();
+}
+
 // 拖动滑块时：停掉这个滑块上正在播的动画，免得动画和手抢；如果正在攒尖，先退出攒尖
 formSlider.addEventListener('input', () => {
   stopSlide(formSlider);
-  if (branchTarget.zj === 1) setBranch('zj', 0);
+  if (spireMode) setSpire(false);
   requestRender();
+});
+ridgeSlider.addEventListener('input', () => {
+  stopSlide(ridgeSlider);
+  requestRender();
+});
+// 正脊拖回最左端松手，就回到庑殿，收起第二根滑块
+ridgeSlider.addEventListener('change', () => {
+  if (Number(ridgeSlider.value) < 0.02) {
+    ridgeSlider.value = '0';
+    setSpire(false);
+  }
 });
 eraSlider.addEventListener('input', () => {
   stopSlide(eraSlider);
@@ -137,11 +165,11 @@ formSlider.addEventListener('keydown', (event) => {
   };
   if (!(event.key in next)) return;
   event.preventDefault();
-  if (branchTarget.zj === 1) setBranch('zj', 0);
+  if (spireMode) setSpire(false);
   slideTo(formSlider, Math.min(3, Math.max(0, next[event.key])));
 });
 // 按下滑块时也停：按住不动时还没有 input 事件
-for (const slider of [formSlider, eraSlider]) slider.addEventListener('pointerdown', () => stopSlide(slider));
+for (const slider of [formSlider, eraSlider, ridgeSlider]) slider.addEventListener('pointerdown', () => stopSlide(slider));
 
 function ease(k: number) {
   return k * k * (3 - 2 * k);
@@ -245,10 +273,10 @@ for (const button of formButtons) {
     }
     const form = button.dataset.form;
     if (form === 'zj') {
-      if (branchTarget.zj !== 1) setBranch('zj', 1);
+      setSpire(true);
       return;
     }
-    if (branchTarget.zj === 1) setBranch('zj', 0);
+    if (spireMode) setSpire(false);
     slideTo(formSlider, Number(form));
   });
 }

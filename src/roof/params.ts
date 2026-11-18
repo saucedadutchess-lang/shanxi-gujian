@@ -60,8 +60,8 @@ export interface RoofSpec {
 }
 
 export interface HallDims {
-  bays: number;
-  bayWidth: number;
+  /** 正面六根柱子的横坐标。攒尖时第二、第五根向内并到相邻的柱子上，五间渐渐变成三间 */
+  bayEdges: number[];
   sideBays: number;
   sideBayWidth: number;
   /** 殿身半面阔、半进深（到檐柱中线） */
@@ -163,9 +163,10 @@ export function computeDims(state: MorphState): HallDims {
   const sideBays = 3;
   const sideBayWidth = ref('sideBay');
   const Db = (sideBays * sideBayWidth) / 2;
-  const bays = zj < 0.5 ? 5 : 3;
-  const Wb = lerp((5 * ref('bay')) / 2, Db, zj);
-  const bayWidth = (Wb * 2) / bays;
+  const W5 = (5 * ref('bay')) / 2;
+  const Wb = lerp(W5, Db, zj);
+  const square = [-1, -1 / 3, -1 / 3, 1 / 3, 1 / 3, 1].map((k) => k * Db);
+  const bayEdges = square.map((x3, i) => lerp(-W5 + (i * 2 * W5) / 5, x3, zj));
   const platformH = ref('platformH');
 
   const colH = ref('colH');
@@ -230,11 +231,12 @@ export function computeDims(state: MorphState): HallDims {
   }
 
   // 攒尖：正脊缩成一点，换成宝顶
-  const ridgeScale = smoothstep(0.4, 1.6, xg) * (1 - jp);
+  // 鸱尾每只约一米半宽，正脊短到三米多就开始跟着缩小，免得两只挤成一团
+  const ridgeScale = smoothstep(0.4, 3.5, xg) * (1 - jp);
   const finialScale = zj * (1 - smoothstep(0.4, 1.6, xg));
 
   return {
-    bays, bayWidth, sideBays, sideBayWidth, Wb, Db, platformH, colH, colR,
+    bayEdges, sideBays, sideBayWidth, Wb, Db, platformH, colH, colR,
     bracketH, jumps, tier, jump, reach, eave, gableWall,
     roof, yEave, wallTopY, rise, gallery, lower, ridgeScale, finialScale,
     extraTiers: 4 - jumps,

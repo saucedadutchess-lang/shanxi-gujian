@@ -148,7 +148,7 @@ export class Hall {
     const out = d.platformOut;
     this.box((Wo + out) * 2 - 0.2, platformH - 0.16, (Do + out) * 2 - 0.2, 0, (platformH - 0.16) / 2, 0, this.mat.stone);
     this.box((Wo + out) * 2, 0.16, (Do + out) * 2, 0, platformH - 0.08, 0, this.mat.stoneDark);
-    const stairW = Math.min(d.bayWidth * 1.4, Wo * 2);
+    const stairW = Math.min((d.bayEdges[3] - d.bayEdges[2]) * 1.4, Wo * 2);
     for (let i = 0; i < 4; i++) {
       const h = (platformH * (4 - i)) / 5;
       this.box(stairW, h, 0.36, 0, h / 2, Do + out + (i + 0.5) * 0.36, this.mat.stoneDark);
@@ -168,11 +168,13 @@ export class Hall {
     const lateStyle = era > 0.55;
     const doorMat = lateStyle ? this.mat.lateDoor : this.mat.earlyDoor;
     const windowMat = lateStyle ? this.mat.lateWindow : this.mat.earlyWindow;
-    const doorSpan = d.bays >= 5 ? 1 : 0;
-    const openW = d.bayWidth - colR * 2 - 0.16;
-    for (let i = 0; i < d.bays; i++) {
-      const x = -Wb + (i + 0.5) * d.bayWidth;
-      const isDoor = Math.abs(i - (d.bays - 1) / 2) <= doorSpan;
+    // 五间时当中三间开门；攒尖收成三间时，两侧的门那两间缩没了
+    for (let i = 0; i < 5; i++) {
+      const x0 = d.bayEdges[i];
+      const x1 = d.bayEdges[i + 1];
+      const x = (x0 + x1) / 2;
+      const openW = x1 - x0 - colR * 2 - 0.16;
+      const isDoor = i >= 1 && i <= 3;
       const y0 = platformH + (isDoor ? 0.04 : 1.25);
       const h = platformH + colH - 0.5 - y0;
       if (openW <= 0.3) continue;
@@ -181,7 +183,8 @@ export class Hall {
     }
 
     // 殿身的柱子和斗拱
-    const xs = range(d.bays + 1, (i) => -Wb + i * d.bayWidth);
+    // 并到一起的柱子只留一根，免得两根柱子和两朵斗拱叠在一处
+    const xs = d.bayEdges.filter((x, i) => i === 0 || x - d.bayEdges[i - 1] >= 0.8);
     const zs = range(d.sideBays + 1, (j) => -Db + j * d.sideBayWidth);
     this.buildColumns(xs, zs, platformH, colH + rise, colR);
     this.buildBeams(d, xs[0], zs[0], topY, 1, !d.gableWall);
