@@ -83,7 +83,7 @@ for (const [id, c] of Object.entries(curated)) {
 
 // 实拍照片：授权必须允许转载，署名和原图链接不能缺，文件必须在
 const LICENSES = /^(Public domain|CC0|CC BY(-SA)? \d\.\d)$/;
-const PHOTO_KINDS = ['全景', '立面', '屋顶', '斗拱', '梁架', '彩塑', '壁画', '题记', '环境', '细部'];
+const PHOTO_KINDS = ['全景', '立面', '屋顶', '斗拱', '梁架', '彩塑', '壁画', '题记', '细部', '环境', '历史'];
 for (const [id, list] of Object.entries(photos)) {
   const w = `photos ${id}`;
   if (!ids.has(id)) err(w, '在 units.json 里找不到这个单位');
