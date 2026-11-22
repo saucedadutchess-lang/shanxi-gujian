@@ -100,10 +100,10 @@ export function latticeWindow() {
  * @param repeatX 横向每个贴图坐标单位里重复几次（方块的贴图坐标以米为单位）
  * @param rotate 把纹理转 90°，让木纹顺着构件的长向
  */
-export function photo(name: string, repeatX: number, repeatY: number, rotate = false, saturation = 1) {
+export function photo(name: string, repeatX: number, repeatY: number, rotate = false, saturation = 1, contrast = 1) {
   const load = (kind: 'diff' | 'nor' | 'arm') => {
     const url = `${import.meta.env.BASE_URL}textures/${name}_${kind}.jpg`;
-    const texture = kind === 'diff' && saturation < 1 ? desaturated(url, saturation) : new THREE.TextureLoader().load(url);
+    const texture = kind === 'diff' && (saturation < 1 || contrast < 1) ? desaturated(url, saturation, contrast) : new THREE.TextureLoader().load(url);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(repeatX, repeatY);
     if (rotate) texture.rotation = Math.PI / 2;
@@ -116,8 +116,8 @@ export function photo(name: string, repeatX: number, repeatY: number, rotate = f
   return { map: load('diff'), normalMap: load('nor'), roughnessMap: arm, aoMap: arm, roughness: 1 };
 }
 
-/** 读入一张照片，降低饱和度后作为纹理（比如把瓦上过多的黄色地衣压成灰色） */
-function desaturated(url: string, saturation: number) {
+/** 读入一张照片，降低饱和度（比如把瓦上过多的黄色地衣压成灰色）、对比度（比如让木纹里的深裂缝淡一些）后作为纹理 */
+function desaturated(url: string, saturation: number, contrast = 1) {
   // 照片读完、处理好之后再把画布交给纹理：纹理一旦按某个尺寸上传到显卡就不能再改尺寸
   const texture = new THREE.Texture();
   new THREE.ImageLoader().load(url, (image) => {
@@ -128,9 +128,13 @@ function desaturated(url: string, saturation: number) {
     ctx.drawImage(image, 0, 0);
     const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const px = data.data;
+    let mean = 0;
+    for (let i = 0; i < px.length; i += 4) mean += 0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2];
+    mean /= px.length / 4;
     for (let i = 0; i < px.length; i += 4) {
       const grey = 0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2];
-      for (let c = 0; c < 3; c++) px[i + c] = grey + (px[i + c] - grey) * saturation;
+      const g2 = mean + (grey - mean) * contrast;
+      for (let c = 0; c < 3; c++) px[i + c] = g2 + (px[i + c] - grey) * saturation * contrast;
     }
     ctx.putImageData(data, 0, 0);
     texture.image = canvas;

@@ -3,8 +3,8 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { buildRoof } from '../roof/geometry';
-import { chiweiFin, earlyFinial, fishGeometry, joinery, plastered, tileEndGeometry, worldUV } from '../roof/hall';
-import { barWindow, photo, plankDoor } from '../roof/textures';
+import { chiweiFin, earlyFinial, fishGeometry, plastered, tileEndGeometry, worldUV } from '../roof/hall';
+import { photo } from '../roof/textures';
 import {
   COLUMNS, Db, F, FEN, JI_TOP, LAYERS, MODEL, NIU_TOP, PING_IN, PING_TOP, RAFTER_R, REACH,
   ROOF, ROOF_Y, SIZES, Wb, col, tilt, type Column, type Layer,
@@ -25,19 +25,28 @@ function makeMaterials() {
     dou: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 0.9, 0.9), color: tint(0x67544a) }),
     rafter: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 0.35, 1.2), color: tint(0x705a48) }),
     board: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 1, 1.5), color: tint(0x7c4532) }),
+    // 前檐板壁：褪色的红褐木板，颜色比例取自照片 01、03（约 1 : 0.69 : 0.54）。每块板有自己的贴图偏移和深浅（顶点色）
+    // 木纹照片的深裂缝比南禅寺板壁多，对比度压到一半
+    plank: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 0.6, 0.3, false, 0.8, 0.5), color: new THREE.Color(0.95, 0.55, 0.4), vertexColors: true, normalScale: new THREE.Vector2(0.5, 0.5) }),
+    frame: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 0.7, 0.7, false, 0.8, 0.6), color: new THREE.Color(0.58, 0.34, 0.25), vertexColors: true, normalScale: new THREE.Vector2(0.6, 0.6) }),
+    // 殿内：没有环境光遮蔽，室内会和室外一样亮；地面和墙里皮直接用暗一些的颜色，近似照片里门洞内的幽暗
+    floorIn: new THREE.MeshStandardMaterial({ ...photo('brick_floor_003', 1.3, 1.3, false, 0.15, 0.6), color: new THREE.Color(0.42, 0.36, 0.29) }),
+    plasterIn: plastered(new THREE.Color(0.55, 0.5, 0.42), 'plastered_wall_04', 0.5, false),
+    // 直棂窗后面的白纸（照片上窗格是浅色的）
+    paper: new THREE.MeshStandardMaterial({ color: new THREE.Color(0.5, 0.47, 0.41), roughness: 1, side: THREE.DoubleSide }),
     tile: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: new THREE.Color(0.95, 0.94, 0.92), side: THREE.DoubleSide }),
     rib: new THREE.MeshStandardMaterial({ ...photo('grey_roof_tiles', 1, 1, false, 0.2), color: new THREE.Color(1.15, 1.13, 1.1), vertexColors: true }),
     ridge: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.55, 0.55), color: new THREE.Color(0x5c5a55).multiplyScalar(2.2) }),
     // 鸱尾：修缮时新做的灰陶（照片 02、05），不是琉璃
     chiwei: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 1.2, 1.2), color: new THREE.Color(0x77736c).multiplyScalar(1.6), side: THREE.DoubleSide }),
     under: new THREE.MeshStandardMaterial({ color: 0x4f4034, roughness: 0.95, side: THREE.DoubleSide }),
-    redWall: plastered(new THREE.Color(1.0, 0.55, 0.45), 'red_plaster_weathered', 0.4, false),
+    // 土红墙：照片 03 阳光下约 (140, 91, 74)，比纯红暗淡得多
+    redWall: plastered(new THREE.Color(0.5, 0.4, 0.4), 'red_plaster_weathered', 0.4, false),
     // 栱眼壁：照片上是发黄的白灰
     plaster: plastered(new THREE.Color(1.45, 1.3, 1.02), 'plastered_wall_04', 0.5, false),
-    brick: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 1.1, 1.1), color: new THREE.Color(1.35, 1.3, 1.22) }),
+    // 砖：照片上是灰黄色、磨砖对缝的细砖墙，灰缝很浅。贴图降饱和、放大到一皮约 6.5 厘米，法线减弱
+    brick: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.75, 0.75, false, 0.25, 0.45), color: new THREE.Color(1.25, 1.12, 0.92), normalScale: new THREE.Vector2(0.35, 0.35) }),
     stone: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 0.6, 0.6), color: new THREE.Color(0.95, 0.92, 0.86) }),
-    door: joinery(plankDoor()),
-    window: joinery(barWindow()),
   };
 }
 type Mats = ReturnType<typeof makeMaterials>;
@@ -552,6 +561,18 @@ export function buildNanchan(): NanchanModel {
       box(c, 'qiang', 'brick', wt, dado, d, x, dado / 2, (z0 + z1) / 2, [sx, 0]);
       box(c, 'qiang', 'redWall', wt, yTop - dado, d, x, (dado + yTop) / 2, (z0 + z1) / 2, [sx, 0]);
     }
+    // 殿内：墙里皮抹灰、地面铺砖，都用暗一些的材质（见 floorIn、plasterIn）
+    {
+      const iw = Wb - inset;
+      const back = capY(['2-E', '3-E', '4-E', '5-E']);
+      box(c, 'qiang', 'plasterIn', iw * 2, back, 0.012, 0, back / 2, -Db + inset + 0.008, [0, -1]);
+      for (const sx of [1, -1]) {
+        const h = capY(sx > 0 ? ['5-B', '5-C', '5-D', '5-E'] : ['2-B', '2-C', '2-D', '2-E']);
+        const d = 2 * Db - inset;
+        box(c, 'qiang', 'plasterIn', 0.012, h, d, sx * (iw - 0.008), h / 2, inset / 2, [sx, 0]);
+      }
+      box(c, 'taiming', 'floorIn', iw * 2, 0.012, 2 * Db - inset, 0, 0.006, inset / 2);
+    }
     // 栱眼壁：阑额以上、牛脊枋以下，柱缝上一道抹灰墙
     for (const s of sides) {
       const a = s.cols[0], b = s.cols[s.cols.length - 1];
@@ -563,12 +584,53 @@ export function buildNanchan(): NanchanModel {
       m4.setPosition((a.x + b.x) / 2, (y0 + y1) / 2, (a.z + b.z) / 2);
       c.add('gongyan', 'plaster', worldUV(g, len, y1 - y0, 0.1), m4, s.out);
     }
-    // 前檐：明间板门，两次间直棂窗，下为砖砌槛墙，其余是木板壁
+    // 前檐：木框里镶竖拼木板的板壁。明间开门洞，门扇向里开着（照片上一直开着）；两次间是直棂窗，下面砖砌槛墙。
+    // 分格的高度、宽度按照片 02 量（以柱高 3.89 米定比例）：顶上一排横板、一道中串，门洞和窗顶齐平。
     const front = ['2-B', '3-B', '4-B', '5-B'].map(col);
     const zf = Db + 0.02;
-    const bt = 0.09;
-    const [dw, dh] = SIZES.door;
+    const [dw, yHead] = SIZES.door;
     const [ww, wh, sill] = SIZES.window;
+    const rnd = (() => {
+      let a = 20260522;
+      return () => {
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    })();
+    /** 一块木料：贴图随机错开，深浅随机，免得每块板花纹一样 */
+    const timber = (part: string, mat: MatKey, w: number, h: number, d: number, x: number, y: number, z: number, out: [number, number], tone = 0.12) => {
+      if (w <= 0.005 || h <= 0.005) return;
+      const g = worldUV(new THREE.BoxGeometry(w, h, d), w, h, d);
+      const uv = g.getAttribute('uv');
+      const du = rnd() * 4, dv = rnd() * 4;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) + du, uv.getY(i) + dv);
+      const k = 1 - tone + rnd() * tone * 1.6;
+      const warm = 1 + (rnd() - 0.5) * 0.1;
+      const col = new Float32Array(g.getAttribute('position').count * 3);
+      for (let i = 0; i < col.length; i += 3) {
+        col[i] = k * warm;
+        col[i + 1] = k;
+        col[i + 2] = k / warm;
+      }
+      g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      c.add(part, mat, g, new THREE.Matrix4().makeTranslation(x, y, z), out);
+    };
+    const FD = 0.1; // 框料厚（前后）
+    /** 框料：横的或竖的一根，正面比板子凸出 */
+    const member = (part: string, x0: number, x1: number, y0: number, y1: number, out: [number, number]) =>
+      timber(part, 'frame', x1 - x0, y1 - y0, FD, (x0 + x1) / 2, (y0 + y1) / 2, zf, out, 0.08);
+    /** 框里的心板：竖拼，每块宽约 26 厘米，板缝留一点 */
+    const panel = (part: string, x0: number, x1: number, y0: number, y1: number, out: [number, number]) => {
+      const n = Math.max(1, Math.round((x1 - x0) / 0.26));
+      const pw = (x1 - x0) / n;
+      for (let i = 0; i < n; i++) timber(part, 'plank', pw - 0.006, y1 - y0, 0.035, x0 + pw * (i + 0.5), (y0 + y1) / 2, zf - 0.02 + (rnd() - 0.5) * 0.004, out, 0.16);
+    };
+    const RAIL = 0.15; // 上串
+    const TOPP = 0.35; // 顶上一排横板
+    const MID = 0.11; // 中串
+    const POST = 0.12; // 两头贴柱的立枋
     for (let i = 0; i < 3; i++) {
       const a = front[i], b = front[i + 1];
       const ra = (Array.isArray(a.dia) ? a.dia[0] : a.dia) / 2;
@@ -576,24 +638,71 @@ export function buildNanchan(): NanchanModel {
       const x0 = a.x + ra * 0.8, x1 = b.x - rb * 0.8;
       const yTop = Math.min(a.top, b.top) - laneH;
       const cx = (x0 + x1) / 2;
-      const W = x1 - x0;
       const out: [number, number] = [0, 1];
+      const part = i === 1 ? 'men' : 'chuang';
+      const yP1 = yTop - RAIL;
+      const yP0 = yP1 - TOPP;
+      const yM = yP0 - MID;
+      const base = i === 1 ? 0 : sill;
+      // 框：上串、中串、两头立枋；顶上横板分三格
+      member(part, x0, x1, yP1, yTop, out);
+      member(part, x0, x1, yM, yP0, out);
+      member(part, x0, x0 + POST, base, yP1, out);
+      member(part, x1 - POST, x1, base, yP1, out);
+      const iw = (x1 - x0 - 2 * POST) / 3;
+      for (let k = 0; k < 3; k++) {
+        const px0 = x0 + POST + iw * k;
+        if (k > 0) member(part, px0 - 0.05, px0 + 0.05, yP0, yP1, out);
+        panel(part, px0 + (k > 0 ? 0.05 : 0), px0 + iw - (k < 2 ? 0.05 : 0), yP0, yP1, out);
+      }
       if (i === 1) {
-        // 板门：门洞两侧和上方是木板壁
-        const side = (W - dw) / 2;
-        box(c, 'men', 'board', side, yTop, bt, x0 + side / 2, yTop / 2, zf, out);
-        box(c, 'men', 'board', side, yTop, bt, x1 - side / 2, yTop / 2, zf, out);
-        box(c, 'men', 'board', dw, yTop - dh, bt, cx, (dh + yTop) / 2, zf, out);
-        const leaf = new THREE.PlaneGeometry(dw, dh);
-        c.add('men', 'door', leaf, new THREE.Matrix4().makeTranslation(cx, dh / 2, zf - 0.03), out);
+        // 门洞：两边立颊，上面门额，下面门限和石门砧；门洞两侧的板壁中间一道腰串
+        const STILE = 0.15;
+        const dx0 = cx - dw / 2, dx1 = cx + dw / 2;
+        member(part, dx0 - STILE, dx0, 0, yM, out);
+        member(part, dx1, dx1 + STILE, 0, yM, out);
+        member(part, dx0, dx1, yHead, yM, out);
+        timber(part, 'frame', dw, 0.15, 0.2, cx, 0.075, zf - 0.04, out, 0.08);
+        for (const sx of [-1, 1]) box(c, part, 'stone', 0.3, 0.16, 0.42, cx + sx * (dw / 2 + 0.02), 0.08, zf - 0.06, out);
+        for (const [sx0, sx1] of [[x0 + POST, dx0 - STILE], [dx1 + STILE, x1 - POST]]) {
+          member(part, sx0, sx1, 0, 0.17, out);
+          member(part, sx0, sx1, 1.26, 1.45, out);
+          panel(part, sx0, sx1, 0.17, 1.26, out);
+          panel(part, sx0, sx1, 1.45, yM, out);
+        }
+        // 两扇板门向里开到九十度，靠在门洞两侧
+        const lw = dw / 2 - 0.02;
+        const lh = yHead - 0.17;
+        for (const sx of [-1, 1]) {
+          const hx = cx + sx * (dw / 2 - 0.05);
+          const n = 3;
+          for (let k = 0; k < n; k++) timber(part, 'plank', 0.07, lh, lw / n - 0.004, hx, 0.15 + lh / 2, zf - 0.08 - (lw / n) * (k + 0.5), out, 0.16);
+        }
       } else {
-        box(c, 'chuang', 'brick', W, sill, 0.5, cx, sill / 2, Db - 0.05, out);
-        const side = (W - ww) / 2;
-        const top = sill + wh;
-        box(c, 'chuang', 'board', side, yTop - sill, bt, x0 + side / 2, (sill + yTop) / 2, zf, out);
-        box(c, 'chuang', 'board', side, yTop - sill, bt, x1 - side / 2, (sill + yTop) / 2, zf, out);
-        box(c, 'chuang', 'board', ww, yTop - top, bt, cx, (top + yTop) / 2, zf, out);
-        c.add('chuang', 'window', new THREE.PlaneGeometry(ww, wh), new THREE.Matrix4().makeTranslation(cx, sill + wh / 2, zf), out);
+        // 槛墙（砖）、窗槛、窗两边的立颊和心板、窗上的横枋
+        box(c, part, 'brick', x1 - x0, sill, 0.5, cx, sill / 2, Db - 0.05, out);
+        member(part, x0 - 0.01, x1 + 0.01, sill, sill + 0.09, out);
+        const wy0 = sill + 0.09;
+        const wy1 = Math.min(wy0 + wh, yM - 0.12);
+        const STILE = 0.1;
+        const wx0 = cx - ww / 2, wx1 = cx + ww / 2;
+        member(part, wx0 - STILE, wx0, wy0, yM, out);
+        member(part, wx1, wx1 + STILE, wy0, yM, out);
+        member(part, x0 + POST, x1 - POST, wy1, yM, out);
+        member(part, wx0, wx1, wy0, wy0 + 0.06, out);
+        panel(part, x0 + POST, wx0 - STILE, wy0, wy1, out);
+        panel(part, wx1 + STILE, x1 - POST, wy0, wy1, out);
+        // 直棂：破子棂（方木斜劈，尖棱朝外），照片上 11 根；后面糊白纸
+        const nb = 11;
+        const bw = 0.07;
+        const gap = (ww - nb * bw) / (nb - 1);
+        for (let k = 0; k < nb; k++) {
+          const bx = wx0 + bw / 2 + k * (bw + gap);
+          const g = new THREE.CylinderGeometry(bw * 0.62, bw * 0.62, wy1 - wy0 - 0.06, 3, 1);
+          g.rotateY(Math.PI / 2);
+          c.add(part, 'frame', g, new THREE.Matrix4().makeTranslation(bx, (wy0 + 0.06 + wy1) / 2, zf), out);
+        }
+        box(c, part, 'paper', ww, wy1 - wy0, 0.01, cx, (wy0 + wy1) / 2, zf - 0.07, out);
       }
     }
   }
