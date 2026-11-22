@@ -642,7 +642,7 @@ export function buildNanchan(): NanchanModel {
     }
   }
 
-  // 椽：圆的檐椽从檐口里一直铺到屋脊；方的飞子加在檐头上；转角是 45° 的角梁
+  // 椽：圆的檐椽从檐口里一直铺到屋脊；南禅寺现状不施飞子（参数 flyRatio 为 0），有飞子时加在檐头上；转角是 45° 的角梁
   const rafterMatrices: THREE.Matrix4[] = [];
   const flyMatrices: THREE.Matrix4[] = [];
   {
@@ -681,6 +681,7 @@ export function buildNanchan(): NanchanModel {
       for (const sz of [1, -1]) {
         const ru = (u: number) => s.front(x, u, sz, -tau - r);
         if (top > uf + 0.01) chain(ru, uf, top * 0.995, 8, rafterMatrices, r, r, X);
+        if (fly <= 0) continue;
         const fu = (u: number) => s.front(x, u, sz, -tau - fhh / 2);
         chain(fu, 0.004, Math.min(top, uf * 2.2), 3, flyMatrices, fw, fhh, X);
       }
@@ -693,6 +694,7 @@ export function buildNanchan(): NanchanModel {
       for (const sx of [1, -1]) {
         const ru = (u: number) => s.end(u, z, sx, -tau - r);
         if (top > uf + 0.01) chain(ru, uf, top * 0.995, 5, rafterMatrices, r, r, Z);
+        if (fly <= 0) continue;
         const fu = (u: number) => s.end(u, z, sx, -tau - fhh / 2);
         chain(fu, 0.004, Math.min(top, uf * 2.2), 3, flyMatrices, fw, fhh, Z);
       }
@@ -736,7 +738,7 @@ export function buildNanchan(): NanchanModel {
     meshes.push(mesh);
   };
   instanced('chuan', new THREE.CylinderGeometry(1, 1, 1, 8).rotateX(Math.PI / 2), mats.rafter, rafterMatrices);
-  instanced('feizi', new THREE.BoxGeometry(1, 1, 1), mats.rafter, flyMatrices);
+  if (flyMatrices.length) instanced('feizi', new THREE.BoxGeometry(1, 1, 1), mats.rafter, flyMatrices);
 
   // 柱头不在一个平面上：屋面一整块按拟合的斜面倾斜（槫、梁架在上面已经按斜面摆过）
   for (const mesh of layers['屋面'].children as THREE.Mesh[]) {
