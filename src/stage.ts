@@ -67,12 +67,29 @@ export function createStage(canvas: HTMLCanvasElement) {
     camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', resize);
+  // 容器本身变大变小（比如地图页拖动分隔线）时也要跟着改
+  if (canvas.parentElement) new ResizeObserver(resize).observe(canvas.parentElement);
   resize();
 
-  renderer.setAnimationLoop(() => {
+  /** 每帧调用的额外动作（比如相机飞行动画） */
+  const beforeRender: (() => void)[] = [];
+  const loop = () => {
+    for (const f of beforeRender) f();
     controls.update();
     renderer.render(scene, camera);
-  });
+  };
+  renderer.setAnimationLoop(loop);
 
-  return { scene, camera, renderer, controls };
+  return {
+    scene,
+    camera,
+    renderer,
+    controls,
+    beforeRender,
+    /** 看不见的时候停下渲染，省电 */
+    setRunning(on: boolean) {
+      renderer.setAnimationLoop(on ? loop : null);
+      if (on) resize();
+    },
+  };
 }

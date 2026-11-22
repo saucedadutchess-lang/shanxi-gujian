@@ -4,7 +4,8 @@ import { ERA_GROUPS, type EraGroup } from './era';
 import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
-import { renderThumb, thumbFor } from './thumbs';
+import { renderThumb, thumbFor, type Thumb } from './thumbs';
+import type { Viewer } from './viewer3d';
 import { RANK_LABEL, REGION_COLOR, rankOf, shortName, type MapView, type PointState } from './view';
 import {
   BATCH_DATES,
@@ -289,6 +290,7 @@ function select(id: string | null) {
   labelsVersion = -1;
   if (!id) {
     card.hidden = true;
+    viewer?.close();
     return;
   }
   const u = byId.get(id)!;
@@ -350,6 +352,12 @@ function select(id: string | null) {
     <p class="fact-src">名录信息出处：${factMeta(r)}</p>`;
   card.hidden = false;
   fillThumbs(card);
+  const t3 = thumbFor(u);
+  for (const el of card.querySelectorAll<HTMLElement>('[data-open3d]')) el.addEventListener('click', () => open3d(u, t3!));
+  if (viewer?.isOpen()) {
+    if (t3) open3d(u, t3);
+    else viewer.close();
+  }
   card.querySelector('.close')!.addEventListener('click', () => select(null));
   const widen = card.querySelector<HTMLButtonElement>('.widen')!;
   widen.addEventListener('click', () => {
@@ -381,11 +389,27 @@ createTerrainView(wrap)
     $<HTMLElement>('#map-hint').textContent = '立体地形没有加载成功，现在是平面示意图';
   });
 
+// ---------- 示意 3D ----------
+let viewer: Viewer | null = null;
+let viewerLoading: Promise<Viewer> | null = null;
+async function open3d(u: Unit, t: Thumb) {
+  viewerLoading ??= import('./viewer3d').then((m) => (viewer = m.createViewer(wrap, () => wrap.classList.remove('viewing3d'))));
+  const v = await viewerLoading;
+  hover(null, 0, 0);
+  wrap.classList.add('viewing3d');
+  v.open(u.name, t);
+}
+
 // ---------- 示意小图 ----------
 function thumbBlock(u: Unit, cls: string) {
   const t = thumbFor(u);
   if (!t) return '';
-  return `<figure class="${cls}"><img alt="${esc(t.caption)}（示意）" data-thumb="${esc(u.id)}" /><figcaption><span class="tag">示意</span>${esc(t.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的照片或模型</figcaption></figure>`;
+  const card = cls === 'card-thumb';
+  return `<figure class="${cls}">${card ? '<button type="button" class="thumb-open" data-open3d title="打开示意 3D，可以任意转、放大">' : ''}<img alt="${esc(t.caption)}（示意）" data-thumb="${esc(u.id)}" />${
+    card ? '<span class="open3d-hint">⟲ 转着看</span></button>' : ''
+  }<figcaption><span class="tag">示意</span>${esc(t.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的照片或模型${
+    card ? '　<button type="button" class="link-btn" data-open3d>打开示意 3D</button>' : ''
+  }</figcaption></figure>`;
 }
 function fillThumbs(root: HTMLElement) {
   for (const img of root.querySelectorAll<HTMLImageElement>('img[data-thumb]')) {
