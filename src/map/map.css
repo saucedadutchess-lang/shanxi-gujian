@@ -71,14 +71,17 @@
 .dot.r-s { fill: var(--r-s); }
 
 .dot.rank-A {
-  stroke: var(--ink);
-  stroke-width: calc(1.2px * var(--s, 1));
+  stroke: #fffaf0;
+  stroke-width: calc(1.6px * var(--s, 1));
+  filter: drop-shadow(0 0 0.8px #3a312a);
 }
 
 .dot.rank-S,
 .dot.rank-Ss {
-  stroke: var(--accent);
+  fill: #b8402c;
+  stroke: #e2b85a;
   stroke-width: calc(2px * var(--s, 1));
+  filter: drop-shadow(0 0 0.8px #5a2a1c);
 }
 
 .dot.unlit {
@@ -426,13 +429,19 @@
 .pt.big {
   width: 13px;
   height: 13px;
-  box-shadow: 0 0 0 2px var(--accent);
+  background: #b8402c;
+  box-shadow:
+    0 0 0 2px #e2b85a,
+    0 0 0 3px #5a2a1c;
 }
 
 .pt.mid {
   width: 10px;
   height: 10px;
-  box-shadow: 0 0 0 1.5px var(--ink);
+  margin: 0 1.5px;
+  box-shadow:
+    0 0 0 1.5px #fffaf0,
+    0 0 0 2.5px #3a312a;
 }
 
 .lg-regions .pt.mid {

@@ -30,6 +30,11 @@ const INK = new THREE.Color('#2b2620');
 const ACCENT = new THREE.Color('#9c3b2e');
 const UNLIT = new THREE.Color('#bdb2a0');
 const WHITE = new THREE.Color('#fffaf0');
+/** S 级：朱红点、金边，像一方小印 */
+const S_HEAD = new THREE.Color('#b8402c');
+const S_RING = new THREE.Color('#e2b85a');
+const S_LINE = new THREE.Color('#5a2a1c');
+const A_LINE = new THREE.Color('#3a312a');
 
 const smooth = (lo: number, hi: number, v: number) => {
   const t = Math.min(1, Math.max(0, (v - lo) / (hi - lo)));
@@ -331,7 +336,9 @@ export async function createTerrainView(wrap: HTMLElement): Promise<MapView> {
 
   const sphere = new THREE.SphereGeometry(1, 20, 14);
   const heads = new THREE.InstancedMesh(sphere, new THREE.MeshLambertMaterial(), n);
+  // 点由里到外三层：点心、一圈浅色边（S 级金色，其余白色）、S/A 级再加一道深色细线
   const rims = new THREE.InstancedMesh(sphere, new THREE.MeshBasicMaterial({ side: THREE.BackSide }), n);
+  const lines = new THREE.InstancedMesh(sphere, new THREE.MeshBasicMaterial({ side: THREE.BackSide }), n);
   const stemGeo = new THREE.CylinderGeometry(1, 1, 1, 6);
   stemGeo.translate(0, 0.5, 0);
   const stems = new THREE.InstancedMesh(stemGeo, new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: 0.6 }), n);
@@ -339,7 +346,7 @@ export async function createTerrainView(wrap: HTMLElement): Promise<MapView> {
   const shadowGeo = new THREE.CircleGeometry(1, 20);
   shadowGeo.rotateX(-Math.PI / 2);
   const shadows = new THREE.InstancedMesh(shadowGeo, new THREE.MeshBasicMaterial({ color: 0x3a2a1a, transparent: true, opacity: 0.22, depthWrite: false }), n);
-  for (const m of [heads, rims, stems, shadows]) {
+  for (const m of [heads, rims, lines, stems, shadows]) {
     m.frustumCulled = false;
     m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     scene.add(m);
@@ -350,6 +357,7 @@ export async function createTerrainView(wrap: HTMLElement): Promise<MapView> {
   for (let i = 0; i < n; i++) {
     heads.setColorAt(i, regionColor[i]);
     rims.setColorAt(i, INK);
+    lines.setColorAt(i, INK);
   }
 
   // ---------- 相机 ----------
@@ -485,28 +493,36 @@ export async function createTerrainView(wrap: HTMLElement): Promise<MapView> {
       mat.compose(headPos[i], q, scl.setScalar(rad));
       heads.setMatrixAt(i, mat);
       const rk = rank[i];
-      const rimScale = i === selected ? 1.42 : rk === 'S' || rk === 'S?' ? 1.32 : rk === 'A' ? 1.26 : 1.2;
+      const top = rk === 'S' || rk === 'S?';
+      const rimScale = top ? 1.3 : rk === 'A' ? 1.28 : 1.2;
       mat.compose(headPos[i], q, scl.setScalar(rad * rimScale));
       rims.setMatrixAt(i, mat);
+      // 选中的点外面加一道朱红粗线
+      const lineScale = i === selected ? rimScale + 0.32 : rk === 'B' ? 0 : rimScale + 0.12;
+      mat.compose(headPos[i], q, scl.setScalar(rad * lineScale));
+      lines.setMatrixAt(i, mat);
       mat.compose(base[i], q, scl.set(0.9 * wpp * vis[i], stem, 0.9 * wpp * vis[i]));
       stems.setMatrixAt(i, mat);
       const sh = (rk === 'B' ? 2.4 : 3.6) * wpp * vis[i] * r;
       mat.compose(v.copy(base[i]).setY(base[i].y + 0.05), q, scl.set(sh, 1, sh));
       shadows.setMatrixAt(i, mat);
 
-      heads.setColorAt(i, tmpC.copy(UNLIT).lerp(regionColor[i], r));
-      rims.setColorAt(i, i === selected || rk === 'S' || rk === 'S?' ? ACCENT : rk === 'A' ? INK : WHITE);
+      heads.setColorAt(i, tmpC.copy(UNLIT).lerp(top ? S_HEAD : regionColor[i], r));
+      rims.setColorAt(i, top ? tmpC.copy(WHITE).lerp(S_RING, r) : WHITE);
+      lines.setColorAt(i, i === selected ? ACCENT : top ? S_LINE : A_LINE);
 
       v.copy(headPos[i]).project(camera);
       const s = screen[i];
       s.ok = vis[i] > 0.5 && v.z < 1 && v.z > -1;
       s.x = (v.x * 0.5 + 0.5) * w;
       s.y = (-v.y * 0.5 + 0.5) * h;
-      s.r = radius[i] * big * (0.55 + 0.45 * r);
+      // 算上外面两圈边，标签从边外开始写
+      s.r = radius[i] * big * (0.55 + 0.45 * r) * (rank[i] === 'B' ? 1.2 : 1.4);
     }
-    for (const m of [heads, rims, stems, shadows]) m.instanceMatrix.needsUpdate = true;
+    for (const m of [heads, rims, lines, stems, shadows]) m.instanceMatrix.needsUpdate = true;
     heads.instanceColor!.needsUpdate = true;
     rims.instanceColor!.needsUpdate = true;
+    lines.instanceColor!.needsUpdate = true;
     renderer.render(scene, camera);
   }
   renderer.setAnimationLoop(frame);

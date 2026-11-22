@@ -87,10 +87,17 @@ for (const b of document.querySelectorAll<HTMLButtonElement>('[data-zoom]')) {
 }
 
 // ---------- 筛选 ----------
+const RANK_GROUPS = ['S 级', 'A 级', '其余'] as const;
+type RankGroup = (typeof RANK_GROUPS)[number];
+const rankGroup = (u: Unit): RankGroup => {
+  const r = rankOf(u);
+  return r === 'S' || r === 'S?' ? 'S 级' : r === 'A' ? 'A 级' : '其余';
+};
 const CATEGORIES = [...new Set(units.map((u) => u.record.category))];
 const state = {
   year: 1912,
   region: new Set<Region>(),
+  rank: new Set<RankGroup>(),
   era: new Set<EraGroup>(),
   cat: new Set<string>(),
   form: new Set<string>(),
@@ -121,6 +128,7 @@ chips('#f-region', REGIONS, state.region, (v) => units.filter((u) => u.region ==
   if (picked.length) view.fitTo(picked);
   else view.reset();
 });
+chips('#f-rank', RANK_GROUPS, state.rank, (v) => units.filter((u) => rankGroup(u) === v).length);
 chips('#f-era', ERA_GROUPS, state.era, (v) => units.filter((u) => u.era.group === v).length);
 chips('#f-cat', CATEGORIES, state.cat, (v) => units.filter((u) => u.record.category === v).length);
 chips('#f-form', FORMS, state.form, (v) => units.filter((u) => u.forms.has(v)).length);
@@ -129,6 +137,7 @@ chips('#f-hl', HIGHLIGHTS, state.hl, (v) => units.filter((u) => u.highlights.has
 const anyOf = (wanted: Set<string>, have: Set<string>) => [...wanted].some((v) => have.has(v));
 function matches(u: Unit) {
   if (state.region.size && !state.region.has(u.region)) return false;
+  if (state.rank.size && !state.rank.has(rankGroup(u))) return false;
   if (state.era.size && !state.era.has(u.era.group)) return false;
   if (state.cat.size && !state.cat.has(u.record.category)) return false;
   if (state.form.size && !anyOf(state.form, u.forms)) return false;

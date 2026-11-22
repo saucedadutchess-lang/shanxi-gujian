@@ -59,5 +59,5 @@ export function rankOf(u: Unit): Rank {
 export const RANK_LABEL: Record<Rank, string> = { S: 'S 级', 'S?': '建议 S 级', A: '建议 A 级', B: '' };
 
 /** 点的大小（屏幕像素，半径） */
-const RADIUS: Record<Rank, number> = { S: 7.5, 'S?': 7.5, A: 5, B: 3.2 };
+const RADIUS: Record<Rank, number> = { S: 7.5, 'S?': 7.5, A: 5.6, B: 3.2 };
 export const pointRadius = (u: Unit) => RADIUS[rankOf(u)];
