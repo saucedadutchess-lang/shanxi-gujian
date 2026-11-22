@@ -739,3 +739,87 @@
     height: 60vh;
   }
 }
+
+/* ---------- 分隔线：拖动调整地图和详情栏的宽度 ---------- */
+.map-main {
+  grid-template-columns: minmax(0, 1fr) 10px var(--panel-w, 380px);
+}
+
+.map-main .panel {
+  border-left: 0;
+}
+
+.splitter {
+  position: relative;
+  z-index: 3;
+  cursor: col-resize;
+  touch-action: none;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  outline: none;
+}
+
+/* 中间一条短握把，悬停和拖动时变成主色 */
+.splitter::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 4px;
+  height: 44px;
+  margin-top: -22px;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background 0.15s;
+}
+
+.splitter:hover::after,
+.splitter:focus-visible::after,
+.map-main.resizing .splitter::after {
+  background: var(--accent);
+}
+
+.splitter:focus-visible {
+  box-shadow: inset 0 0 0 2px rgba(156, 59, 46, 0.35);
+}
+
+/* 拖动时不选中文字，地图也不抢鼠标 */
+.map-main.resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+.map-main.resizing .map-wrap,
+.map-main.resizing .panel {
+  pointer-events: none;
+}
+
+.card .widen {
+  position: absolute;
+  top: 9px;
+  right: 40px;
+  padding: 2px 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.card .widen:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+@media (max-width: 760px) {
+  .map-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .splitter,
+  .card .widen {
+    display: none;
+  }
+}

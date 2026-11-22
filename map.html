@@ -15,7 +15,7 @@
         <a href="./index.html">屋顶变形器</a>
       </nav>
     </header>
-    <main>
+    <main class="map-main" id="map-main">
       <div class="map-wrap" id="map-wrap">
         <svg id="map" role="img" aria-label="山西全国重点文物保护单位分布示意图"></svg>
         <div class="labels" id="labels" aria-hidden="true"></div>
@@ -55,7 +55,9 @@
         </p>
       </div>
 
-      <aside class="panel map-panel">
+      <div class="splitter" id="splitter" role="separator" aria-orientation="vertical" aria-controls="panel" tabindex="0" aria-label="地图和详情栏的分隔线，拖动或按左右键调整宽度，双击恢复" title="拖动调整宽度 · 双击恢复"></div>
+
+      <aside class="panel map-panel" id="panel">
         <section id="card" class="card" hidden aria-live="polite"></section>
 
         <div id="filters">

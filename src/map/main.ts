@@ -1,6 +1,7 @@
 import '../style.css';
 import './map.css';
 import { ERA_GROUPS, type EraGroup } from './era';
+import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
 import { renderThumb, thumbFor } from './thumbs';
@@ -85,6 +86,18 @@ for (const b of document.querySelectorAll<HTMLButtonElement>('[data-zoom]')) {
     }
   });
 }
+
+// ---------- 分隔线 ----------
+const splitter = setupSplitter($<HTMLElement>('#map-main'), $<HTMLElement>('#splitter'));
+// 宽度变了，平面图的点在屏幕上的位置跟着变，标签要重排
+new ResizeObserver(() => (labelsVersion = -1)).observe(wrap);
+// 拖过分隔线以后，名片上的“放大”按钮回到“放大”
+splitter.onChange(() => {
+  const b = document.querySelector<HTMLButtonElement>('#card .widen');
+  if (!b) return;
+  b.setAttribute('aria-pressed', String(splitter.isWide()));
+  b.textContent = splitter.isWide() ? '还原' : '放大';
+});
 
 // ---------- 筛选 ----------
 const RANK_GROUPS = ['S 级', 'A 级', '其余'] as const;
@@ -317,6 +330,7 @@ function select(id: string | null) {
     : '暂无坐标，图上没有标出';
   card.innerHTML = `
     <button type="button" class="close" aria-label="关闭">×</button>
+    <button type="button" class="widen" aria-pressed="${splitter.isWide()}" title="把详情栏放大到约半屏，再点一次还原">${splitter.isWide() ? '还原' : '放大'}</button>
     <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${rankOf(u) !== 'B' ? ` · <span class="badge${c?.tier ? '' : ' soft'}">${esc(RANK_LABEL[rankOf(u)])}</span>` : ''}</p>
     <h2>${esc(u.name)}</h2>
     ${thumbBlock(u, 'card-thumb')}
@@ -337,6 +351,10 @@ function select(id: string | null) {
   card.hidden = false;
   fillThumbs(card);
   card.querySelector('.close')!.addEventListener('click', () => select(null));
+  const widen = card.querySelector<HTMLButtonElement>('.widen')!;
+  widen.addEventListener('click', () => {
+    splitter.toggleWide();
+  });
   card.scrollIntoView({ block: 'nearest' });
 }
 
