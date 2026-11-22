@@ -1,6 +1,6 @@
 // 构建前检查 data/：每条事实必须带出处（src，指向 data/sources.json）和类型（kind）。
 // 有一条不合格就退出码 1，npm run build 随之失败。
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { REGIONS } from './regions.mjs';
 
 const read = (p) => JSON.parse(readFileSync(new URL(`../data/${p}`, import.meta.url), 'utf8'));
@@ -96,6 +96,37 @@ for (const [id, list] of Object.entries(photos)) {
     if (!PHOTO_KINDS.includes(p.kind)) err(wp, `类别 ${p.kind} 不在 ${PHOTO_KINDS.join('、')} 里`);
     for (const f of [p.file, p.file?.replace(/\.jpg$/, '-s.jpg')])
       if (!f || !existsSync(new URL(`../public/photos/${f}`, import.meta.url))) err(wp, `文件 public/photos/${f} 不在`);
+  }
+}
+
+// 按测绘尺寸建的模型（data/models/）：每个参数、每类构件都要写依据和出处，模型要有精度标注
+const PRECISIONS = ['测绘级', '依据图纸复原', '示意'];
+const BASES = ['实测', '材分推算', '修缮做法', '推测'];
+const LAYERS = ['台基', '柱', '墙门窗', '额枋', '铺作', '梁架', '槫', '椽', '屋面'];
+const UNITS = ['mm', '分', '比例'];
+const modelsDir = new URL('../data/models/', import.meta.url);
+for (const f of existsSync(modelsDir) ? readdirSync(modelsDir).filter((n) => n.endsWith('.json')) : []) {
+  const m = read(`models/${f}`);
+  const w = `models/${f}`;
+  if (!PRECISIONS.includes(m.precision)) err(w, `精度标注 precision 必须是 ${PRECISIONS.join(' / ')}`);
+  if (!ids.has(m.unitId)) err(w, `unitId ${m.unitId} 在 units.json 里找不到`);
+  const basis = (where, x) => {
+    fact(where, x, { needKind: false });
+    if (!BASES.includes(x?.basis)) err(where, `依据 basis 必须是 ${BASES.join(' / ')}，现在是 ${x?.basis}`);
+  };
+  for (const [k, p] of Object.entries(m.params ?? {})) {
+    const wp = `${w} 参数 ${k}`;
+    basis(wp, p);
+    if (p.value === undefined) err(wp, '缺 value');
+    if (!UNITS.includes(p.unit)) err(wp, `单位 unit 必须是 ${UNITS.join(' / ')}`);
+    if (!p.label) err(wp, '缺 label');
+  }
+  for (const [k, part] of Object.entries(m.parts ?? {})) {
+    const wp = `${w} 构件 ${k}`;
+    basis(wp, part);
+    if (!part.name || !part.desc) err(wp, '缺名称或说明');
+    if (!LAYERS.includes(part.layer)) err(wp, `层 ${part.layer} 不在 ${LAYERS.join('、')} 里`);
+    for (const key of part.params ?? []) if (!m.params?.[key]) err(wp, `参数 ${key} 不在参数表里`);
   }
 }
 

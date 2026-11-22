@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         index: 'index.html',
         map: 'map.html',
+        nanchan: 'nanchan.html',
       },
     },
   },

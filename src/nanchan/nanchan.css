@@ -1,0 +1,197 @@
+.nc-views {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  gap: 4px;
+}
+
+.nc-views button,
+.nc-seg button,
+.nc-clear {
+  padding: 5px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: rgba(251, 248, 242, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nc-views button:hover,
+.nc-seg button:hover,
+.nc-clear:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nc-layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+.nc-layers label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.nc-seg {
+  display: flex;
+  gap: 4px;
+}
+
+.nc-seg button[aria-checked='true'] {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.nc-legend {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.nc-legend li {
+  display: grid;
+  grid-template-columns: 14px auto;
+  column-gap: 8px;
+  margin-bottom: 4px;
+}
+
+.nc-legend i {
+  grid-row: span 2;
+  width: 12px;
+  height: 12px;
+  margin-top: 5px;
+  border-radius: 2px;
+}
+
+.nc-legend b {
+  color: var(--ink);
+  font-weight: normal;
+}
+
+body:not(.by-basis) .nc-legend {
+  opacity: 0.6;
+}
+
+.nc-chip {
+  display: inline-block;
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 18px;
+  color: #fff;
+  background: var(--c);
+  border-radius: 3px;
+  vertical-align: 2px;
+}
+
+.nc-layer {
+  margin: 2px 0 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.nc-col {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nc-params {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nc-params li {
+  padding: 8px 0;
+  border-top: 1px dashed var(--line);
+}
+
+.nc-p {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.nc-v {
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+.nc-s,
+.nc-n {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.nc-empty {
+  color: var(--muted);
+}
+
+.nc-clear {
+  margin-top: 12px;
+}
+
+.sources code {
+  font-size: 12px;
+}
+
+.nc-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.nc-credit {
+  position: absolute;
+  right: 12px;
+  bottom: 8px;
+  margin: 0;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  background: rgba(251, 248, 242, 0.85);
+  border-radius: 4px;
+}
+
+.nc-credit a {
+  color: inherit;
+}
+
+.nc-small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.nc-photos {
+  margin-top: 10px;
+}
+
+.nc-photos button[aria-pressed='true'] {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.nc-photo-ctl {
+  margin-top: 12px;
+}

@@ -1,0 +1,1164 @@
+{
+  "_说明": "南禅寺大殿模型的参数表。程序（src/nanchan/）按这里的数字算出每个构件。每个数字都写明依据（basis）和出处（src，登记在 data/sources.json）。依据分四种：实测＝论文表格里的点云或卡尺实测值，是今天的现状；材分推算＝论文作者由实测均值推出的整数“分°”；修缮做法＝1974–1975 年修缮时定下、今天看到的做法；推测＝本项目按《营造法式》比例或照片估计。unit 是 mm 或 分（1 分°＝fen 毫米）。坐标：柱网编号沿用论文，2–5 自西向东，B 是前檐（南），E 是后檐（北），C、D 在两山。发现数字有错，改这里重新生成。",
+  "building": "南禅寺大殿",
+  "unitId": "1-0079-3-032",
+  "precision": "依据图纸复原",
+  "precisionNote": "主要尺寸（柱网、柱高、柱径、斗拱、举架）取自已发表的三维扫描实测数据；阑额、梁栿、椽、门窗等论文没有给出的尺寸按《营造法式》比例或照片推测。默认展示现状，柱高的高低不齐照实测摆。",
+  "params": {
+    "fen": {
+      "value": 16.5,
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.3",
+      "label": "1 分°",
+      "note": "单材材厚实测均值 163.41 毫米，取 10 分°；作者比较几种可能后定为 16.5 毫米"
+    },
+    "chi": {
+      "value": 300,
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.3",
+      "label": "营造尺",
+      "note": "明间 16.5 尺、次间和进深各 11 尺、平柱高 13 尺都合整尺半尺"
+    },
+    "bayB": {
+      "value": [
+        3304.7,
+        4964.8,
+        3322.7
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 5",
+      "label": "前檐（B 列）西次间、明间、东次间面阔"
+    },
+    "bayE": {
+      "value": [
+        3311.2,
+        4983.1,
+        3313.5
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 5",
+      "label": "后檐（E 列）西次间、明间、东次间面阔"
+    },
+    "depthW": {
+      "value": [
+        3265.1,
+        3315.7,
+        3294.4
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 4",
+      "label": "西山（2 缝）三间进深，自前向后"
+    },
+    "depthE": {
+      "value": [
+        3283,
+        3314.8,
+        3289.5
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 4",
+      "label": "东山（5 缝）三间进深，自前向后"
+    },
+    "depthMid": {
+      "value": [
+        9941.6,
+        9927.4
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 4",
+      "label": "明间西缝、东缝通进深"
+    },
+    "colTop": {
+      "value": {
+        "2-B": 3927,
+        "3-B": 3897.7,
+        "4-B": 3885,
+        "5-B": 3927.3,
+        "2-C": 3911.2,
+        "5-C": 3918.7,
+        "2-D": 3911.9,
+        "5-D": 3967.2,
+        "2-E": 3937.9,
+        "3-E": 3911.4,
+        "4-E": 3946,
+        "5-E": 4009.5
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 11",
+      "label": "柱头标高",
+      "note": "以前檐明间东柱（4-B）柱础顶面为 0。北侧较高，东北角最高；作者以前檐平柱定平柱高 13 尺（3900 毫米），角柱生起约 2 分°"
+    },
+    "colDia": {
+      "value": {
+        "2-B": 379,
+        "3-B": 373.9,
+        "4-B": 383.4,
+        "5-B": 400.8,
+        "2-C": [
+          266.5,
+          394.8
+        ],
+        "5-C": 314.1,
+        "2-D": [
+          251.2,
+          330.5
+        ],
+        "5-D": 361.6,
+        "2-E": [
+          324.2,
+          282.3
+        ],
+        "3-E": 464.1,
+        "4-E": 410.7,
+        "5-E": 369.8
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 12",
+      "label": "柱径（方柱为两边长）",
+      "note": "西山 2-C、2-D、2-E 是方柱，做法和其余圆柱不同，作者认为不是同一时期的构件。方柱两个边长哪个朝外表中没有注明，模型里第一个数取面阔方向。5-C 一格在网页版里排版错位，按表注“圆柱柱径均值 384.16 毫米”反算为 314.1"
+    },
+    "cai": {
+      "value": 15,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.3",
+      "label": "材广（单材高）",
+      "note": "合 247.5 毫米，相当《营造法式》二等材"
+    },
+    "caiThick": {
+      "value": 10,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.2",
+      "label": "单材材厚",
+      "note": "实测均值 162.95 毫米"
+    },
+    "zucai": {
+      "value": 21,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.2、表 3",
+      "label": "足材高",
+      "note": "实测均值 345.36 毫米"
+    },
+    "zucaiThick": {
+      "value": 11,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.2",
+      "label": "承重华栱的材厚",
+      "note": "前后檐柱头华栱、山面柱头第一跳、转角第一跳角华栱加厚 1 分°，实测均值 181.72 毫米"
+    },
+    "ludou": {
+      "value": [
+        29,
+        26,
+        18
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 10",
+      "label": "栌斗宽、深、高",
+      "note": "实测均值 473.5、432.65、296.69 毫米。比《营造法式》的 32、32、20 分°小"
+    },
+    "ludouParts": {
+      "value": [
+        7,
+        4,
+        7
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 10",
+      "label": "栌斗耳、平、欹高"
+    },
+    "jump1": {
+      "value": 27,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4、表 9",
+      "label": "外檐第一跳出跳",
+      "note": "华栱外露长 34 分°（实测均值 561.94 毫米），减去散斗半长 7 分°"
+    },
+    "jump2": {
+      "value": 20,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 9",
+      "label": "外檐第二跳出跳",
+      "note": "实测均值 326.64 毫米"
+    },
+    "innerFB": {
+      "value": 32,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4、表 9",
+      "label": "前后檐柱头里转第一跳出跳",
+      "note": "里转长 39 分°（实测均值 643.63 毫米），承四椽栿"
+    },
+    "innerGable": {
+      "value": [
+        35,
+        22
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4、表 9",
+      "label": "山面柱头里转第一、二跳出跳",
+      "note": "两跳总长 64 分°（实测均值 1056.13 毫米），承丁栿"
+    },
+    "nidao": {
+      "value": 70,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4",
+      "label": "泥道栱长"
+    },
+    "ling": {
+      "value": 70,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4",
+      "label": "令栱长"
+    },
+    "chonggong": {
+      "value": 114,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4",
+      "label": "柱头枋上隐刻泥道重栱长"
+    },
+    "bracketH": {
+      "value": 95,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "§3.4",
+      "label": "栌斗底至橑檐槫上皮",
+      "note": "栌斗平欹 11 分° 加四层足材 21 分°"
+    },
+    "liaoToNiu": {
+      "value": 783.65,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 13",
+      "label": "橑檐槫至牛脊枋水平距离"
+    },
+    "niuToPing": {
+      "value": 2479.28,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 13",
+      "label": "牛脊枋至平槫水平距离"
+    },
+    "pingToJi": {
+      "value": 2488.3,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 13",
+      "label": "平槫至脊槫水平距离"
+    },
+    "juH": {
+      "value": 2138.1,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 13",
+      "label": "橑檐槫上皮至脊槫上皮高",
+      "note": "约 130 分°，总举折比约 1∶2.67，比佛光寺东大殿平缓。修缮时拆去了脊槫下的驼峰、短柱、大斗，只留大叉手，作者说举高可能因此有变化"
+    },
+    "pingDrop": {
+      "value": 162.68,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "where": "表 13",
+      "label": "平槫上皮低于脊槫、橑檐槫连线",
+      "note": "约 10 分°（《营造法式》算法应为 13 分°）"
+    },
+    "eaveOut": {
+      "value": 2340,
+      "unit": "mm",
+      "basis": "修缮做法",
+      "src": [
+        "qi-chai-1980",
+        "zhang-2022"
+      ],
+      "where": "张文 §3.1",
+      "label": "檐出（柱中至檐口）",
+      "note": "修缮前檐椽很短，修缮时按台明和柱高的关系定为 234 厘米，作者说“存在较大推测成分”"
+    },
+    "platformH": {
+      "value": 1100,
+      "unit": "mm",
+      "basis": "修缮做法",
+      "src": [
+        "qi-chai-1980"
+      ],
+      "where": "",
+      "label": "台明高",
+      "note": "1972 年发掘台明，修缮时按发掘情况复原。数字读自扫描件识别文字，待核对原刊"
+    },
+    "chiwei": {
+      "value": [
+        1400,
+        1220
+      ],
+      "unit": "mm",
+      "basis": "修缮做法",
+      "src": [
+        "qi-chai-1980"
+      ],
+      "where": "",
+      "label": "鸱尾高、宽",
+      "note": "修缮时仿唐式新做，用原大模型在现场试装后定的尺寸。数字读自扫描件识别文字，待核对原刊"
+    },
+    "flyRatio": {
+      "value": 0.6,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 檐",
+      "label": "飞子出与檐椽出之比",
+      "note": "法式：飞子“各以檐出十分之六为出”。用它把橑檐槫以外的出檐分成檐椽、飞子两段"
+    },
+    "laneH": {
+      "value": [
+        30,
+        20
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 阑额",
+      "label": "阑额高、厚",
+      "note": "法式：广加材一倍，厚减广三分之一"
+    },
+    "sichuanfu": {
+      "value": [
+        42,
+        28
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 梁",
+      "label": "四椽栿高、厚",
+      "note": "法式：厅堂四椽栿广两材两栔；厚取广的三分之二"
+    },
+    "pingliang": {
+      "value": [
+        36,
+        24
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-nanchan"
+      ],
+      "where": "卷五 梁",
+      "label": "平梁高、厚",
+      "note": "法式平梁广两材至两材一栔，照片上南禅寺的平梁较粗，取中偏大"
+    },
+    "chashou": {
+      "value": [
+        22,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 侏儒柱",
+      "label": "大叉手广、厚",
+      "note": "法式：叉手广一材半至两材，厚取三分之一左右"
+    },
+    "tuojiao": {
+      "value": [
+        15,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 侏儒柱",
+      "label": "托脚广、厚",
+      "note": "法式：托脚广随材"
+    },
+    "dingfu": {
+      "value": [
+        30,
+        20
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 梁",
+      "label": "丁栿高、厚"
+    },
+    "tuanD": {
+      "value": 21,
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 栋",
+      "label": "平槫、脊槫直径",
+      "note": "法式：厅堂槫径一材一栔或一材三分"
+    },
+    "liaoD": {
+      "value": 18,
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 栋",
+      "label": "橑檐槫直径"
+    },
+    "niuji": {
+      "value": [
+        15,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 材",
+      "label": "牛脊枋、柱头枋高、厚",
+      "note": "取单材"
+    },
+    "timu": {
+      "value": [
+        126,
+        12,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 替木",
+      "label": "替木长、高、厚",
+      "note": "法式：令栱上用者长一百二十六分°"
+    },
+    "sandou": {
+      "value": [
+        14,
+        14,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "zhang-2022"
+      ],
+      "where": "卷四 斗；张文 §3.4",
+      "label": "散斗、交互斗长、宽、高",
+      "note": "张文：散斗底长约 14 分°；高按法式 10 分°（耳 4、平 2、欹 4）"
+    },
+    "shuatou": {
+      "value": 25,
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-nanchan"
+      ],
+      "where": "卷四 爵头",
+      "label": "批竹耍头伸出令栱心",
+      "note": "南禅寺是批竹式耍头（张文 §3.4），伸出长度按照片估计"
+    },
+    "jiaoliang": {
+      "value": [
+        28,
+        18
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 阳马",
+      "label": "大角梁高、厚",
+      "note": "法式：大角梁广二十八至三十分°，厚十八至二十分°"
+    },
+    "rafterD": {
+      "value": 9,
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-nanchan"
+      ],
+      "where": "卷五 椽",
+      "label": "檐椽直径",
+      "note": "法式：殿阁椽径九至十分°，厅堂七至八分°；照片上椽子较粗，取九分°"
+    },
+    "rafterGap": {
+      "value": 330,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan",
+        "yzfs"
+      ],
+      "where": "照片 02、06",
+      "label": "椽子中距",
+      "note": "在正面照片上数椽子估计；法式：厅堂布椽每间广九寸至一尺"
+    },
+    "roofThick": {
+      "value": 180,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 06",
+      "label": "望板以上的屋面厚（望板、苫背、瓦）"
+    },
+    "lift": {
+      "value": 600,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 02、03",
+      "label": "翼角起翘",
+      "note": "把模型叠在正面照片（照片 02）上比较：檐口两端比正中高出的量约 0.6 米"
+    },
+    "ridgeH": {
+      "value": 450,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 02",
+      "label": "正脊高"
+    },
+    "platformOut": {
+      "value": 1950,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan",
+        "qi-chai-1980"
+      ],
+      "where": "照片 03、04",
+      "label": "台明边至檐柱中",
+      "note": "修缮文章说檐出比台明多出 30–40 厘米；照片上墙外的台明约一米多宽"
+    },
+    "yuetai": {
+      "value": [
+        5000,
+        150
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 02、03",
+      "label": "月台进深、比台明低多少",
+      "note": "月台和台明同宽"
+    },
+    "wallThick": {
+      "value": [
+        800,
+        1000
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 03、04",
+      "label": "两山和后檐墙厚、砖砌下碱高",
+      "note": "墙把柱子包在里面，外皮刷土红。正面照片上山墙前端只在角柱外露出窄窄一条"
+    },
+    "door": {
+      "value": [
+        1600,
+        2350
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 02",
+      "label": "明间板门门洞宽、高"
+    },
+    "window": {
+      "value": [
+        950,
+        800,
+        1250
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "where": "照片 02",
+      "label": "次间直棂窗宽、高、窗台高"
+    }
+  },
+  "parts": {
+    "taiming": {
+      "name": "台明",
+      "layer": "台基",
+      "basis": "修缮做法",
+      "src": [
+        "qi-chai-1980",
+        "commons-nanchan"
+      ],
+      "params": [
+        "platformH",
+        "platformOut"
+      ],
+      "desc": "大殿坐在一米多高的砖砌台子上。1972 年发掘出原来的台明，修缮时照原样恢复。"
+    },
+    "yuetai": {
+      "name": "月台和踏道",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [
+        "yuetai"
+      ],
+      "desc": "殿前宽大的平台和台阶。尺寸按照片估计。"
+    },
+    "zhuchu": {
+      "name": "柱础",
+      "layer": "柱",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [],
+      "desc": "柱子下垫的石头。形状资料里没有，做成平整的方石。"
+    },
+    "zhu": {
+      "name": "檐柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "colTop",
+        "colDia",
+        "bayB",
+        "bayE",
+        "depthW",
+        "depthE"
+      ],
+      "desc": "一圈 12 根柱子，殿内没有柱。柱高、柱径、位置都按扫描实测摆，所以高低粗细并不一样：角柱比平柱高一点（生起），北边整体偏高。"
+    },
+    "lane": {
+      "name": "阑额",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "laneH"
+      ],
+      "desc": "柱头之间的横木，把柱子连成一圈。唐代没有普拍枋，斗拱直接坐在柱头上。"
+    },
+    "ludou": {
+      "name": "栌斗",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "ludou",
+        "ludouParts"
+      ],
+      "desc": "斗拱最下面的大斗，直接坐在柱头上。比《营造法式》规定的略小。"
+    },
+    "huagong": {
+      "name": "华栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "jump1",
+        "jump2",
+        "innerFB",
+        "innerGable",
+        "zucai",
+        "zucaiThick"
+      ],
+      "desc": "向外挑出的栱，两跳，把屋檐托出去。每跳上没有横栱（偷心造）。承重的几根比别的厚一分°，这是南禅寺的特别之处。"
+    },
+    "nidaogong": {
+      "name": "泥道栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "nidao",
+        "chonggong"
+      ],
+      "desc": "顺着墙面、坐在栌斗里的横栱。上面两层柱头枋，第一层上刻出重栱的样子。"
+    },
+    "linggong": {
+      "name": "令栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "ling"
+      ],
+      "desc": "第二跳头上的横栱，托着替木和橑檐槫。转角处两面的令栱交叉在一起（鸳鸯交手）。"
+    },
+    "shuatou": {
+      "name": "批竹耍头",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "zhang-2022",
+        "commons-nanchan"
+      ],
+      "params": [
+        "shuatou"
+      ],
+      "desc": "令栱上方伸出的木头，端头斜削如批竹，是唐代的做法。伸出长度按照片估计。"
+    },
+    "dou": {
+      "name": "散斗、交互斗",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "zhang-2022"
+      ],
+      "params": [
+        "sandou"
+      ],
+      "desc": "栱头上的小斗，把上一层的木头托住。"
+    },
+    "timu": {
+      "name": "替木",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "timu"
+      ],
+      "desc": "令栱上的短木，垫在橑檐槫下。"
+    },
+    "fang": {
+      "name": "柱头枋",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "zhang-2022",
+        "yzfs"
+      ],
+      "params": [
+        "niuji"
+      ],
+      "desc": "顺着墙面叠起的两层枋子，把各朵斗拱连成一圈。南禅寺没有补间铺作，柱与柱之间只有枋子。"
+    },
+    "tuofeng": {
+      "name": "驼峰",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [],
+      "desc": "第二层柱头枋上的小驼峰、皿板和散斗，托着牛脊枋。这种做法后代少见。"
+    },
+    "sichuanfu": {
+      "name": "四椽栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhang-2022",
+        "yzfs"
+      ],
+      "params": [
+        "sichuanfu"
+      ],
+      "desc": "前后檐柱之间的大梁，跨过整个进深，殿内因此不用柱子。两端坐在里转华栱上。截面按法式推测。"
+    },
+    "dingfu": {
+      "name": "丁栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhang-2022",
+        "yzfs"
+      ],
+      "params": [
+        "dingfu",
+        "innerGable"
+      ],
+      "desc": "从山面柱头搭到四椽栿上的梁，托着歇山的山面。里端搭在四椽栿上面，所以是斜的。"
+    },
+    "pingliang": {
+      "name": "平梁",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-nanchan"
+      ],
+      "params": [
+        "pingliang"
+      ],
+      "desc": "四椽栿上方较短的梁，两端托平槫。"
+    },
+    "chashou": {
+      "name": "大叉手",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhang-2022",
+        "yzfs"
+      ],
+      "params": [
+        "chashou"
+      ],
+      "desc": "平梁上人字形的两根斜木，直接顶住脊槫，不用侏儒柱。这是唐代做法；修缮时拆去了后加的驼峰、短柱、大斗，只留大叉手。"
+    },
+    "tuojiao": {
+      "name": "托脚",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "tuojiao"
+      ],
+      "desc": "从四椽栿斜撑到平槫的木头，防止槫向外滚。"
+    },
+    "shuzhu": {
+      "name": "蜀柱",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "丁栿上的短柱，托住歇山山面的平槫。实测资料没有写，按歇山的一般做法补上。"
+    },
+    "liaoyan": {
+      "name": "橑檐槫",
+      "layer": "槫",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022",
+        "yzfs"
+      ],
+      "params": [
+        "bracketH",
+        "liaoD",
+        "liaoToNiu"
+      ],
+      "desc": "斗拱最外端托着的圆木，屋檐的椽子搭在上面。"
+    },
+    "niuji": {
+      "name": "牛脊枋",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "liaoToNiu",
+        "niuji"
+      ],
+      "desc": "檐柱缝上方的枋子，托椽子的中段。"
+    },
+    "pingtuan": {
+      "name": "平槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "niuToPing",
+        "pingDrop",
+        "tuanD"
+      ],
+      "desc": "屋面中段的檩条。它比橑檐槫和脊槫的连线低一点，屋面因此有一道折线（举折）。"
+    },
+    "jituan": {
+      "name": "脊槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-2022"
+      ],
+      "params": [
+        "pingToJi",
+        "juH",
+        "tuanD"
+      ],
+      "desc": "屋脊下的檩条，比橑檐槫高约 2.14 米，屋顶平缓舒展。"
+    },
+    "chuan": {
+      "name": "檐椽",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-nanchan"
+      ],
+      "params": [
+        "rafterD",
+        "rafterGap",
+        "eaveOut"
+      ],
+      "desc": "一排排圆木椽子，从脊槫一直铺到檐口。翼角的椽子和正身平行排列。"
+    },
+    "feizi": {
+      "name": "飞子",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "flyRatio",
+        "eaveOut"
+      ],
+      "desc": "檐椽头上再加的一层方椽，把屋檐再挑出去一段，檐口因此微微上扬。"
+    },
+    "jiaoliang": {
+      "name": "角梁",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "jiaoliang"
+      ],
+      "desc": "屋角沿 45° 斜出的大木，托着翼角。"
+    },
+    "wamian": {
+      "name": "瓦面",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [
+        "roofThick",
+        "lift",
+        "eaveOut"
+      ],
+      "desc": "筒瓦和板瓦。屋面曲线由实测的槫高定出，翼角起翘按照片估计。"
+    },
+    "ji": {
+      "name": "正脊、垂脊、戗脊",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [
+        "ridgeH"
+      ],
+      "desc": "歇山顶九条脊：一条正脊、四条垂脊、四条戗脊。"
+    },
+    "chiwei": {
+      "name": "鸱尾",
+      "layer": "屋面",
+      "basis": "修缮做法",
+      "src": [
+        "qi-chai-1980"
+      ],
+      "params": [
+        "chiwei"
+      ],
+      "desc": "正脊两端的鸱尾。修缮前是后代的样子，1975 年仿唐代式样新做。"
+    },
+    "shanhua": {
+      "name": "山花、博风、悬鱼",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [],
+      "desc": "歇山两端的三角形山面，边上是博风板，顶上挂悬鱼。"
+    },
+    "qiang": {
+      "name": "墙",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [
+        "wallThick"
+      ],
+      "desc": "两山和后檐是厚墙，把柱子包在里面，外面刷土红，下面一截砖砌。"
+    },
+    "gongyan": {
+      "name": "栱眼壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [],
+      "desc": "阑额以上、柱头枋之间抹白灰的墙面。"
+    },
+    "men": {
+      "name": "板门",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [
+        "door"
+      ],
+      "desc": "前檐明间的两扇板门。尺寸按照片估计。"
+    },
+    "chuang": {
+      "name": "直棂窗",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-nanchan"
+      ],
+      "params": [
+        "window"
+      ],
+      "desc": "前檐两次间的直棂窗，下面是砖砌槛墙，周围是木板壁。尺寸按照片估计。"
+    }
+  }
+}

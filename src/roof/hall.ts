@@ -582,7 +582,7 @@ const CHIWEI_OUTLINE: [number, number][] = [
   [0.8, 0.86],
 ];
 
-function earlyFinial() {
+export function earlyFinial() {
   return silhouette((s) => {
     const [first, ...rest] = CHIWEI_OUTLINE;
     s.moveTo(...first);
@@ -605,7 +605,7 @@ function earlyFinial() {
 }
 
 /** 鸱尾外侧那道鳍：比身子厚一点，凸出来一层，表面一道道竖棱 */
-function chiweiFin() {
+export function chiweiFin() {
   const shape = new THREE.Shape();
   shape.moveTo(-0.42, 0.05);
   shape.lineTo(-0.4, 0.9);
@@ -727,7 +727,7 @@ function beastHeadGeometry() {
 }
 
 /** 瓦当：圆形的瓦头，比筒瓦略大，面朝 z 正方向 */
-function tileEndGeometry() {
+export function tileEndGeometry() {
   const geometry = new THREE.CylinderGeometry(0.115, 0.115, 0.05, 18);
   geometry.rotateX(Math.PI / 2);
   const count = geometry.getAttribute('position').count;
@@ -745,7 +745,7 @@ function pinnacleGeometry() {
 }
 
 /** 悬鱼的轮廓：上宽下尖的垂饰 */
-function fishGeometry() {
+export function fishGeometry() {
   const shape = new THREE.Shape();
   shape.moveTo(-0.32, 0);
   shape.lineTo(0.32, 0);
@@ -759,7 +759,7 @@ function fishGeometry() {
 }
 
 /** 把方块的贴图坐标换成以米为单位，这样纹理在大小不同的构件上疏密一致 */
-function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): THREE.BoxGeometry {
+export function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): THREE.BoxGeometry {
   const uv = geometry.getAttribute('uv');
   const sizes: [number, number][] = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
   for (let face = 0; face < 6; face++) {
@@ -772,18 +772,18 @@ function worldUV(geometry: THREE.BoxGeometry, w: number, h: number, d: number): 
 }
 
 /** 门窗：图案画在画布上，表面起伏和粗糙度用木头照片 */
-function joinery(pattern: THREE.Texture) {
+export function joinery(pattern: THREE.Texture) {
   const wood = photo('rough_wood', 1, 1.5);
   return new THREE.MeshStandardMaterial({ map: pattern, normalMap: wood.normalMap, roughnessMap: wood.roughnessMap, roughness: 1 });
 }
 
 /** 抹灰墙面的材质 */
-function plastered(color: THREE.Color, name: string, repeat: number, shaded: boolean) {
+export function plastered(color: THREE.Color, name: string, repeat: number, shaded: boolean) {
   return new THREE.MeshStandardMaterial({ ...photo(name, repeat, repeat), color, side: THREE.DoubleSide, vertexColors: shaded });
 }
 
 /** 给方块加顶点色：底边深，往上 1.6 米以内渐渐变浅 */
-function groundStain(geometry: THREE.BoxGeometry, h: number) {
+export function groundStain(geometry: THREE.BoxGeometry, h: number) {
   const pos = geometry.getAttribute('position');
   const colors: number[] = [];
   const bottom = Math.max(0.62, 1 - 0.38 * Math.min(1, h / 1.6));

@@ -412,8 +412,10 @@ function thumbBlock(u: Unit, cls: string) {
     card ? '<span class="open3d-hint">⟲ 转着看</span></button>' : ''
   }<figcaption><span class="tag">示意</span>${esc(t.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的照片或模型${
     card ? '　<button type="button" class="link-btn" data-open3d>打开示意 3D</button>' : ''
-  }</figcaption></figure>`;
+  }</figcaption></figure>${card && MODEL_PAGES[u.id] ? `<p class="model-link"><a href="${MODEL_PAGES[u.id]}">按实测尺寸复原的 3D 模型 →</a> 可以一层层拆开，每个构件附尺寸和出处</p>` : ''}`;
 }
+// 按测绘尺寸建了模型的单位，名片里链到模型页
+const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': './nanchan.html' };
 function fillThumbs(root: HTMLElement) {
   for (const img of root.querySelectorAll<HTMLImageElement>('img[data-thumb]')) {
     const t = thumbFor(byId.get(img.dataset.thumb!)!);

@@ -57,6 +57,11 @@ export interface RoofSpec {
   /** 檐椽伸进檐口以内多远（前后檐、两山） */
   eave: number;
   eaveEnd: number;
+  /**
+   * 可选：按实测举折给出的折线。从斗拱最外端（离檐口 off）往屋脊，每段 [水平长, 坡度]；
+   * 给了它就不用 slopeEave 到 slopeRidge 的渐变（南禅寺大殿用，屋顶变形器不用）
+   */
+  segs?: [number, number][];
 }
 
 export interface HallDims {
@@ -112,7 +117,7 @@ export const smoothstep = (lo: number, hi: number, v: number) => {
   return k * k * (3 - 2 * k);
 };
 
-type Profile = Pick<RoofSpec, 'D' | 'off' | 'fly' | 'slopeEave' | 'slopeRidge' | 'jp'>;
+type Profile = Pick<RoofSpec, 'D' | 'off' | 'fly' | 'slopeEave' | 'slopeRidge' | 'jp' | 'segs'>;
 
 /** 飞椽比檐椽平缓多少 */
 const FLY_SLOPE = 0.6;
@@ -125,6 +130,18 @@ function rawProfile(spec: Profile, x: number): [y: number, slope: number] {
   const y1 = m0 * FLY_SLOPE * f;
   if (x <= off) return [y1 + m0 * (x - f), m0];
   const y2 = y1 + m0 * (off - f);
+  if (spec.segs) {
+    let y = y2;
+    let rest = x - off;
+    let slope = m0;
+    for (const [len, m] of spec.segs) {
+      slope = m;
+      if (rest <= len) return [y + m * rest, m];
+      y += m * len;
+      rest -= len;
+    }
+    return [y + slope * rest, slope];
+  }
   const span = D - off;
   const q = (x - off) / span;
   return [y2 + span * (m0 * q + ((m1 - m0) / 2) * q * q), m0 + (m1 - m0) * q];

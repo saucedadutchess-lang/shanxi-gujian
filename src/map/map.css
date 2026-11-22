@@ -1177,3 +1177,14 @@
 .lb-credit a {
   color: inherit;
 }
+
+.model-link {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.model-link a {
+  color: var(--accent);
+  font-size: 14px;
+}
