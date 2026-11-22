@@ -1,6 +1,6 @@
 // 构建前检查 data/：每条事实必须带出处（src，指向 data/sources.json）和类型（kind）。
 // 有一条不合格就退出码 1，npm run build 随之失败。
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { REGIONS } from './regions.mjs';
 
 const read = (p) => JSON.parse(readFileSync(new URL(`../data/${p}`, import.meta.url), 'utf8'));
@@ -10,6 +10,7 @@ const curated = read('curated.json').units;
 const boundaries = read('boundaries.json');
 const rivers = read('rivers.json');
 const terrain = read('terrain.json');
+const photos = read('photos.json').units;
 
 const KINDS = ['史料记载', '民间传说'];
 const FORMS = ['庑殿', '歇山', '悬山', '硬山', '攒尖', '重檐', '塔'];
@@ -77,6 +78,24 @@ for (const [id, c] of Object.entries(curated)) {
       fact(`${wb} 看点`, b.highlights);
       for (const v of b.highlights.value ?? []) if (!HIGHLIGHTS.includes(v)) err(wb, `看点 ${v} 不在 ${HIGHLIGHTS.join('、')} 里`);
     }
+  }
+}
+
+// 实拍照片：授权必须允许转载，署名和原图链接不能缺，文件必须在
+const LICENSES = /^(Public domain|CC0|CC BY(-SA)? \d\.\d)$/;
+const PHOTO_KINDS = ['全景', '立面', '屋顶', '斗拱', '梁架', '彩塑', '壁画', '题记', '环境', '细部'];
+for (const [id, list] of Object.entries(photos)) {
+  const w = `photos ${id}`;
+  if (!ids.has(id)) err(w, '在 units.json 里找不到这个单位');
+  for (const p of list) {
+    const wp = `${w} ${p.file}`;
+    if (!LICENSES.test(p.license ?? '')) err(wp, `授权 ${p.license} 不在允许的范围（公有领域、CC0、CC BY、CC BY-SA）`);
+    if (!p.author) err(wp, '缺作者（CC 授权要求署名）');
+    if (!/^https:\/\/commons\.wikimedia\.org\/wiki\/File:/.test(p.source ?? '')) err(wp, '缺维基共享资源原图链接');
+    if (!p.caption) err(wp, '缺说明');
+    if (!PHOTO_KINDS.includes(p.kind)) err(wp, `类别 ${p.kind} 不在 ${PHOTO_KINDS.join('、')} 里`);
+    for (const f of [p.file, p.file?.replace(/\.jpg$/, '-s.jpg')])
+      if (!f || !existsSync(new URL(`../public/photos/${f}`, import.meta.url))) err(wp, `文件 public/photos/${f} 不在`);
   }
 }
 

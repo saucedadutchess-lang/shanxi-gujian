@@ -969,3 +969,211 @@
 .map-wrap.viewing3d .hover-card {
   display: none;
 }
+
+/* ---------- 实拍照片：名片里的轮播 ---------- */
+.gallery {
+  margin: 0 0 10px;
+}
+
+.g-main {
+  position: relative;
+}
+
+.g-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: #e9e2d5;
+  border-radius: 5px;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.g-open img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+.g-prev,
+.g-next {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 44px;
+  margin-top: -22px;
+  padding: 0;
+  font-size: 26px;
+  line-height: 1;
+  color: #fff;
+  background: rgba(43, 38, 32, 0.45);
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.g-prev {
+  left: 6px;
+}
+
+.g-next {
+  right: 6px;
+}
+
+.g-main:hover .g-prev,
+.g-main:hover .g-next,
+.g-prev:focus-visible,
+.g-next:focus-visible {
+  opacity: 1;
+}
+
+.g-prev:hover,
+.g-next:hover {
+  background: var(--accent);
+}
+
+.g-count {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 1px 8px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(43, 38, 32, 0.55);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.gallery figcaption {
+  margin: 5px 0 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.tag.real {
+  color: #3f6b4a;
+  border-color: #8fb39a;
+}
+
+.g-strip {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.g-strip button {
+  flex: none;
+  width: 58px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.g-strip button[aria-current='true'] {
+  border-color: var(--accent);
+  opacity: 1;
+}
+
+.g-strip button:hover {
+  opacity: 1;
+}
+
+.g-strip img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/* ---------- 全屏看图 ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 17, 14, 0.94);
+}
+
+.lightbox img {
+  max-width: calc(100vw - 120px);
+  max-height: calc(100vh - 110px);
+  object-fit: contain;
+  user-select: none;
+}
+
+.lightbox button {
+  position: absolute;
+  padding: 0;
+  color: #f4efe6;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.lightbox button:hover {
+  background: var(--accent);
+}
+
+.lb-prev,
+.lb-next {
+  top: 50%;
+  width: 44px;
+  height: 64px;
+  margin-top: -32px;
+  font-size: 36px;
+}
+
+.lb-prev {
+  left: 12px;
+}
+
+.lb-next {
+  right: 12px;
+}
+
+.lb-close {
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  font-size: 26px;
+}
+
+.lb-cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  text-align: center;
+  color: #e9e2d5;
+}
+
+.lb-cap p {
+  margin: 2px 0;
+}
+
+.lb-title {
+  font-size: 14px;
+}
+
+.lb-credit {
+  font-size: 11px;
+  color: #a39885;
+}
+
+.lb-credit a {
+  color: inherit;
+}

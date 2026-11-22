@@ -1,6 +1,7 @@
 import '../style.css';
 import './map.css';
 import { ERA_GROUPS, type EraGroup } from './era';
+import { galleryBlock, wireGallery } from './photos';
 import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
@@ -335,6 +336,7 @@ function select(id: string | null) {
     <button type="button" class="widen" aria-pressed="${splitter.isWide()}" title="把详情栏放大到约半屏，再点一次还原">${splitter.isWide() ? '还原' : '放大'}</button>
     <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${rankOf(u) !== 'B' ? ` · <span class="badge${c?.tier ? '' : ' soft'}">${esc(RANK_LABEL[rankOf(u)])}</span>` : ''}</p>
     <h2>${esc(u.name)}</h2>
+    ${galleryBlock(u.id)}
     ${thumbBlock(u, 'card-thumb')}
     ${three}
     ${buildings}
@@ -352,6 +354,7 @@ function select(id: string | null) {
     <p class="fact-src">名录信息出处：${factMeta(r)}</p>`;
   card.hidden = false;
   fillThumbs(card);
+  wireGallery(card);
   const t3 = thumbFor(u);
   for (const el of card.querySelectorAll<HTMLElement>('[data-open3d]')) el.addEventListener('click', () => open3d(u, t3!));
   if (viewer?.isOpen()) {
