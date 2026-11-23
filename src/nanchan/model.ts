@@ -680,7 +680,10 @@ export function buildNanchan(): NanchanModel {
         }
       } else {
         // 槛墙（砖）、窗槛、窗两边的立颊和心板、窗上的横枋
-        box(c, part, 'brick', x1 - x0, sill, 0.5, cx, sill / 2, Db - 0.05, out);
+        // 槛墙从山墙里皮砌起，正面比山墙端头退进 3 厘米：两者共面又重叠会互相闪烁（深度冲突）
+        const kx0 = i === 0 ? Math.max(x0, -(Wb - inset)) : x0;
+        const kx1 = i === 2 ? Math.min(x1, Wb - inset) : x1;
+        box(c, part, 'brick', kx1 - kx0, sill, 0.5, (kx0 + kx1) / 2, sill / 2, Db - 0.08, out);
         member(part, x0 - 0.01, x1 + 0.01, sill, sill + 0.09, out);
         const wy0 = sill + 0.09;
         const wy1 = Math.min(wy0 + wh, yM - 0.12);
