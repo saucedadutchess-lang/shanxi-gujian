@@ -315,13 +315,11 @@
   color: var(--accent);
 }
 
-.hover-thumb,
-.card-thumb {
+.hover-thumb {
   margin: 0 0 8px;
 }
 
-.hover-thumb img,
-.card-thumb img {
+.hover-thumb img {
   display: block;
   width: 100%;
   aspect-ratio: 36 / 22;
@@ -331,13 +329,6 @@
 
 .hover-thumb figcaption {
   display: none;
-}
-
-.card-thumb figcaption {
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--muted);
 }
 
 .tag {
@@ -613,8 +604,250 @@
 }
 
 .card h2 {
-  margin: 2px 0 10px;
+  margin: 2px 0 2px;
   font-size: 22px;
+}
+
+.card-sub {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* 图像区：实拍照片和 3D 共用一块 */
+.media {
+  margin: 0 0 12px;
+}
+
+.media-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 6px;
+  padding: 2px;
+  background: var(--paper);
+  border-radius: 6px;
+}
+
+.media-tabs button {
+  flex: 1;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.media-tabs button[aria-selected='true'] {
+  color: var(--ink);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.media .gallery {
+  margin: 0;
+}
+
+.media-3d {
+  margin: 0;
+}
+
+.spin-box {
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+  background: linear-gradient(#ece5d8, #f6f1e8);
+}
+
+.spin-box canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.spin-box canvas:active {
+  cursor: grabbing;
+}
+
+.spin-box canvas:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.spin-hint,
+.spin-wait {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #fff;
+  background: rgba(43, 38, 32, 0.6);
+  border-radius: 10px;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+.spin-wait {
+  display: none;
+}
+
+.spin-box.loading .spin-wait {
+  display: block;
+}
+
+.spin-box.loading .spin-hint,
+.spin-box.spun .spin-hint {
+  opacity: 0;
+}
+
+.spin-open {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  padding: 3px 10px;
+  font-size: 13px;
+  color: #fff;
+  text-decoration: none;
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+.spin-open:hover {
+  background: #7d2d22;
+}
+
+.media-3d figcaption {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.tag.tag-model {
+  color: #3e6170;
+  border-color: #8fb0bd;
+}
+
+/* 角标和例外类型 */
+.ref {
+  margin-left: 2px;
+  font-size: 10px;
+  line-height: 0;
+}
+
+.ref a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.ref a:hover {
+  color: var(--accent);
+}
+
+.kind-x {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9a5a1c;
+  background: #f8ecd9;
+  border: 1px solid #e3c49a;
+  border-radius: 3px;
+  vertical-align: 1px;
+}
+
+/* 入口按钮：主按钮实心，次按钮描边 */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 6px;
+}
+
+.btn {
+  display: block;
+  padding: 7px 12px;
+  font-size: 15px;
+  text-align: center;
+  color: var(--accent);
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+}
+
+.btn:hover {
+  background: #fbf1ee;
+}
+
+.btn.primary {
+  padding: 9px 12px;
+  font-size: 16px;
+  color: #fff;
+  background: var(--accent);
+}
+
+.btn.primary:hover {
+  background: #7d2d22;
+}
+
+.btn small {
+  display: block;
+  margin-top: 1px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.card-soon {
+  margin: 4px 0 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* 折叠：出处、名录与坐标 */
+.fold {
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.fold summary {
+  padding: 8px 0 2px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.fold summary:hover {
+  color: var(--accent);
+}
+
+.src-list {
+  margin: 6px 0 0;
+  padding-left: 1.6em;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.src-list a {
+  color: inherit;
+}
+
+.src-check {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #b0682c;
+}
+
+.fold .info {
+  margin-top: 6px;
 }
 
 .card h4 {
@@ -825,152 +1058,6 @@
 }
 
 /* ---------- 名片里的示意小图：点开示意 3D ---------- */
-.thumb-open {
-  position: relative;
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
-
-.open3d-hint {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  padding: 3px 9px;
-  font-size: 12px;
-  color: #fff;
-  background: rgba(43, 38, 32, 0.62);
-  border-radius: 12px;
-  transition: background 0.15s;
-}
-
-.thumb-open:hover .open3d-hint,
-.thumb-open:focus-visible .open3d-hint {
-  background: var(--accent);
-}
-
-.link-btn {
-  padding: 0;
-  font: inherit;
-  color: var(--accent);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid currentColor;
-  cursor: pointer;
-}
-
-/* ---------- 示意 3D 窗口：盖住地图那一块 ---------- */
-.viewer3d {
-  position: absolute;
-  inset: 0;
-  z-index: 20;
-  background: #d5dcdc;
-}
-
-.viewer3d[hidden] {
-  display: none;
-}
-
-.viewer3d canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  cursor: grab;
-}
-
-.viewer3d canvas:active {
-  cursor: grabbing;
-}
-
-.v3-head {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  pointer-events: none;
-}
-
-.v3-title {
-  flex: 1;
-  margin: 0;
-  padding: 8px 12px;
-  font-size: 13px;
-  line-height: 1.5;
-  background: rgba(251, 248, 242, 0.92);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  pointer-events: auto;
-}
-
-.v3-title b {
-  margin-right: 8px;
-  font-size: 16px;
-}
-
-.v3-cap {
-  color: var(--muted);
-}
-
-.v3-head button,
-.v3-views button {
-  padding: 6px 12px;
-  font: inherit;
-  font-size: 13px;
-  color: var(--ink);
-  background: rgba(251, 248, 242, 0.94);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.v3-head button:hover,
-.v3-views button:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.v3-views {
-  position: absolute;
-  left: 12px;
-  bottom: 52px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.v3-views .v3-spin[aria-pressed='true'] {
-  color: #fff;
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.v3-note {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 10px;
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #4a4238;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
-  pointer-events: none;
-}
-
-/* 看 3D 时地图上的标签、悬浮卡不出来 */
-.map-wrap.viewing3d .labels,
-.map-wrap.viewing3d .hover-card {
-  display: none;
-}
-
-/* ---------- 实拍照片：名片里的轮播 ---------- */
 .gallery {
   margin: 0 0 10px;
 }

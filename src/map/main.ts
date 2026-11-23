@@ -1,12 +1,13 @@
 import '../style.css';
 import './map.css';
 import { ERA_GROUPS, type EraGroup } from './era';
-import { galleryBlock, wireGallery } from './photos';
+import { galleryBlock, photosOf, wireGallery } from './photos';
 import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
-import { renderThumb, thumbFor, type Thumb } from './thumbs';
-import type { Viewer } from './viewer3d';
+import { renderThumb, thumbFor } from './thumbs';
+import { mountTurntable, unmountTurntable, type SpinSource } from './turntable';
+import type { MorphState } from '../roof/params';
 import { RANK_LABEL, REGION_COLOR, rankOf, shortName, type MapView, type PointState } from './view';
 import {
   BATCH_DATES,
@@ -273,16 +274,57 @@ function update() {
 const card = $<HTMLElement>('#card');
 let selected: string | null = null;
 
-const srcRefs = (f: Fact) =>
-  f.src
-    .map((id) => {
-      const s = sources[id];
-      const title = s.author ? `${s.author}《${s.title}》` : `《${s.title}》`;
-      return s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(title)}</a>` : esc(title);
-    })
-    .join('；');
+// 名片里的出处：正文只放角标，名片底部“出处”里列全。
+// 类型只标例外（民间传说等），史料记载是常态，不打标签。
+const srcTitle = (id: string) => {
+  const s = sources[id];
+  const title = s.author ? `${s.author}《${s.title}》` : `《${s.title}》`;
+  return s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(title)}</a>` : esc(title);
+};
 const factMeta = (f: Fact) =>
-  `<span class="fact-meta">${f.kind ? `<span class="kind">${esc(f.kind)}</span>` : ''}${srcRefs(f)}${f.check ? `<span class="check">${esc(f.check)}</span>` : ''}</span>`;
+  `<span class="fact-meta">${f.kind ? `<span class="kind">${esc(f.kind)}</span>` : ''}${f.src.map(srcTitle).join('；')}${f.check ? `<span class="check">${esc(f.check)}</span>` : ''}</span>`;
+/** 一张名片里用到的出处按出现顺序编号；ref 给一条事实出角标，block 是底部的出处列表 */
+function citer() {
+  const list: string[] = [];
+  const checks: string[] = [];
+  const ref = (f: Fact | undefined, label: string) => {
+    if (!f) return '';
+    const ns = f.src.map((s) => {
+      if (!list.includes(s)) list.push(s);
+      return list.indexOf(s) + 1;
+    });
+    if (f.check) checks.push(`${label}：${f.check}`);
+    const tag = f.kind && f.kind !== '史料记载' ? `<span class="kind-x">${esc(f.kind)}</span>` : '';
+    return `${tag}<sup class="ref"><a href="#card-src" data-ref title="看出处">${ns.join(',')}</a></sup>`;
+  };
+  const block = () =>
+    list.length
+      ? `<details class="fold" id="card-src"><summary>出处（${list.length}）</summary><ol class="src-list">${list.map((s) => `<li>${srcTitle(s)}</li>`).join('')}</ol>${
+          checks.length ? `<p class="src-check">待核：${checks.map(esc).join('；')}</p>` : ''
+        }</details>`
+      : '';
+  return { ref, block };
+}
+/** 几条事实合成一条（单体的年代、形制、看点），出处取并集 */
+const merge = (facts: (Fact | undefined)[]): Fact | undefined => {
+  const fs = facts.filter((x): x is Fact => !!x);
+  if (!fs.length) return undefined;
+  return {
+    src: [...new Set(fs.flatMap((x) => x.src))],
+    kind: fs.find((x) => x.kind && x.kind !== '史料记载')?.kind ?? fs[0].kind,
+    check: fs.map((x) => x.check).filter(Boolean).join('；') || undefined,
+  };
+};
+
+// 写了建筑页的单位、按测绘尺寸建了模型的单位（值是 data/models/ 下的模型名，页面是同名 html）
+const BUILDING_PAGES: Record<string, string> = { '1-0079-3-032': './building.html?id=nanchan' };
+const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan' };
+
+/** 示意殿堂的参数换成屋顶变形器的网址，进去就摆好这个形制和年代 */
+function morphHref(s: MorphState) {
+  const form = s.zj ? '攒尖' : s.g ? '硬山' : s.t >= 1 ? '悬山' : s.t > 0 ? '歇山' : '庑殿';
+  return `./index.html?form=${encodeURIComponent(form)}&era=${s.era.toFixed(2)}${s.dbl ? '&dbl=1' : ''}`;
+}
 
 function select(id: string | null) {
   selected = id;
@@ -291,41 +333,69 @@ function select(id: string | null) {
   labelsVersion = -1;
   if (!id) {
     card.hidden = true;
-    viewer?.close();
+    unmountTurntable();
     return;
   }
   const u = byId.get(id)!;
   const c = u.curated;
   const r = u.record;
+  const cite = citer();
+  const page = BUILDING_PAGES[u.id];
+  const model = MODEL_PAGES[u.id];
+  const t3 = thumbFor(u);
+  const hasPhotos = photosOf(u.id).length > 0;
+  const spin: SpinSource | null = model ? { kind: 'model', model } : t3 ? { kind: 'hall', state: t3.state } : null;
+
+  // ---- 图像区：实拍照片和 3D 共用一块，有两样时上面切换 ----
+  const spinBlock = spin
+    ? `<figure class="media-3d"${hasPhotos ? ' hidden' : ''}>
+        <div class="spin-box"><canvas tabindex="0" aria-label="三维${model ? '复原模型' : '示意'}，拖动或按左右方向键转动"></canvas>
+          <span class="spin-hint">⟲ 拖动转着看</span><span class="spin-wait">正在生成…</span>
+          ${model ? `<a class="spin-open" href="./${model}.html">拆开完整模型 →</a>` : ''}</div>
+        <figcaption>${
+          model
+            ? '<span class="tag tag-model">依据图纸复原</span>按论文实测尺寸生成的模型，彩塑、残损没有做'
+            : `<span class="tag">示意</span>${esc(t3!.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的模型`
+        }</figcaption></figure>`
+    : '';
+  const media =
+    hasPhotos || spin
+      ? `<div class="media">${
+          hasPhotos && spin
+            ? `<div class="media-tabs" role="tablist" aria-label="看照片还是 3D"><button type="button" role="tab" data-tab="photo" aria-selected="true">实拍照片</button><button type="button" role="tab" data-tab="3d" aria-selected="false">${model ? '3D 复原' : '3D 示意'}</button></div>`
+            : ''
+        }${hasPhotos ? `<div class="media-photo">${galleryBlock(u.id)}</div>` : ''}${spinBlock}</div>`
+      : '';
+
   const three = c?.card
     ? `<ol class="three">
-        <li><span class="q">是什么</span>${esc(c.card.what.text)}${factMeta(c.card.what)}</li>
-        <li><span class="q">特点</span>${esc(c.card.feature.text)}${factMeta(c.card.feature)}</li>
-        <li><span class="q">价值</span>${esc(c.card.value.text)}${factMeta(c.card.value)}</li>
+        <li><span class="q">是什么</span>${esc(c.card.what.text)}${cite.ref(c.card.what, '是什么')}</li>
+        <li><span class="q">特点</span>${esc(c.card.feature.text)}${cite.ref(c.card.feature, '特点')}</li>
+        <li><span class="q">价值</span>${esc(c.card.value.text)}${cite.ref(c.card.value, '价值')}</li>
       </ol>`
-    : `<p class="todo">名片三句话还没写。下面是名录里的信息。</p>`;
-  // 一座单体的几项事实可能出处不同，合在一起列，待核的地方逐条带上
-  const mergedMeta = (facts: (Fact | undefined)[]) => {
-    const fs = facts.filter((x): x is Fact => !!x);
-    return factMeta({
-      src: [...new Set(fs.flatMap((x) => x.src))],
-      kind: fs.every((x) => x.kind === fs[0]?.kind) ? fs[0]?.kind : undefined,
-      check: fs.map((x) => x.check).filter(Boolean).join('；') || undefined,
-    });
-  };
-  const buildings = c?.buildings?.length
-    ? `<h4>单体</h4><ul class="buildings">${c.buildings
-        .map(
-          (b) =>
-            `<li><b>${esc(b.name)}</b>${b.year ? `　${esc(b.year.label)}${/\d/.test(b.year.label) ? '' : `（${b.year.value}）`}` : ''}${b.form ? `　${esc(b.form.value.join('、'))}` : ''}${
-              b.highlights ? `　看点：${esc(b.highlights.value.join('、'))}` : ''
-            }${mergedMeta([b.year, b.form, b.highlights])}</li>`,
-        )
-        .join('')}</ul>`
-    : '';
-  const unitHighlights = c?.highlights
-    ? `<p class="unit-hl">看点：${esc(c.highlights.value.join('、'))}${factMeta(c.highlights)}</p>`
-    : '';
+    : `<p class="todo">名片三句话还没写。名录里的信息在下面“名录与坐标”里。</p>`;
+
+  // ---- 入口：建筑页是主按钮；没有建筑页时名片就是终点，只给去认形制的次按钮 ----
+  const morph = t3 && !model ? `<a class="btn" href="${morphHref(t3.state)}">到屋顶变形器认形制 →</a>` : '';
+  const actions = page
+    ? `<div class="card-actions"><a class="btn primary" href="${page}">打开建筑页 →<small>时间轴、故事、三把钥匙、到现场必看</small></a>${
+        model ? `<a class="btn" href="./${model}.html">拆开 3D 模型</a>` : ''
+      }</div>`
+    : `${c?.tier === 'S' ? '<p class="card-soon">S 级，建筑页编写中。</p>' : ''}${morph ? `<div class="card-actions">${morph}</div>` : ''}`;
+
+  // 有建筑页的，单体、看点交给建筑页
+  const buildings =
+    !page && c?.buildings?.length
+      ? `<h4>单体</h4><ul class="buildings">${c.buildings
+          .map(
+            (b) =>
+              `<li><b>${esc(b.name)}</b>${b.year ? `　${esc(b.year.label)}${/\d/.test(b.year.label) ? '' : `（${b.year.value}）`}` : ''}${b.form ? `　${esc(b.form.value.join('、'))}` : ''}${
+                b.highlights ? `　看点：${esc(b.highlights.value.join('、'))}` : ''
+              }${cite.ref(merge([b.year, b.form, b.highlights]), b.name)}</li>`,
+          )
+          .join('')}</ul>`
+      : '';
+  const unitHighlights = !page && c?.highlights ? `<p class="unit-hl">看点：${esc(c.highlights.value.join('、'))}${cite.ref(c.highlights, '看点')}</p>` : '';
   const loc = u.location
     ? `${u.location.lat.toFixed(4)}, ${u.location.lng.toFixed(4)}（<a href="https://www.wikidata.org/wiki/${esc(u.location.wikidata)}" target="_blank" rel="noopener">Wikidata ${esc(
         u.location.wikidata,
@@ -336,12 +406,14 @@ function select(id: string | null) {
     <button type="button" class="widen" aria-pressed="${splitter.isWide()}" title="把详情栏放大到约半屏，再点一次还原">${splitter.isWide() ? '还原' : '放大'}</button>
     <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${rankOf(u) !== 'B' ? ` · <span class="badge${c?.tier ? '' : ' soft'}">${esc(RANK_LABEL[rankOf(u)])}</span>` : ''}</p>
     <h2>${esc(u.name)}</h2>
-    ${galleryBlock(u.id)}
-    ${thumbBlock(u, 'card-thumb')}
+    <p class="card-sub">${esc(r.era)} · ${esc(r.prefecture)}${esc(r.county)}</p>
+    ${media}
     ${three}
+    ${actions}
     ${buildings}
     ${unitHighlights}
-    <h4>名录信息</h4>
+    ${cite.block()}
+    <details class="fold"><summary>名录与坐标</summary>
     <dl class="info">
       <dt>批次</dt><dd>第${'一二三四五六七八'[r.batch - 1]}批（${BATCH_DATES[r.batch]}公布）</dd>
       <dt>年代</dt><dd>${esc(r.era)}</dd>
@@ -351,21 +423,45 @@ function select(id: string | null) {
       <dt>国保编号</dt><dd>${u.id.startsWith('sx-') ? '未对上' : esc(u.id)}</dd>
       <dt>坐标</dt><dd>${loc}</dd>
     </dl>
-    <p class="fact-src">名录信息出处：${factMeta(r)}</p>`;
+    <p class="fact-src">名录信息出处：${factMeta(r)}</p></details>`;
   card.hidden = false;
-  fillThumbs(card);
   wireGallery(card);
-  const t3 = thumbFor(u);
-  for (const el of card.querySelectorAll<HTMLElement>('[data-open3d]')) el.addEventListener('click', () => open3d(u, t3!));
-  if (viewer?.isOpen()) {
-    if (t3) open3d(u, t3);
-    else viewer.close();
+
+  // 图像区切换；3D 第一次露出来时才生成
+  const spinFig = card.querySelector<HTMLElement>('.media-3d');
+  let mounted = false;
+  const show3d = () => {
+    if (mounted || !spinFig || !spin) return;
+    mounted = true;
+    mountTurntable(spinFig.querySelector('.spin-box')!, spin);
+  };
+  unmountTurntable();
+  if (spinFig && !spinFig.hidden) show3d();
+  for (const tab of card.querySelectorAll<HTMLButtonElement>('.media-tabs [data-tab]')) {
+    tab.addEventListener('click', () => {
+      const is3d = tab.dataset.tab === '3d';
+      for (const t of card.querySelectorAll('.media-tabs [data-tab]')) t.setAttribute('aria-selected', String(t === tab));
+      card.querySelector<HTMLElement>('.media-photo')!.hidden = is3d;
+      spinFig!.hidden = !is3d;
+      if (is3d) show3d();
+    });
+  }
+  // 角标：展开底部的出处
+  for (const a of card.querySelectorAll<HTMLAnchorElement>('[data-ref]')) {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const d = card.querySelector<HTMLDetailsElement>('#card-src');
+      if (!d) return;
+      d.open = true;
+      d.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    });
   }
   card.querySelector('.close')!.addEventListener('click', () => select(null));
   const widen = card.querySelector<HTMLButtonElement>('.widen')!;
   widen.addEventListener('click', () => {
     splitter.toggleWide();
   });
+  card.scrollTop = 0;
   card.scrollIntoView({ block: 'nearest' });
 }
 
@@ -392,33 +488,13 @@ createTerrainView(wrap)
     $<HTMLElement>('#map-hint').textContent = '立体地形没有加载成功，现在是平面示意图';
   });
 
-// ---------- 示意 3D ----------
-let viewer: Viewer | null = null;
-let viewerLoading: Promise<Viewer> | null = null;
-async function open3d(u: Unit, t: Thumb) {
-  viewerLoading ??= import('./viewer3d').then((m) => (viewer = m.createViewer(wrap, () => wrap.classList.remove('viewing3d'))));
-  const v = await viewerLoading;
-  hover(null, 0, 0);
-  wrap.classList.add('viewing3d');
-  v.open(u.name, t);
-}
-
 // ---------- 示意小图 ----------
-function thumbBlock(u: Unit, cls: string) {
+/** 悬浮卡里的示意小图 */
+function thumbBlock(u: Unit) {
   const t = thumbFor(u);
   if (!t) return '';
-  const card = cls === 'card-thumb';
-  return `<figure class="${cls}">${card ? '<button type="button" class="thumb-open" data-open3d title="打开示意 3D，可以任意转、放大">' : ''}<img alt="${esc(t.caption)}（示意）" data-thumb="${esc(u.id)}" />${
-    card ? '<span class="open3d-hint">⟲ 转着看</span></button>' : ''
-  }<figcaption><span class="tag">示意</span>${esc(t.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的照片或模型${
-    card ? '　<button type="button" class="link-btn" data-open3d>打开示意 3D</button>' : ''
-  }</figcaption></figure>${card && BUILDING_PAGES[u.id] ? `<p class="model-link"><a href="${BUILDING_PAGES[u.id]}">建筑页 →</a> 时间轴、故事、三把钥匙、到现场必看</p>` : ''}${
-    card && MODEL_PAGES[u.id] ? `<p class="model-link"><a href="${MODEL_PAGES[u.id]}">按实测尺寸复原的 3D 模型 →</a> 可以一层层拆开，每个构件附尺寸和出处</p>` : ''
-  }`;
+  return `<figure class="hover-thumb"><img alt="${esc(t.caption)}（示意）" data-thumb="${esc(u.id)}" /><figcaption><span class="tag">示意</span>${esc(t.caption)}</figcaption></figure>`;
 }
-// 写了建筑页的单位、按测绘尺寸建了模型的单位，名片里链过去
-const BUILDING_PAGES: Record<string, string> = { '1-0079-3-032': './building.html?id=nanchan' };
-const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': './nanchan.html' };
 function fillThumbs(root: HTMLElement) {
   for (const img of root.querySelectorAll<HTMLImageElement>('img[data-thumb]')) {
     const t = thumbFor(byId.get(img.dataset.thumb!)!);
@@ -445,7 +521,7 @@ function hover(id: string | null, x: number, y: number) {
     const u = byId.get(id)!;
     const what = u.curated?.card?.what.text;
     hoverEl.innerHTML = `
-      ${thumbBlock(u, 'hover-thumb')}
+      ${thumbBlock(u)}
       <p class="hc-kicker"><i style="background:${REGION_COLOR[u.region]}"></i>${esc(u.region)} · ${esc(u.record.county)} · ${esc(u.record.category)}</p>
       <h4>${esc(u.name)}</h4>
       <p class="hc-era">${esc(u.record.era)}${rankOf(u) !== 'B' ? ` · ${esc(RANK_LABEL[rankOf(u)])}` : ''}</p>

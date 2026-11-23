@@ -76,9 +76,56 @@ export class Hall {
   private fish = fishGeometry();
   private unitCylinder = shared(new THREE.CylinderGeometry(1, 1, 1, 8));
 
+  /** 素色画法：不用照片贴图，屋面灰、木构浅褐、墙台基米白，像建筑模型的白模。地图上的示意都用这种，免得被当成这座建筑本身 */
+  private plain = false;
+  constructor(opts: { plain?: boolean } = {}) {
+    if (!opts.plain) return;
+    this.plain = true;
+    const m = (hex: number, extra: THREE.MeshStandardMaterialParameters = {}) => new THREE.MeshStandardMaterial({ color: hex, roughness: 0.92, ...extra });
+    const D = THREE.DoubleSide;
+    const roof = 0x8d8a85;
+    const ridge = 0x6f6c68;
+    const wood = 0xb89c7f;
+    const body = 0xeee6d8;
+    const stone = 0xd6cebf;
+    const old = this.mat;
+    this.mat = {
+      ...old,
+      tile: m(roof, { side: D }),
+      rib: m(roof, { vertexColors: true }),
+      ridge: m(ridge, { side: D }),
+      glaze: m(ridge, { side: D }),
+      glazeGold: m(ridge),
+      glazeChiwei: m(ridge, { side: D }),
+      ridgeBody: m(ridge),
+      wood: m(0x9c8268, { side: D }),
+      rafter: m(wood),
+      column: m(wood),
+      beam: m(wood),
+      bracket: m(wood),
+      dou: m(wood),
+      wall: m(body, { side: D }),
+      wallShaded: m(body, { side: D, vertexColors: true }),
+      plaster: m(body, { side: D }),
+      stone: m(stone, { vertexColors: true }),
+      stoneDark: m(stone),
+      earlyDoor: m(0xd9cbb5),
+      earlyWindow: m(0xd9cbb5),
+      lateDoor: m(0xd9cbb5),
+      lateWindow: m(0xd9cbb5),
+    };
+    for (const v of Object.values(old)) v.dispose();
+  }
+
   update(state: MorphState) {
     this.clear();
     const d = computeDims(state);
+    if (this.plain) {
+      this.buildBody(d, state.era);
+      this.buildRoofLevel(d, d.roof, d.yEave, state.era, true);
+      if (d.lower) this.buildRoofLevel(d, d.lower.roof, d.lower.yEave, state.era, false);
+      return;
+    }
 
     // 早期木构多为土红刷饰，明清官式檐下用青绿彩画
     const late = THREE.MathUtils.smoothstep(state.era, 0.55, 0.95);

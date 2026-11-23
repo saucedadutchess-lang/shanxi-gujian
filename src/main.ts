@@ -283,3 +283,16 @@ for (const button of formButtons) {
 
 buildRefTable();
 render();
+
+// 从地图名片带参数进来（?form=歇山&era=0.00&dbl=1）：摆好那座建筑的形制和时代
+{
+  const q = new URLSearchParams(location.search);
+  const form = q.get('form');
+  const era = Number(q.get('era'));
+  if (q.has('era') && era >= 0 && era <= 1) {
+    eraSlider.value = String(era * 100);
+    eraSlider.dispatchEvent(new Event('input'));
+  }
+  if (form) formButtons.find((b) => b.textContent === form)?.click();
+  if (q.get('dbl') === '1') setTimeout(() => document.querySelector<HTMLButtonElement>('.switch[data-branch="dbl"]')?.click(), 50);
+}

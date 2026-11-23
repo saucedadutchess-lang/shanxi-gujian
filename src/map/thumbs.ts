@@ -1,5 +1,6 @@
 // 示意小图：用屋顶变形器的示意殿堂，按单体的形制和年代摆好参数，离屏渲染成一张图。
 // 这不是这座建筑的照片，也不是它的模型，只说明“这一类屋顶、这个时代大致长这样”，页面上标“示意”。
+// 用素色画法（不贴照片），一眼看得出是示意。
 import * as THREE from 'three';
 import { Hall } from '../roof/hall';
 import type { MorphState } from '../roof/params';
@@ -77,15 +78,26 @@ function setup() {
   renderer.toneMappingExposure = 1.0;
   renderer.setClearColor(0x000000, 0);
   const scene = new THREE.Scene();
+  addLights(scene);
+  const camera = new THREE.PerspectiveCamera(30, TW / TH, 0.5, 500);
+  const hall = new Hall({ plain: true });
+  scene.add(hall.group);
+  return { renderer, scene, camera, hall };
+}
+
+/** 离屏渲染器：小图和名片里的转台共用一个，不多开 WebGL */
+export function offscreen() {
+  ctx ??= setup();
+  return ctx;
+}
+/** 和小图一样的灯光，给转台的场景用 */
+export function addLights(scene: THREE.Scene) {
   scene.add(new THREE.HemisphereLight(0xdfe6ee, 0xd9c7a6, 1.6));
   const sun = new THREE.DirectionalLight(0xffe7c4, 3.2);
   sun.position.set(-34, 40, 44);
   scene.add(sun);
-  const camera = new THREE.PerspectiveCamera(30, TW / TH, 0.5, 500);
-  const hall = new Hall();
-  scene.add(hall.group);
-  return { renderer, scene, camera, hall };
 }
+export { texturesReady };
 
 const key = (s: MorphState) => [s.t, s.g, s.era.toFixed(2), s.dbl, s.zj].join('|');
 
@@ -100,6 +112,7 @@ export function renderThumb(state: MorphState): Promise<string> {
       ctx.hall.update(state);
       await texturesReady();
       const { renderer, scene, camera, hall } = ctx;
+      renderer.setSize(TW, TH, false);
       hall.update(state);
       // 按模型大小摆相机：从左前方稍高处看
       const box = new THREE.Box3().setFromObject(hall.group);
