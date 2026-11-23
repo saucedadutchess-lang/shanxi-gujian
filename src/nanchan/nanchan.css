@@ -195,3 +195,18 @@ body:not(.by-basis) .nc-legend {
 .nc-photo-ctl {
   margin-top: 12px;
 }
+
+.nc-back {
+  margin: 0 0 10px;
+  font-size: 13px;
+}
+
+.nc-back a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.embed .site-header,
+.embed .nc-back {
+  display: none;
+}

@@ -412,9 +412,12 @@ function thumbBlock(u: Unit, cls: string) {
     card ? '<span class="open3d-hint">⟲ 转着看</span></button>' : ''
   }<figcaption><span class="tag">示意</span>${esc(t.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的照片或模型${
     card ? '　<button type="button" class="link-btn" data-open3d>打开示意 3D</button>' : ''
-  }</figcaption></figure>${card && MODEL_PAGES[u.id] ? `<p class="model-link"><a href="${MODEL_PAGES[u.id]}">按实测尺寸复原的 3D 模型 →</a> 可以一层层拆开，每个构件附尺寸和出处</p>` : ''}`;
+  }</figcaption></figure>${card && BUILDING_PAGES[u.id] ? `<p class="model-link"><a href="${BUILDING_PAGES[u.id]}">建筑页 →</a> 时间轴、故事、三把钥匙、到现场必看</p>` : ''}${
+    card && MODEL_PAGES[u.id] ? `<p class="model-link"><a href="${MODEL_PAGES[u.id]}">按实测尺寸复原的 3D 模型 →</a> 可以一层层拆开，每个构件附尺寸和出处</p>` : ''
+  }`;
 }
-// 按测绘尺寸建了模型的单位，名片里链到模型页
+// 写了建筑页的单位、按测绘尺寸建了模型的单位，名片里链过去
+const BUILDING_PAGES: Record<string, string> = { '1-0079-3-032': './building.html?id=nanchan' };
 const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': './nanchan.html' };
 function fillThumbs(root: HTMLElement) {
   for (const img of root.querySelectorAll<HTMLImageElement>('img[data-thumb]')) {
@@ -537,3 +540,11 @@ $<HTMLElement>('#lg-regions').innerHTML = REGIONS.map((r) => `<li><i class="pt m
 $<HTMLElement>('#lg-note').innerHTML = `<span class="credit-3d">地形高度放大 ${EXAGGERATION} 倍；</span>S 级、A 级的名字一直显示，放大后显示全部`;
 // 地图区域矮的时候图例先收起来，免得挡住晋南
 if (wrap.clientHeight < 700) $<HTMLDetailsElement>('#legend').open = false;
+
+// ---------- 从别的页面带“#单位 id”进来（如建筑页的“附近”），直接打开它的名片 ----------
+function openFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (byId.has(id)) select(id);
+}
+openFromHash();
+window.addEventListener('hashchange', openFromHash);

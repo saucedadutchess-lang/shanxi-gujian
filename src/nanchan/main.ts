@@ -12,6 +12,9 @@ const sources = sourcesJson as Record<string, { title: string; author?: string; 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
+// 嵌在建筑页里（?embed）时去掉站点页头和返回链接
+if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+
 const canvas = $<HTMLCanvasElement>('#stage');
 const stage = createStage(canvas);
 const { camera, controls, scene } = stage;

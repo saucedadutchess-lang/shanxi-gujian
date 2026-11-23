@@ -5,11 +5,12 @@ export default defineConfig({
   base: './',
   build: {
     rollupOptions: {
-      // 多页：屋顶变形器和地图各一页
+      // 多页：屋顶变形器、地图、建筑页（?id= 选哪座）、南禅寺模型
       input: {
         index: 'index.html',
         map: 'map.html',
         nanchan: 'nanchan.html',
+        building: 'building.html',
       },
     },
   },

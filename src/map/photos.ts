@@ -132,3 +132,10 @@ function openLightbox(list: Photo[], start: number, onIndex: (i: number) => void
   show(i);
   el.querySelector<HTMLButtonElement>('.lb-close')!.focus();
 }
+
+/** 直接打开某张照片的全屏看图（建筑页的看点小图用），可以左右翻同一单位的其他照片 */
+export function openPhoto(unitId: string, file: string) {
+  const list = photosOf(unitId);
+  const i = list.findIndex((p) => p.file === file);
+  if (i >= 0) openLightbox(list, i, () => {});
+}

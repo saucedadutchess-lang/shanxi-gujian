@@ -130,6 +130,56 @@ for (const f of existsSync(modelsDir) ? readdirSync(modelsDir).filter((n) => n.e
   }
 }
 
+// 建筑页（data/buildings/）：每条文字都要有类型、出处和页码位置；建筑页多一种类型“学界推断”，
+// 用来标论文作者的推测和假说，和史料记载、民间传说分开
+const PAGE_KINDS = [...KINDS, '学界推断'];
+const buildingsDir = new URL('../data/buildings/', import.meta.url);
+const photoFiles = new Set(Object.values(photos).flat().map((p) => p.file));
+for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) => n.endsWith('.json')) : []) {
+  const b = read(`buildings/${f}`);
+  const w = `buildings/${f}`;
+  if (`${b.id}.json` !== f) err(w, `id ${b.id} 要和文件名一致`);
+  if (!ids.has(b.unitId)) err(w, `unitId ${b.unitId} 在 units.json 里找不到`);
+  else if (!curated[b.unitId]?.buildings?.some((x) => x.id === b.buildingId)) err(w, `单体 ${b.buildingId} 在 curated.json 的这个单位下找不到`);
+  if (!curated[b.unitId]?.card) err(w, '这个单位在 curated.json 里还没写名片三句话');
+  if (b.model && !existsSync(new URL(`../data/models/${b.model}.json`, import.meta.url))) err(w, `模型 data/models/${b.model}.json 不在`);
+  if (!b.name || !b.review) err(w, '缺名称或审核状态 review');
+  const item = (where, x) => {
+    fact(where, x, { needKind: false });
+    if (!PAGE_KINDS.includes(x?.kind)) err(where, `类型 kind 必须是 ${PAGE_KINDS.join(' / ')}，现在是 ${x?.kind}`);
+    if (!x?.where) err(where, '缺出处里的位置 where（页码、卷次或表号）');
+    if (!x?.text && x?.a === undefined) err(where, '缺文字');
+  };
+  (b.timeline ?? []).forEach((t, i) => {
+    item(`${w} 时间轴 ${i + 1}`, t);
+    if (!t.date) err(`${w} 时间轴 ${i + 1}`, '缺日期');
+  });
+  for (const s of b.stories ?? []) {
+    if (!s.title || !s.paras?.length) err(`${w} 故事`, '缺标题或段落');
+    (s.paras ?? []).forEach((p, i) => item(`${w} 故事「${s.title}」第 ${i + 1} 段`, p));
+  }
+  const k = b.keys ?? {};
+  (k.form?.facts ?? []).forEach((x, i) => item(`${w} 认形制 ${i + 1}`, x));
+  if (k.grade) {
+    item(`${w} 读等级 规则`, k.grade.rule);
+    for (const r of k.grade.rows ?? []) {
+      if (!r.label || r.a === undefined || r.b === undefined) err(`${w} 读等级`, '每行要有 label、a、b');
+      fact(`${w} 读等级「${r.label}」`, r, { needKind: false });
+      if (!PAGE_KINDS.includes(r.kind)) err(`${w} 读等级「${r.label}」`, `类型 kind 不对：${r.kind}`);
+    }
+  }
+  const ns = new Set();
+  for (const o of b.onsite?.items ?? []) {
+    const wo = `${w} 现场看点 ${o.n} ${o.title}`;
+    item(wo, o);
+    if (ns.has(o.n)) err(wo, '编号重复');
+    ns.add(o.n);
+    if (!Array.isArray(o.at) || o.at.length !== 2) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
+    if (o.photo && !photoFiles.has(o.photo)) err(wo, `照片 ${o.photo} 不在 data/photos.json 里`);
+  }
+  if (b.practical?.address) item(`${w} 地址`, b.practical.address);
+}
+
 fact('boundaries', boundaries, { needKind: false });
 fact('rivers', rivers, { needKind: false });
 fact('terrain', terrain, { needKind: false });
