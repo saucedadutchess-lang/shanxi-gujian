@@ -661,6 +661,13 @@
   background: linear-gradient(#ece5d8, #f6f1e8);
 }
 
+.model-box iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border: 0;
+}
+
 .spin-box canvas {
   display: block;
   width: 100%;

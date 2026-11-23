@@ -97,7 +97,6 @@ export function addLights(scene: THREE.Scene) {
   sun.position.set(-34, 40, 44);
   scene.add(sun);
 }
-export { texturesReady };
 
 const key = (s: MorphState) => [s.t, s.g, s.era.toFixed(2), s.dbl, s.zj].join('|');
 

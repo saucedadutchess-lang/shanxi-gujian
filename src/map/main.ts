@@ -6,7 +6,7 @@ import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
 import { renderThumb, thumbFor } from './thumbs';
-import { SPIN_VIEWS, mountTurntable, unmountTurntable, type SpinSource } from './turntable';
+import { SPIN_VIEWS, mountTurntable, unmountTurntable } from './turntable';
 import type { MorphState } from '../roof/params';
 import { RANK_LABEL, REGION_COLOR, rankOf, shortName, type MapView, type PointState } from './view';
 import {
@@ -344,17 +344,22 @@ function select(id: string | null) {
   const model = MODEL_PAGES[u.id];
   const t3 = thumbFor(u);
   const hasPhotos = photosOf(u.id).length > 0;
-  const spin: SpinSource | null = model ? { kind: 'model', model } : t3 ? { kind: 'hall', state: t3.state } : null;
+  // 有复原模型的嵌模型页的精简模式（同一套光照、阴影、地面）；其余用示意殿堂的转台
+  const spin = !!model || !!t3;
 
   // ---- 图像区：实拍照片和 3D 共用一块，有两样时上面切换 ----
   const spinBlock = spin
     ? `<figure class="media-3d"${hasPhotos ? ' hidden' : ''}>
-        <div class="spin-box"><canvas tabindex="0" aria-label="三维${model ? '复原模型' : '示意'}，拖动或按方向键转动，加减号缩放"></canvas>
-          <span class="spin-hint">拖动旋转 · 捏合缩放</span><span class="spin-wait">正在生成…</span>
-          ${model ? `<a class="spin-open" href="./${model}.html">拆开完整模型 →</a>` : ''}
-          <div class="spin-views" role="group" aria-label="视角">${Object.entries(SPIN_VIEWS)
-            .map(([k, v]) => `<button type="button" data-spin-view="${k}">${v.label}</button>`)
-            .join('')}</div></div>
+        ${
+          model
+            ? `<div class="spin-box model-box loading"><span class="spin-hint">拖动旋转 · 捏合缩放</span><span class="spin-wait">正在读入模型…</span>
+                <a class="spin-open" href="./${model}.html">拆开完整模型 →</a></div>`
+            : `<div class="spin-box"><canvas tabindex="0" aria-label="三维示意，拖动或按方向键转动，加减号缩放"></canvas>
+                <span class="spin-hint">拖动旋转 · 捏合缩放</span><span class="spin-wait">正在生成…</span>
+                <div class="spin-views" role="group" aria-label="视角">${Object.entries(SPIN_VIEWS)
+                  .map(([k, v]) => `<button type="button" data-spin-view="${k}">${v.label}</button>`)
+                  .join('')}</div></div>`
+        }
         <figcaption>${
           model
             ? '<span class="tag tag-model">依据图纸复原</span>按论文实测尺寸生成的模型，彩塑、残损没有做'
@@ -436,7 +441,14 @@ function select(id: string | null) {
   const show3d = () => {
     if (mounted || !spinFig || !spin) return;
     mounted = true;
-    mountTurntable(spinFig.querySelector('.spin-box')!, spin);
+    const box = spinFig.querySelector<HTMLElement>('.spin-box')!;
+    if (model) {
+      // iframe 跟着名片走：换单位、关名片时随名片内容一起移除，三维画面也就释放了
+      const f = document.createElement('iframe');
+      f.src = `./${model}.html?mini`;
+      f.title = `${u.name}三维复原模型`;
+      box.prepend(f);
+    } else mountTurntable(box, { kind: 'hall', state: t3!.state });
   };
   unmountTurntable();
   if (spinFig && !spinFig.hidden) show3d();
@@ -467,6 +479,15 @@ function select(id: string | null) {
   card.scrollTop = 0;
   card.scrollIntoView({ block: 'nearest' });
 }
+
+// 名片里嵌的模型页读好、被拖动时会告诉这里，收起“正在读入”和操作提示
+window.addEventListener('message', (e) => {
+  if (e.origin !== location.origin) return;
+  const box = card.querySelector<HTMLElement>('.model-box');
+  if (!box) return;
+  if (e.data?.type === 'model-ready') box.classList.remove('loading');
+  if (e.data?.type === 'model-interacted') box.classList.add('spun');
+});
 
 // ---------- 起步 ----------
 const unlocated = units.filter((u) => !u.location);

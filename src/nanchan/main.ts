@@ -12,8 +12,15 @@ const sources = sourcesJson as Record<string, { title: string; author?: string; 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
-// 嵌在建筑页里（?embed）时去掉站点页头和返回链接
-if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+// 嵌在建筑页里（?embed）时去掉站点页头和返回链接；
+// 嵌在地图名片里（?mini）时只留模型和视角按钮，只能转、缩放，拆开、点构件、照片对照都在完整页面
+const query = new URLSearchParams(location.search);
+const MINI = query.has('mini');
+if (query.has('embed') || MINI) document.body.classList.add('embed');
+if (MINI) {
+  document.documentElement.classList.add('mini');
+  document.body.classList.add('mini');
+}
 
 const canvas = $<HTMLCanvasElement>('#stage');
 const stage = createStage(canvas);
@@ -65,6 +72,8 @@ stage.beforeRender.push(() => {
 controls.addEventListener('start', () => (flight = null));
 function goTo(v: View, animate = true) {
   const { p, t, fov = 32 } = pose(v);
+  // 名片里的小窗比完整页面窄，室外几个视角往后退，台基、月台才框得全
+  if (MINI && v !== 'inside' && v !== 'eave') p.sub(t).multiplyScalar(1.45).add(t);
   if (!animate) {
     camera.position.copy(p);
     controls.target.copy(t);
@@ -161,6 +170,7 @@ const ray = new THREE.Raycaster();
 let down: { x: number; y: number } | null = null;
 canvas.addEventListener('pointerdown', (e) => (down = { x: e.clientX, y: e.clientY }));
 canvas.addEventListener('pointerup', (e) => {
+  if (MINI) return;
   if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
   const r = canvas.getBoundingClientRect();
   ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
@@ -238,3 +248,50 @@ new ResizeObserver(placeForPhoto).observe(wrap);
 
 // 调试用：在控制台里看模型
 Object.assign(window, { nanchan: { model, camera, controls, goTo } });
+
+// ---------- 地图名片里的精简模式 ----------
+// 和完整页面同一套光照、阴影、地面；只是不拆、不点、不对照照片。
+// 地图本身已经占着一个三维画面，这里尽量省：阴影贴图减半，不动的时候停下渲染。
+if (MINI) {
+  scene.traverse((o) => {
+    if (o instanceof THREE.DirectionalLight && o.castShadow) o.shadow.mapSize.set(2048, 2048);
+  });
+  controls.enablePan = false;
+  // 普通滚轮留给名片滚动；触控板捏合（浏览器里是按着 Ctrl 的滚轮）才缩放
+  controls.enableZoom = false;
+  const offset = new THREE.Vector3();
+  canvas.addEventListener(
+    'wheel',
+    (e) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      offset.copy(camera.position).sub(controls.target);
+      const d = THREE.MathUtils.clamp(offset.length() * Math.exp(e.deltaY * 0.01), controls.minDistance, controls.maxDistance);
+      camera.position.copy(controls.target).add(offset.setLength(d));
+      kick(800);
+      tell('model-interacted');
+    },
+    { passive: false },
+  );
+  // 不动的时候停下渲染：拖动、飞到预设视角、贴图读完时跑一阵
+  let idle = 0;
+  function kick(ms: number) {
+    stage.setRunning(true);
+    clearTimeout(idle);
+    idle = window.setTimeout(() => stage.setRunning(false), ms);
+  }
+  controls.addEventListener('start', () => {
+    kick(600000);
+    tell('model-interacted');
+  });
+  controls.addEventListener('end', () => kick(1500));
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-view]')) b.addEventListener('click', () => kick(1600));
+  const tell = (type: string) => parent !== window && parent.postMessage({ type }, location.origin);
+  THREE.DefaultLoadingManager.onLoad = () => {
+    kick(1200);
+    tell('model-ready');
+  };
+  kick(8000);
+  // 贴图没有经过 LoadingManager 的情况：最晚 8 秒也算读好
+  setTimeout(() => tell('model-ready'), 8000);
+}

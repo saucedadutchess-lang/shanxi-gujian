@@ -210,3 +210,35 @@ body:not(.by-basis) .nc-legend {
 .embed .nc-back {
   display: none;
 }
+
+/* 地图名片里的精简模式：只有模型和视角按钮。iframe 只有四百多像素宽，要压住窄屏样式 */
+html.mini,
+html.mini body {
+  height: 100%;
+}
+
+html.mini main {
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.mini .nc-views button {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.mini .nc-panel,
+.mini .hint,
+.mini .nc-overlay,
+.mini .nc-credit {
+  display: none;
+}
+
+.mini .nc-views {
+  top: auto;
+  left: auto;
+  right: 8px;
+  bottom: 8px;
+  gap: 2px;
+}

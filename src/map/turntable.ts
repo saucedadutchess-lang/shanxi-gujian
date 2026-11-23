@@ -1,35 +1,18 @@
 // 名片里的“转着看”：在名片里原地拖动，左右转、上下改仰角，触控板捏合缩放，另有几个视角按钮。
 // 不另开 WebGL：借小图的离屏渲染器，拖动时才渲染一帧，画到名片里的 2D 画布上。
 // 普通滚轮不接，名片照常上下滚；每个角度都按包围盒自动取景，台基、月台整个框进画面。
-// 两种内容：示意（屋顶变形器的素色通用殿堂，按形制和年代摆）；有测绘模型的单位用复原模型（南禅寺）。
+// 内容是示意：屋顶变形器的素色通用殿堂，按形制和年代摆。有复原模型的单位（南禅寺）不走这里，名片里直接嵌模型页的精简模式。
 import * as THREE from 'three';
 import { Hall } from '../roof/hall';
 import type { MorphState } from '../roof/params';
-import { addLights, offscreen, texturesReady } from './thumbs';
+import { addLights, offscreen } from './thumbs';
 
-export type SpinSource = { kind: 'hall'; state: MorphState } | { kind: 'model'; model: string };
+export type SpinSource = { kind: 'hall'; state: MorphState };
 
 const scene = new THREE.Scene();
 addLights(scene);
 const camera = new THREE.PerspectiveCamera(28, 1, 0.5, 600);
 let hall: Hall | null = null;
-/** 复原模型只建一次，留着复用 */
-const models = new Map<string, Promise<THREE.Object3D>>();
-function loadModel(name: string) {
-  let p = models.get(name);
-  if (!p) {
-    p = (async () => {
-      if (name !== 'nanchan') throw new Error(`没有模型 ${name}`);
-      const { buildNanchan } = await import('../nanchan/model');
-      const m = buildNanchan();
-      await texturesReady();
-      return m.group;
-    })();
-    models.set(name, p);
-  }
-  return p;
-}
-
 let current: { dispose(): void } | null = null;
 
 /** 名片里的几个视角：水平角（0 = 正面，负数偏左前）、仰角（弧度）、放大倍数 */
@@ -100,18 +83,12 @@ export function mountTurntable(host: HTMLElement, src: SpinSource) {
 
   async function prepare() {
     host.classList.add('loading');
-    if (src.kind === 'hall') {
-      hall ??= new Hall({ plain: true });
-      hall.update(src.state);
-      obj = hall.group;
-    } else {
-      obj = await loadModel(src.model);
-    }
+    hall ??= new Hall({ plain: true });
+    hall.update(src.state);
+    obj = hall.group;
     if (!alive) return;
     box.setFromObject(obj);
     box.getCenter(pivot);
-    // 复原模型连着月台，前后很长；绕殿身中心（模型原点）转，免得转起来晃
-    if (src.kind === 'model') pivot.x = pivot.z = 0;
     host.classList.remove('loading');
     draw();
   }
