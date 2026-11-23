@@ -317,7 +317,10 @@ const merge = (facts: (Fact | undefined)[]): Fact | undefined => {
 };
 
 // 写了建筑页的单位、按测绘尺寸建了模型的单位（值是 data/models/ 下的模型名，页面是同名 html）
-const BUILDING_PAGES: Record<string, string> = { '1-0079-3-032': './building.html?id=nanchan' };
+const BUILDING_PAGES: Record<string, string> = {
+  '1-0079-3-032': './building.html?id=nanchan',
+  '1-0080-3-033': './building.html?id=foguang',
+};
 const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan' };
 
 /** 示意殿堂的参数换成屋顶变形器的网址，进去就摆好这个形制和年代 */

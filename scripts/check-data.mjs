@@ -160,6 +160,18 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
   }
   const k = b.keys ?? {};
   (k.form?.facts ?? []).forEach((x, i) => item(`${w} 认形制 ${i + 1}`, x));
+  (k.structure?.facts ?? []).forEach((x, i) => item(`${w} 拆结构 ${i + 1}`, x));
+  // 没有模型时方位图按实测柱网画：尺寸要带出处，门窗要和开间对上
+  if (b.plan) {
+    const wp = `${w} 平面 plan`;
+    fact(wp, b.plan, { needKind: false });
+    if (!PAGE_KINDS.includes(b.plan.kind)) err(wp, `类型 kind 不对：${b.plan.kind}`);
+    if (!b.plan.where) err(wp, '缺出处里的位置 where');
+    const nums = (a) => Array.isArray(a) && a.length > 0 && a.every((v) => typeof v === 'number' && v > 0);
+    if (!nums(b.plan.bays) || !nums(b.plan.depths)) err(wp, '开间 bays、进深 depths 要写成米数数组');
+    if (!['S', 'W', 'N', 'E'].includes(b.plan.facing)) err(wp, '朝向 facing 要写 S / W / N / E');
+    if (b.plan.front?.length !== b.plan.bays?.length) err(wp, '前檐门窗 front 要和开间一一对应');
+  }
   if (k.grade) {
     item(`${w} 读等级 规则`, k.grade.rule);
     for (const r of k.grade.rows ?? []) {

@@ -7,7 +7,7 @@ import './building.css';
 import { sources, units, type Source, type Unit } from '../map/data';
 import { galleryBlock, openPhoto, wireGallery } from '../map/photos';
 import { renderThumb, thumbFor } from '../map/thumbs';
-import { hasPlan, planSvg } from './plan';
+import { hasPlan, planSvg, type GridSpec } from './plan';
 
 type Kind = '史料记载' | '民间传说' | '学界推断';
 interface Item {
@@ -23,6 +23,8 @@ interface Page {
   name: string;
   place: string;
   model?: string;
+  /** 没有模型时，到现场必看的方位图按这里的实测柱网画 */
+  plan?: GridSpec & Item;
   review: string;
   timeline: (Item & { date: string })[];
   stories: { title: string; paras: Item[] }[];
@@ -34,7 +36,7 @@ interface Page {
       with: string;
       rows: { label: string; a: string; b: string; src: string[]; kind: Kind; where?: string }[];
     };
-    structure?: { text: string };
+    structure?: { text: string; facts?: Item[] };
   };
   onsite?: { note: string; items: (Item & { n: number; title: string; at: [number, number]; photo?: string })[] };
   practical: { address?: Item; pending?: string };
@@ -58,6 +60,8 @@ function render(p: Page) {
   const card = unit.curated!.card!;
   const building = unit.curated!.buildings!.find((b) => b.id === p.buildingId)!;
   document.title = `${p.name}｜观晋`;
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('.site-nav a'))
+    if (a.search === `?id=${p.id}`) a.setAttribute('aria-current', 'page');
 
   // ---------- 出处：正文里写短名，页尾列全 ----------
   const used: string[] = [];
@@ -151,11 +155,12 @@ function render(p: Page) {
   const structKey = k.structure
     ? `<div class="bp-key" id="key-structure"><h3><span>三</span>拆结构</h3>
       <p class="bp-lead">${esc(k.structure.text)}</p>
+      ${(k.structure.facts ?? []).map((x) => `<p>${esc(x.text)}${meta(x)}</p>`).join('')}
       ${
         modelPage
           ? `<div class="bp-model" id="model-box"><button type="button" class="bp-model-open">在这里打开 3D 模型<small>要读入不少贴图，比较占内存，用完可以刷新页面</small></button></div>
              <p class="bp-go-row"><a class="bp-go" href="${modelPage}">在新页面全屏打开 →</a></p>`
-          : '<p class="todo">还没有模型。</p>'
+          : '<p class="todo">3D 模型还在做，做好后放在这里。</p>'
       }</div>`
     : '';
   const keys = add('keys', '三把钥匙', formKey + gradeKey + structKey);
@@ -167,7 +172,7 @@ function render(p: Page) {
         'onsite',
         '到现场必看',
         `<div class="bp-onsite">
-        ${p.model && hasPlan(p.model) ? `<figure class="bp-plan">${planSvg(p.model, os.items)}<figcaption><span class="tag">示意</span>${esc(os.note)}</figcaption></figure>` : ''}
+        ${hasPlan(p.model, p.plan) ? `<figure class="bp-plan">${planSvg(p.model, os.items, p.plan)}<figcaption><span class="tag">示意</span>${esc(os.note)}${p.plan ? meta(p.plan) : ''}</figcaption></figure>` : ''}
         <ol class="bp-spots">${os.items
           .map(
             (o) => `<li data-n="${o.n}" id="spot-${o.n}"><b class="n">${o.n}</b><div><h3>${esc(o.title)}</h3><p>${esc(o.text)}</p>${meta(o)}</div>${

@@ -699,3 +699,9 @@ body.bp-page {
 .bp-missing {
   padding: 60px 0;
 }
+
+.plan .altar {
+  fill: #e6dcc8;
+  stroke: #b9ab94;
+  stroke-width: 0.08;
+}
