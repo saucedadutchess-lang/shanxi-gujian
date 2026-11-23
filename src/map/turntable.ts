@@ -1,6 +1,6 @@
-// 名片里的“转着看”：在名片里原地拖动，水平转一圈。
+// 名片里的“转着看”：在名片里原地拖动，左右转、上下改仰角，触控板捏合缩放，另有几个视角按钮。
 // 不另开 WebGL：借小图的离屏渲染器，拖动时才渲染一帧，画到名片里的 2D 画布上。
-// 只响应拖动和方向键，不接滚轮，名片照常上下滚。
+// 普通滚轮不接，名片照常上下滚；每个角度都按包围盒自动取景，台基、月台整个框进画面。
 // 两种内容：示意（屋顶变形器的素色通用殿堂，按形制和年代摆）；有测绘模型的单位用复原模型（南禅寺）。
 import * as THREE from 'three';
 import { Hall } from '../roof/hall';
@@ -32,6 +32,59 @@ function loadModel(name: string) {
 
 let current: { dispose(): void } | null = null;
 
+/** 名片里的几个视角：水平角（0 = 正面，负数偏左前）、仰角（弧度）、放大倍数 */
+export const SPIN_VIEWS = {
+  corner: { label: '斜看', angle: -0.62, elev: 0.16, zoom: 1 },
+  front: { label: '正面', angle: 0, elev: 0.06, zoom: 1 },
+  side: { label: '侧面', angle: -Math.PI / 2, elev: 0.08, zoom: 1 },
+  top: { label: '俯瞰', angle: -0.62, elev: 0.85, zoom: 1 },
+} as const;
+export type SpinView = keyof typeof SPIN_VIEWS;
+const ELEV = [0.02, 1.25];
+const ZOOM = [0.8, 3];
+
+/**
+ * 按当前方向把整个包围盒（连台基、月台）框进画面：
+ * 先算出每个角在相机坐标里的位置，求出刚好装得下的距离，再把画面中心挪到投影范围的正中。
+ */
+function frame(cam: THREE.PerspectiveCamera, box: THREE.Box3, pivot: THREE.Vector3, angle: number, elev: number, zoom: number) {
+  const dir = new THREE.Vector3(Math.sin(angle) * Math.cos(elev), Math.sin(elev), Math.cos(angle) * Math.cos(elev));
+  const tV = Math.tan((cam.fov * Math.PI) / 360) * 0.92;
+  const tH = tV * cam.aspect;
+  const corners: THREE.Vector3[] = [];
+  for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) corners.push(new THREE.Vector3(x, y, z));
+  const target = pivot.clone();
+  const r = new THREE.Vector3();
+  const u = new THREE.Vector3();
+  const f = new THREE.Vector3();
+  let d = 1;
+  for (let pass = 0; pass < 3; pass++) {
+    cam.position.copy(target).add(dir);
+    cam.lookAt(target);
+    cam.updateMatrixWorld();
+    r.setFromMatrixColumn(cam.matrixWorld, 0);
+    u.setFromMatrixColumn(cam.matrixWorld, 1);
+    f.setFromMatrixColumn(cam.matrixWorld, 2).negate();
+    const local = corners.map((c) => {
+      const v = c.clone().sub(target);
+      return { x: v.dot(r), y: v.dot(u), z: v.dot(f) };
+    });
+    d = Math.max(...local.map((p) => Math.max(Math.abs(p.x) / tH, Math.abs(p.y) / tV) - p.z));
+    if (pass === 2) break;
+    // 投影范围的中点，挪过去让画面居中
+    const sx = local.map((p) => p.x / ((d + p.z) * tH));
+    const sy = local.map((p) => p.y / ((d + p.z) * tV));
+    const mx = (Math.max(...sx) + Math.min(...sx)) / 2;
+    const my = (Math.max(...sy) + Math.min(...sy)) / 2;
+    target.addScaledVector(r, mx * d * tH).addScaledVector(u, my * d * tV);
+  }
+  // 放大时往模型中心靠，不往画面中心靠
+  const k = 1 / zoom;
+  const t = target.clone().lerp(pivot, 1 - k);
+  cam.position.copy(t).addScaledVector(dir, d * k);
+  cam.lookAt(t);
+}
+
 /** 把转台装进 host（里面要有一个 canvas）；换单位或关名片时上一个自动作废 */
 export function mountTurntable(host: HTMLElement, src: SpinSource) {
   current?.dispose();
@@ -39,9 +92,11 @@ export function mountTurntable(host: HTMLElement, src: SpinSource) {
   const g2 = canvas.getContext('2d')!;
   let alive = true;
   let obj: THREE.Object3D | null = null;
-  let angle = -0.7; // 从左前方看，正面和山面都看得到
-  const center = new THREE.Vector3();
-  let radius = 10;
+  let angle: number = SPIN_VIEWS.corner.angle;
+  let elev: number = SPIN_VIEWS.corner.elev;
+  let zoom: number = SPIN_VIEWS.corner.zoom;
+  const box = new THREE.Box3();
+  const pivot = new THREE.Vector3();
 
   async function prepare() {
     host.classList.add('loading');
@@ -53,12 +108,10 @@ export function mountTurntable(host: HTMLElement, src: SpinSource) {
       obj = await loadModel(src.model);
     }
     if (!alive) return;
-    const box = new THREE.Box3().setFromObject(obj);
-    box.getCenter(center);
-    const size = box.getSize(new THREE.Vector3());
+    box.setFromObject(obj);
+    box.getCenter(pivot);
     // 复原模型连着月台，前后很长；绕殿身中心（模型原点）转，免得转起来晃
-    if (src.kind === 'model') center.x = center.z = 0;
-    radius = Math.max(Math.max(size.x, size.z) * 0.48, size.y * 0.8);
+    if (src.kind === 'model') pivot.x = pivot.z = 0;
     host.classList.remove('loading');
     draw();
   }
@@ -77,14 +130,7 @@ export function mountTurntable(host: HTMLElement, src: SpinSource) {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    const dist = radius / Math.tan((camera.fov * Math.PI) / 360) / Math.min(1, camera.aspect);
-    const elev = 0.32;
-    camera.position.set(
-      center.x + Math.sin(angle) * Math.cos(elev) * dist,
-      center.y + Math.sin(elev) * dist,
-      center.z + Math.cos(angle) * Math.cos(elev) * dist,
-    );
-    camera.lookAt(center.x, center.y - radius * 0.05, center.z);
+    frame(camera, box, pivot, angle, elev, zoom);
     scene.add(obj);
     renderer.render(scene, camera);
     scene.remove(obj);
@@ -92,23 +138,43 @@ export function mountTurntable(host: HTMLElement, src: SpinSource) {
     g2.drawImage(renderer.domElement, 0, 0, canvas.width, canvas.height);
   }
 
-  // 拖动：水平拖一个画布宽约转半圈
-  let drag: { x: number; a: number } | null = null;
+  const clamp = (v: number, [a, b]: readonly number[]) => Math.min(b, Math.max(a, v));
+  let tween = 0;
+  // 拖动：左右转，上下改仰角；水平拖一个画布宽约转半圈
+  let drag: { x: number; y: number; a: number; e: number } | null = null;
   const down = (e: PointerEvent) => {
-    drag = { x: e.clientX, a: angle };
+    tween++;
+    drag = { x: e.clientX, y: e.clientY, a: angle, e: elev };
     canvas.setPointerCapture(e.pointerId);
     host.classList.add('spun');
   };
   const move = (e: PointerEvent) => {
     if (!drag) return;
     angle = drag.a - ((e.clientX - drag.x) / canvas.clientWidth) * Math.PI;
+    elev = clamp(drag.e + ((e.clientY - drag.y) / canvas.clientHeight) * 1.6, ELEV);
     requestDraw();
   };
   const up = () => (drag = null);
-  const key = (e: KeyboardEvent) => {
-    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  // 只接捏合（触控板捏合在浏览器里是按着 Ctrl 的滚轮），普通滚轮留给名片滚动
+  const wheel = (e: WheelEvent) => {
+    if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
-    angle += (e.key === 'ArrowLeft' ? 1 : -1) * (Math.PI / 12);
+    tween++;
+    zoom = clamp(zoom * Math.exp(-e.deltaY * 0.01), ZOOM);
+    host.classList.add('spun');
+    requestDraw();
+  };
+  const key = (e: KeyboardEvent) => {
+    const step = Math.PI / 12;
+    if (e.key === 'ArrowLeft') angle += step;
+    else if (e.key === 'ArrowRight') angle -= step;
+    else if (e.key === 'ArrowUp') elev = clamp(elev + 0.12, ELEV);
+    else if (e.key === 'ArrowDown') elev = clamp(elev - 0.12, ELEV);
+    else if (e.key === '+' || e.key === '=') zoom = clamp(zoom * 1.25, ZOOM);
+    else if (e.key === '-') zoom = clamp(zoom / 1.25, ZOOM);
+    else return;
+    e.preventDefault();
+    tween++;
     host.classList.add('spun');
     requestDraw();
   };
@@ -121,10 +187,38 @@ export function mountTurntable(host: HTMLElement, src: SpinSource) {
       draw();
     });
   }
+  /** 换到预设视角：半秒过渡，水平角走近的那一边 */
+  function goTo(v: SpinView) {
+    const to = SPIN_VIEWS[v];
+    const from = { angle, elev, zoom };
+    let da = (to.angle - angle) % (Math.PI * 2);
+    if (da > Math.PI) da -= Math.PI * 2;
+    if (da < -Math.PI) da += Math.PI * 2;
+    const id = ++tween;
+    const t0 = performance.now();
+    const step = () => {
+      if (id !== tween || !alive) return;
+      const k = Math.min(1, (performance.now() - t0) / 500);
+      const e = k * k * (3 - 2 * k);
+      angle = from.angle + da * e;
+      elev = from.elev + (to.elev - from.elev) * e;
+      zoom = from.zoom + (to.zoom - from.zoom) * e;
+      draw();
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  for (const b of host.querySelectorAll<HTMLButtonElement>('[data-spin-view]')) {
+    b.addEventListener('click', () => {
+      host.classList.add('spun');
+      goTo(b.dataset.spinView as SpinView);
+    });
+  }
   canvas.addEventListener('pointerdown', down);
   canvas.addEventListener('pointermove', move);
   canvas.addEventListener('pointerup', up);
   canvas.addEventListener('pointercancel', up);
+  canvas.addEventListener('wheel', wheel, { passive: false });
   canvas.addEventListener('keydown', key);
   // 名片拉宽、窗口变化时重画
   const ro = new ResizeObserver(() => requestDraw());

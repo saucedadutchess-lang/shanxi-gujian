@@ -6,7 +6,7 @@ import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
 import { EXAGGERATION, createTerrainView } from './terrain3d';
 import { renderThumb, thumbFor } from './thumbs';
-import { mountTurntable, unmountTurntable, type SpinSource } from './turntable';
+import { SPIN_VIEWS, mountTurntable, unmountTurntable, type SpinSource } from './turntable';
 import type { MorphState } from '../roof/params';
 import { RANK_LABEL, REGION_COLOR, rankOf, shortName, type MapView, type PointState } from './view';
 import {
@@ -349,9 +349,12 @@ function select(id: string | null) {
   // ---- 图像区：实拍照片和 3D 共用一块，有两样时上面切换 ----
   const spinBlock = spin
     ? `<figure class="media-3d"${hasPhotos ? ' hidden' : ''}>
-        <div class="spin-box"><canvas tabindex="0" aria-label="三维${model ? '复原模型' : '示意'}，拖动或按左右方向键转动"></canvas>
-          <span class="spin-hint">⟲ 拖动转着看</span><span class="spin-wait">正在生成…</span>
-          ${model ? `<a class="spin-open" href="./${model}.html">拆开完整模型 →</a>` : ''}</div>
+        <div class="spin-box"><canvas tabindex="0" aria-label="三维${model ? '复原模型' : '示意'}，拖动或按方向键转动，加减号缩放"></canvas>
+          <span class="spin-hint">拖动旋转 · 捏合缩放</span><span class="spin-wait">正在生成…</span>
+          ${model ? `<a class="spin-open" href="./${model}.html">拆开完整模型 →</a>` : ''}
+          <div class="spin-views" role="group" aria-label="视角">${Object.entries(SPIN_VIEWS)
+            .map(([k, v]) => `<button type="button" data-spin-view="${k}">${v.label}</button>`)
+            .join('')}</div></div>
         <figcaption>${
           model
             ? '<span class="tag tag-model">依据图纸复原</span>按论文实测尺寸生成的模型，彩塑、残损没有做'

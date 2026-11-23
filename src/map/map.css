@@ -705,6 +705,33 @@
   opacity: 0;
 }
 
+.spin-views {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 6px;
+}
+
+.spin-views button {
+  padding: 2px 8px;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.spin-views button:hover {
+  color: #fff;
+  background: var(--accent);
+}
+
 .spin-open {
   position: absolute;
   right: 8px;
