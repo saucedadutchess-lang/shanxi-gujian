@@ -163,7 +163,7 @@ function render(p: Page) {
           : '<p class="todo">3D 模型还在做，做好后放在这里。</p>'
       }</div>`
     : '';
-  const keys = add('keys', '三把钥匙', formKey + gradeKey + structKey);
+  const keys = add('keys', '三把钥匙', `<p class="bp-go-row"><a class="bp-go" href="./intro.html">第一次看？先读古建入门：三把钥匙各是什么、怎么用 →</a></p>` + formKey + gradeKey + structKey);
 
   // ---------- 到现场必看 ----------
   const os = p.onsite;
