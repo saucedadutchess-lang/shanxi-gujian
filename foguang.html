@@ -52,9 +52,15 @@
           <ul class="nc-legend" id="legend"></ul>
         </section>
 
-        <section hidden>
+        <section>
+          <h3>和实拍照片对照</h3>
+          <p class="desc nc-small">把模型叠在照片上，按照片里柱子和台明角的位置反推出拍摄位置，看檐口、屋脊、斗拱对不对得上。转动模型时照片自动收起。</p>
+          <div class="nc-seg nc-photos" role="group" aria-label="对照照片">
+            <button type="button" data-photo="03">西北角</button>
+          </div>
           <div class="nc-photo-ctl" hidden>
-            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" /><output id="photo-op-out"></output>
+            <div class="row"><label for="photo-op">照片透明度</label><output id="photo-op-out">50%</output></div>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" />
             <p class="nc-s" id="photo-note"></p>
           </div>
         </section>

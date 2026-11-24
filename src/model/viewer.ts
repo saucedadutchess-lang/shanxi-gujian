@@ -190,13 +190,16 @@ export function startViewer(cfg: ViewerConfig) {
   const wrap = $('.stage-wrap');
   const BASE_FOV = camera.fov;
   let photoOn: string | null = null;
+  const photoOf = (id: string) => photosOf(MODEL.unitId).find((x) => x.file.endsWith(`/${id}.jpg`))!;
   function placeForPhoto() {
     if (!photoOn) return;
     const q = PHOTO_POSES[photoOn].q;
-    // 照片按 4:3 缩放到画布里（上下或左右留边），相机视角相应放大，让两者重合
+    // 照片按原宽高比缩放到画布里（上下或左右留边），相机视角相应放大，让两者重合
+    const ph = photoOf(photoOn);
+    const aspect = ph.w && ph.h ? ph.w / ph.h : 4 / 3;
     const cw = wrap.clientWidth;
     const ch = wrap.clientHeight;
-    const boxH = Math.min(ch, cw / (4 / 3));
+    const boxH = Math.min(ch, cw / aspect);
     camera.fov = (Math.atan((Math.tan((q[5] * Math.PI) / 360) * ch) / boxH) * 360) / Math.PI;
     camera.updateProjectionMatrix();
     camera.position.set(q[0], q[1], q[2]);
@@ -215,7 +218,7 @@ export function startViewer(cfg: ViewerConfig) {
       return;
     }
     flight = null;
-    const p = photosOf(MODEL.unitId).find((x) => x.file.endsWith(`/${id}.jpg`))!;
+    const p = photoOf(id);
     overlay.src = `${import.meta.env.BASE_URL}photos/${p.file}`;
     overlay.style.opacity = photoOp.value;
     credit.innerHTML = `照片：${esc(p.caption)}${p.date ? `（${p.date}）` : ''} · ${esc(p.author)} · ${esc(p.license)} · <a href="${esc(p.source)}" target="_blank" rel="noopener">维基共享资源原图</a>`;
