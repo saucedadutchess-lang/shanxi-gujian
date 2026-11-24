@@ -101,7 +101,7 @@ class GridBuilder {
    * @param du 一节瓦在 u 上占多长
    * @param seed 决定每节瓦深浅的随机种子
    */
-  addRib(at: (u: number) => Vert, top: number, du: number, lateral: 'x' | 'z', seed: number) {
+  addRib(at: (u: number) => Vert, top: number, du: number, lateral: 'x' | 'z', seed: number, radius = TILE_R) {
     const base = this.pos.length / 3;
     const ring = 4;
     let rings = 0;
@@ -130,8 +130,8 @@ class GridBuilder {
       const tone = (0.92 + 0.08 * hash(k + 1)) * (0.9 + 0.1 * Math.min(1, u0 * 3));
       // 一垄瓦取照片里同一列，一节节往上取，相邻两节颜色相近
       const cell: [number, number] = [Math.floor(hash(101) * PHOTO_COLS), (k + Math.floor(hash(201) * PHOTO_ROWS)) % PHOTO_ROWS];
-      pushRing(at(u0), TILE_R, 0.012, tone, cell, 0);
-      pushRing(at(u1), TILE_R * 0.84, -0.01, tone, cell, (u1 - u0) / du);
+      pushRing(at(u0), radius, 0.012, tone, cell, 0);
+      pushRing(at(u1), radius * 0.84, -0.01, tone, cell, (u1 - u0) / du);
     }
     for (let j = 0; j < rings - 1; j++) {
       // 相邻两节之间不连面，留出台阶
@@ -196,6 +196,10 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
   const s = new RoofSurface(spec);
   const { W, D, uc, uTop, tau, ring } = spec;
   const xg = s.xg;
+  // 瓦的大小：默认按明清的瓦，给了 tileRow（瓦陇间距）就整体放大缩小
+  const tileRow = spec.tileRow ?? TILE_ROW;
+  const tileK = tileRow / TILE_ROW;
+  const tileLen = TILE_LEN * tileK;
 
   const base = new GridBuilder();
   const wood = new GridBuilder();
@@ -206,7 +210,7 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
   // 底瓦面的贴图坐标：横向是面阔（或进深）方向的米数，纵向是沿坡的米数。
   // 照片里一列瓦正好落在两垄筒瓦之间
   const slope = (u: number) => u * D * SLOPE_K;
-  const lateralUV = (v: Vert, u: number): [number, number] => [v[0] / TILE_ROW / PHOTO_COLS + 0.5 / PHOTO_COLS, slope(u) / TILE_LEN / PHOTO_ROWS];
+  const lateralUV = (v: Vert, u: number): [number, number] => [v[0] / tileRow / PHOTO_COLS + 0.5 / PHOTO_COLS, slope(u) / tileLen / PHOTO_ROWS];
   for (const [builder, dy] of [[base, 0], [wood, -tau]] as const) {
     const withUV = builder === base;
     for (const sz of [1, -1]) {
@@ -282,26 +286,26 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
 
   // 筒瓦。一节瓦长约 0.42 米；各垄的接缝对齐，连成一道道横线
   const ribs = new GridBuilder();
-  const du = TILE_LEN / (D * SLOPE_K);
+  const du = tileLen / (D * SLOPE_K);
   const tileEnds: EaveMark[] = [];
-  const kx = Math.floor((W - 0.08) / TILE_ROW);
+  const kx = Math.floor((W - 0.08) / tileRow);
   for (let k = -kx; k <= kx; k++) {
-    const x = k * TILE_ROW;
+    const x = k * tileRow;
     const top = s.frontTop(Math.abs(x));
     if (top < 0.02) continue;
     for (const sz of [1, -1]) {
-      ribs.addRib((u) => s.front(x, u, sz), top, du, 'x', k + sz * 1000);
+      ribs.addRib((u) => s.front(x, u, sz), top, du, 'x', k + sz * 1000, TILE_R * tileK);
       tileEnds.push({ pos: s.front(x, 0, sz), facing: 'z', sign: sz });
     }
   }
   if (hasSkirt) {
-    const kz = Math.floor((D - 0.08) / TILE_ROW);
+    const kz = Math.floor((D - 0.08) / tileRow);
     for (let k = -kz; k <= kz; k++) {
-      const z = k * TILE_ROW;
+      const z = k * tileRow;
       const top = s.endTop(Math.abs(z));
       if (top < 0.02) continue;
       for (const sx of [1, -1]) {
-        ribs.addRib((u) => s.end(u, z, sx), top, du, 'z', k + sx * 3000);
+        ribs.addRib((u) => s.end(u, z, sx), top, du, 'z', k + sx * 3000, TILE_R * tileK);
         tileEnds.push({ pos: s.end(0, z, sx), facing: 'x', sign: sx });
       }
     }
@@ -310,14 +314,14 @@ export function buildRoof(spec: RoofSpec): RoofGeometry {
   // 滴水：两垄筒瓦之间、檐口最下面一块板瓦垂下的尖舌
   const drips: EaveMark[] = [];
   for (let k = -kx; k < kx; k++) {
-    const x = (k + 0.5) * TILE_ROW;
+    const x = (k + 0.5) * tileRow;
     if (s.frontTop(Math.abs(x)) < 0.02) continue;
     for (const sz of [1, -1]) drips.push({ pos: s.front(x, 0, sz), facing: 'z', sign: sz });
   }
   if (hasSkirt) {
-    const kz = Math.floor((D - 0.08) / TILE_ROW);
+    const kz = Math.floor((D - 0.08) / tileRow);
     for (let k = -kz; k < kz; k++) {
-      const z = (k + 0.5) * TILE_ROW;
+      const z = (k + 0.5) * tileRow;
       if (s.endTop(Math.abs(z)) < 0.02) continue;
       for (const sx of [1, -1]) drips.push({ pos: s.end(0, z, sx), facing: 'x', sign: sx });
     }

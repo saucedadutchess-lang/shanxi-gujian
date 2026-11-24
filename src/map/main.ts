@@ -321,7 +321,7 @@ const BUILDING_PAGES: Record<string, string> = {
   '1-0079-3-032': './building.html?id=nanchan',
   '1-0080-3-033': './building.html?id=foguang',
 };
-const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan' };
+const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang' };
 
 /** 示意殿堂的参数换成屋顶变形器的网址，进去就摆好这个形制和年代 */
 function morphHref(s: MorphState) {

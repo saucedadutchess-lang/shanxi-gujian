@@ -62,6 +62,8 @@ export interface RoofSpec {
    * 给了它就不用 slopeEave 到 slopeRidge 的渐变（南禅寺大殿用，屋顶变形器不用）
    */
   segs?: [number, number][];
+  /** 可选：瓦陇中到中的间距（米），不给就用明清的 0.3 米。唐代的瓦大得多（佛光寺东大殿 0.525） */
+  tileRow?: number;
 }
 
 export interface HallDims {

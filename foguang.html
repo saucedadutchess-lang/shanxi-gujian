@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>佛光寺东大殿 · 拆开看｜观晋</title>
+    <meta name="description" content="按已发表的实测尺寸生成的佛光寺东大殿三维模型，可以一层层拆开，看每个构件的尺寸和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html">地图</a>
+        <a href="./index.html">屋顶变形器</a>
+        <a href="./building.html?id=foguang" aria-current="page">佛光寺东大殿</a>
+        <a href="./building.html?id=nanchan">南禅寺大殿</a>
+      </nav>
+    </header>
+    <main>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="佛光寺东大殿的三维模型"></canvas>
+        <div class="nc-views" role="group" aria-label="视角">
+          <button type="button" data-view="front" title="站在殿前看正面（殿朝西）">正面</button>
+          <button type="button" data-view="corner" title="从西北角看，正面和北山面都看得到">斜看</button>
+          <button type="button" data-view="eave" title="走到檐下，抬头看斗拱和出檐">檐下</button>
+          <button type="button" data-view="inside" title="进到殿里，抬头看梁架">殿内</button>
+          <button type="button" data-view="top" title="从高处看屋顶">俯瞰</button>
+        </div>
+        <img class="nc-overlay" id="overlay" alt="" hidden />
+        <p class="nc-credit" id="overlay-credit" hidden></p>
+        <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
+      </div>
+
+      <aside class="panel nc-panel">
+        <p class="nc-back"><a href="./building.html?id=foguang">← 佛光寺东大殿建筑页</a></p>
+        <h2>佛光寺东大殿 <span class="badge" id="precision"></span></h2>
+        <p class="lead" id="precision-note"></p>
+
+        <section>
+          <div class="row"><label for="explode">拆开</label><output id="explode-out">合拢</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" />
+          <div class="nc-layers" id="layers" role="group" aria-label="显示哪些层"></div>
+        </section>
+
+        <section>
+          <h3>颜色</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="颜色">
+            <button type="button" role="radio" aria-checked="true" data-color="material">看材质</button>
+            <button type="button" role="radio" aria-checked="false" data-color="basis">看依据</button>
+          </div>
+          <ul class="nc-legend" id="legend"></ul>
+        </section>
+
+        <section hidden>
+          <div class="nc-photo-ctl" hidden>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" /><output id="photo-op-out"></output>
+            <p class="nc-s" id="photo-note"></p>
+          </div>
+        </section>
+
+        <section id="info" aria-live="polite">
+          <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>
+        </section>
+
+        <section class="sources">
+          <p>柱网、柱高、斗拱出跳、槫的高低取自张荣、刘畅、臧春雨《佛光寺东大殿实测数据解读》（《故宫博物院院刊》2007 年第 2 期）里 2005–2006 年三维激光扫描和手工测量的实测表；出檐、台明出取自张毅捷等《佛光寺东大殿檐部做法研究》（2020）转引的 2011 年勘察报告；柱径、瓦、鸱尾、门窗、佛坛按梁思成《记五台山佛光寺建筑》（1944）。全部参数和出处在仓库的 <code>data/models/foguang.json</code>。</p>
+          <p>殿内三十多尊唐代彩塑、栱眼壁和梁上的唐代壁画、正脊火珠、西北角后加的支撑柱没有做；月梁做成了直梁，翼角椽子没有向角梁散开。和实拍照片的叠合校验还没做。</p>
+        </section>
+      </aside>
+    </main>
+    <script type="module" src="/src/foguang/main.ts"></script>
+  </body>
+</html>

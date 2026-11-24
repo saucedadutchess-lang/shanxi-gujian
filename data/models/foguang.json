@@ -1,0 +1,1222 @@
+{
+  "_说明": "佛光寺东大殿模型的参数表。程序（src/foguang/）按这里的数字算出每个构件。每个数字都写明依据（basis）和出处（src，登记在 data/sources.json）。依据分四种：实测＝论文表格里的三维扫描或手工实测值（是今天的现状），以及梁思成 1937 年量的数；材分推算＝论文作者由实测均值推出的整数“分°”；修缮做法（这座殿没有用到）；推测＝本项目按《营造法式》比例或照片估计。unit 是 mm、分（1 分°＝fen 毫米）或比例。坐标：柱网编号 0–7 自北向南，B 前檐（西）、C 前内柱、D 中缝、E 后内柱、F 后檐（东）。殿朝西，模型里正面朝 +z。发现数字有错，改这里重新生成。",
+  "building": "佛光寺东大殿",
+  "unitId": "1-0080-3-033",
+  "precision": "依据图纸复原",
+  "precisionNote": "柱网、柱高、斗拱出跳、槫的高低、出檐、台明出取自已发表的三维扫描实测数据和梁思成的测量；梁栿、平闇、门窗、墙等论文没有给出的尺寸按《营造法式》比例或照片推测。默认展示现状：柱高高低不齐、橑檐槫下沉都照实测摆。",
+  "params": {
+    "fen": {
+      "value": 21,
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "where": "2007 第 36、42–43 页；讲稿“材分°”",
+      "label": "1 分°",
+      "note": "材厚实测均值 210.3 毫米（去掉特异值），取 10 分°"
+    },
+    "cai": {
+      "value": 15,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022-kaah"
+      ],
+      "where": "讲稿“材分°”",
+      "label": "单材广"
+    },
+    "caiThick": {
+      "value": 10,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "第 34–36 页，表四",
+      "label": "材厚"
+    },
+    "zucai": {
+      "value": 21,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "where": "第 42–43 页，表十一",
+      "label": "足材广",
+      "note": "实测均值 430.46 毫米，约 20.5 分°，比设计值小，是长期受压变形"
+    },
+    "zucaiMeasured": {
+      "value": 430.46,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表十一，第 42–43 页",
+      "label": "足材广实测均值",
+      "note": "模型里斗拱各层的高度按 20.5 ÷ 21 压低，和现状一致"
+    },
+    "bays": {
+      "value": [
+        4430.8,
+        5048.7,
+        5032.1,
+        5029.2,
+        5055.2,
+        5014.8,
+        4423.1
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表五，第 37–38 页",
+      "label": "前檐柱缝柱头开间，自北向南",
+      "note": "其他几缝开间相差几厘米，模型各缝都按前檐摆。中五间均值 5040，两稍间均值 4394"
+    },
+    "depth": {
+      "value": 4402,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表六，第 38 页",
+      "label": "每间进深（四间均值）",
+      "note": "表里各缝各间的数字转出来的文字有错乱，先取论文给的均值"
+    },
+    "colTop": {
+      "value": {
+        "B0": 5211.6,
+        "B1": 5113.4,
+        "B2": 5044.2,
+        "B3": 4991.2,
+        "B4": 4985.9,
+        "B5": 5006.4,
+        "B6": 5016.6,
+        "B7": 4965.9,
+        "C0": 5145.1,
+        "C1": 5098.6,
+        "C2": 5048.9,
+        "C3": 4973.9,
+        "C4": 4995.6,
+        "C5": 5031.1,
+        "C6": 5057.0,
+        "C7": 4966.5,
+        "D0": 4988.6,
+        "D1": 5045.3,
+        "D6": 5051.9,
+        "D7": 4991.7,
+        "E0": 4984.2,
+        "E1": 5108.4,
+        "E2": 5043.9,
+        "E3": 4954.1,
+        "E4": 4884.5,
+        "E5": 4879.8,
+        "E6": 5019.8,
+        "E7": 5014.7,
+        "F0": 5146.1,
+        "F1": 4910.8,
+        "F2": 4846.1,
+        "F3": 4764.6,
+        "F4": 4829.3,
+        "F5": 4911.1,
+        "F6": 5041.3,
+        "F7": 5169.9
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "where": "表七，第 39 页",
+      "label": "柱头标高（明间北缝前内柱柱础石面为 0）",
+      "note": "编号：B 前檐、C 前内柱缝、D 中缝、E 后内柱缝、F 后檐；0–7 自北向南。最高是前檐西北角柱 5211.6，最低是后檐明间北缝 4764.6。后檐 E、F 两列的数字是从转出来有些错乱的表格文字里认的，待核原刊"
+    },
+    "plainCols": {
+      "value": [
+        "F1",
+        "F2",
+        "F4"
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "第 33、39 页",
+      "label": "柱头没有卷杀的柱子",
+      "note": "后檐北稍间北缝、北次间北缝、明间南缝三根檐柱，柱头没有卷杀，比别的柱子矮，论文推断是后代换的"
+    },
+    "colDia": {
+      "value": [
+        540,
+        570
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三 平面”柱",
+      "label": "檐柱、内柱柱径",
+      "note": "梁思成 1937 年测量的约数"
+    },
+    "colTaper": {
+      "value": 0.002,
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三 平面”柱",
+      "label": "柱收分",
+      "note": "约 1/500"
+    },
+    "base": {
+      "value": [
+        1.9,
+        0.1
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”柱及柱础",
+      "label": "柱础方是柱径的几倍、覆盆高是础方的几分之一",
+      "note": "梁：础方略小于柱径的两倍，覆盆高约为础方的十分之一；覆盆的莲瓣没有做"
+    },
+    "ludou": {
+      "value": [
+        32,
+        32,
+        8
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四“斗”",
+      "label": "栌斗长、广、耳高"
+    },
+    "ludouPingQi": {
+      "value": [
+        81.2,
+        162.5
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-2022-kaah"
+      ],
+      "where": "讲稿出跳表",
+      "label": "外檐栌斗平、欹高",
+      "note": "实测外檐平欹合高 243.7、内槽 249.5，平和欹按《营造法式》4 : 8 分开"
+    },
+    "jumps": {
+      "value": [
+        26,
+        21,
+        47
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "where": "表十，第 41–42 页",
+      "label": "外檐柱头铺作出跳：第一跳、第二跳、三四跳合",
+      "note": "实测均值 543.1、444.6、980.0，总出跳 1969.9；第三、四跳是两层下昂，一并量"
+    },
+    "ang": {
+      "value": [
+        47,
+        21
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "第 43–44 页",
+      "label": "下昂平出、抬高",
+      "note": "斜度 24.08°，昂身垂直高一材"
+    },
+    "angTip": {
+      "value": 23,
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-foguang"
+      ],
+      "where": "卷四“飞昂”",
+      "label": "昂尖伸出交互斗心的长度",
+      "note": "昂尖做成批竹昂，按照片"
+    },
+    "innerJumps": {
+      "value": [
+        26,
+        21,
+        21,
+        21
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022-kaah"
+      ],
+      "where": "讲稿出跳表",
+      "label": "内槽柱头铺作向殿内出跳",
+      "note": "实测 547.7、429.5、449.3、439.9；向外槽出一跳，实测 539.5"
+    },
+    "innerOut": {
+      "value": 26,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022-kaah"
+      ],
+      "where": "讲稿出跳表",
+      "label": "内槽柱头铺作向外槽出跳"
+    },
+    "bracketH": {
+      "value": 117,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022-kaah",
+        "zhang-liu-zang-2007"
+      ],
+      "where": "讲稿；2007 表二，第 31–32 页",
+      "label": "柱头到橑檐槫上皮（设计）",
+      "note": "设计值 117 分°（2457 毫米）"
+    },
+    "liaoTop": {
+      "value": 2186.9,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表二，第 31–32 页",
+      "label": "柱头到橑檐槫上皮（现状均值）",
+      "note": "比设计值低约 27 厘米：足材受压变矮，橑檐槫下沉 10–20 厘米。模型里斗拱外跳向下斜，补足这个差（见 docs/sources.md）"
+    },
+    "gongLen": {
+      "value": {
+        "泥道栱": 1260,
+        "令栱": 1260,
+        "瓜子栱": 1160,
+        "慢栱": 2140,
+        "替木": 2480
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”材栔",
+      "label": "横栱和替木的长",
+      "note": "梁文按 1 分° = 2 厘米写作 63、63、58、107、124 分°，这里换回厘米"
+    },
+    "sandou": {
+      "value": [
+        16,
+        14,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四“斗”",
+      "label": "散斗、交互斗长、广、高"
+    },
+    "timu": {
+      "value": [
+        10,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四“替木”",
+      "label": "替木高、厚"
+    },
+    "fang": {
+      "value": [
+        15,
+        10
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五",
+      "label": "柱头枋、罗汉枋高、厚"
+    },
+    "shuatou": {
+      "value": 25,
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 06",
+      "label": "耍头伸出令栱心的长度"
+    },
+    "lane": {
+      "value": [
+        30,
+        20
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五“阑额”",
+      "label": "阑额高、厚"
+    },
+    "tuanGap": {
+      "value": 2212.7,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "where": "表十二，第 45–46 页",
+      "label": "槫距（压槽枋—下平—中平—上平—脊，水平）",
+      "note": "设计 105 分°（2205）"
+    },
+    "yacao": {
+      "value": 17701.7,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表十二，第 45–46 页",
+      "label": "前后压槽枋中距"
+    },
+    "juH": {
+      "value": 4808.2,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表十三，第 46–47 页",
+      "label": "总举高（橑檐槫上皮到脊槫上皮）",
+      "note": "八组均值；设计 231 分°"
+    },
+    "zhongPing": {
+      "value": 4774.4,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "where": "表十四，第 47–48 页",
+      "label": "柱头到中平槫上皮"
+    },
+    "shangDrop": {
+      "value": 15,
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "zhang-2022-kaah",
+        "zhang-liu-zang-2007"
+      ],
+      "where": "讲稿；2007 第 47–48 页",
+      "label": "上平槫自橑檐槫—脊槫连线下折"
+    },
+    "eaveOut": {
+      "value": 3740,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-wang-xiong-2020"
+      ],
+      "where": "表 7",
+      "label": "上檐出（柱中到椽头）",
+      "note": "斗拱出跳 197.4 + 椽子出 176.4 厘米，不施飞子。取自 2011 年勘察报告"
+    },
+    "platformOut": {
+      "value": [
+        3210,
+        2560,
+        3210
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-wang-xiong-2020"
+      ],
+      "where": "表 7",
+      "label": "台明出：前檐、后檐、两山（柱中到台明边）",
+      "note": "作者量自 2011 年报告的剖面实测图"
+    },
+    "platformH": {
+      "value": 740,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 03",
+      "label": "台明高",
+      "note": "没有可靠出处：二手资料有约 0.9 米、前 740 后 460 毫米两种说法，待核 2004 年或 2011 年勘察报告。模型各面一样高"
+    },
+    "liaoD": {
+      "value": 300,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”槫椽角梁",
+      "label": "橑檐槫径",
+      "note": "约一材"
+    },
+    "tuanD": {
+      "value": 450,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五“栋”",
+      "label": "其余槫径",
+      "note": "殿阁槫径一材一栔至两材"
+    },
+    "rafterD": {
+      "value": 150,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”槫椽角梁",
+      "label": "椽径",
+      "note": "只一层圆椽，不加飞子"
+    },
+    "rafterGap": {
+      "value": 300,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-foguang"
+      ],
+      "where": "卷五“椽”；照片 02",
+      "label": "椽中距"
+    },
+    "rufu": {
+      "value": [
+        21,
+        14
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "liang-1944",
+        "yzfs"
+      ],
+      "where": "“三”月梁；卷五“梁”",
+      "label": "明乳栿高、厚",
+      "note": "梁：乳栿高仅一足材；厚按高的三分之二推测"
+    },
+    "mingfu": {
+      "value": [
+        600,
+        420
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”月梁",
+      "label": "四椽明栿高、厚",
+      "note": "梁：广 60 厘米，断面约 5 : 7。原文哪边是高待对原刊，这里按高 60 厘米"
+    },
+    "caofu": {
+      "value": [
+        600,
+        400
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五“梁”",
+      "label": "四椽草栿高、厚"
+    },
+    "caorufu": {
+      "value": [
+        450,
+        300
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五“梁”",
+      "label": "草乳栿高、厚"
+    },
+    "pingliang": {
+      "value": [
+        450,
+        300
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五“梁”",
+      "label": "平梁高、厚"
+    },
+    "chashou": {
+      "value": [
+        300,
+        200
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五“侏儒柱”",
+      "label": "大叉手高、厚"
+    },
+    "pingan": {
+      "value": [
+        2950,
+        2400
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 07",
+      "label": "平闇高（柱头以上）：内槽、外槽",
+      "note": "内槽四周是斜的峻脚。实测资料里没有平闇的标高"
+    },
+    "pinganGrid": {
+      "value": [
+        100,
+        200
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”平闇",
+      "label": "平闇方格：椽方宽、方格空当"
+    },
+    "wallThick": {
+      "value": [
+        1100,
+        1050
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 03",
+      "label": "山墙、后檐墙厚；墙下砖砌一段高"
+    },
+    "door": {
+      "value": [
+        3000,
+        3700
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 02",
+      "label": "版门洞宽、门额下皮高"
+    },
+    "window": {
+      "value": [
+        2900,
+        1500,
+        2050
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 03",
+      "label": "尽间直棂窗宽、高、槛墙高",
+      "note": "梁：直棂十五根"
+    },
+    "gableWindow": {
+      "value": [
+        2300,
+        1200,
+        2500
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 03",
+      "label": "两山后部高窗宽、高、窗台高",
+      "note": "梁：两山后部有高直棂窗。2024 年照片 03 上北山墙看不到窗，模型按现状没有开，这个参数暂时不用"
+    },
+    "ridgeH": {
+      "value": 19,
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”瓦及瓦饰",
+      "label": "正脊瓦层数",
+      "note": "正脊十九层瓦、垂脊九层；模型按每层约 6 厘米"
+    },
+    "chiwei": {
+      "value": 3070,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”瓦及瓦饰",
+      "label": "鸱尾高",
+      "note": "尾尖已损，似明代琉璃"
+    },
+    "tileRow": {
+      "value": 525,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“三”瓦及瓦饰",
+      "label": "瓦陇中到中",
+      "note": "梁：52 或 53 厘米"
+    },
+    "lift": {
+      "value": 600,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片 03",
+      "label": "翼角起翘"
+    },
+    "roofThick": {
+      "value": 300,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "where": "照片",
+      "label": "屋面厚（望板、泥背、瓦）"
+    },
+    "altar": {
+      "value": [
+        740,
+        1.5
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "where": "“五（甲）”",
+      "label": "佛坛高（毫米）、进深（间）",
+      "note": "佛坛宽五间，在后内柱扇面墙前"
+    }
+  },
+  "parts": {
+    "taiming": {
+      "name": "台明",
+      "layer": "台基",
+      "basis": "实测",
+      "src": [
+        "zhang-wang-xiong-2020",
+        "commons-foguang"
+      ],
+      "params": [
+        "platformOut",
+        "platformH"
+      ],
+      "desc": "大殿坐的砖石台子。四边伸出柱中多少是实测（前、山 3.21 米，后 2.56 米）；台高没有查到可靠数字，按照片估计约 0.74 米。殿前的踏道是示意。"
+    },
+    "zhuchu": {
+      "name": "柱础",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "base"
+      ],
+      "desc": "柱下的方石，上面隆起一圈覆盆。尺寸按梁思成的描述；覆盆上的莲瓣没有做。"
+    },
+    "zhu": {
+      "name": "柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007",
+        "liang-1944"
+      ],
+      "params": [
+        "colTop",
+        "plainCols",
+        "colDia",
+        "colTaper",
+        "bays",
+        "depth"
+      ],
+      "desc": "外圈 22 根檐柱，里面一圈 14 根内柱（金箱斗底槽）。柱高照扫描实测摆：四角高、中间低（生起），后檐整体低很多。三根后换的柱子柱头没有卷杀。"
+    },
+    "lane": {
+      "name": "阑额",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "lane"
+      ],
+      "desc": "柱头之间的横木，内外两圈。唐代不用普拍枋，转角不出头。截面按《营造法式》推测。"
+    },
+    "ludou": {
+      "name": "栌斗",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "zhang-2022-kaah"
+      ],
+      "params": [
+        "ludou",
+        "ludouPingQi"
+      ],
+      "desc": "斗拱最下面的大斗，坐在柱头上。平欹的高是实测，长宽按《营造法式》。"
+    },
+    "huagong": {
+      "name": "华栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "params": [
+        "jumps",
+        "innerJumps",
+        "innerOut",
+        "zucai",
+        "zucaiMeasured"
+      ],
+      "desc": "向外、向里挑出的栱。外檐柱头铺作向外出两跳华栱再加两层下昂，共四跳（七铺作）；第一跳上不放横栱（偷心造）。内柱上的铺作向殿内出四跳，托住四椽明栿。"
+    },
+    "ang": {
+      "name": "下昂",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "params": [
+        "ang",
+        "angTip"
+      ],
+      "desc": "斜着向下伸出的长木，两层。外端像杠杆一样托住屋檐，里端压在梁下。每层平出 47 分°、抬高 21 分°。昂尖做成批竹昂。"
+    },
+    "nidaogong": {
+      "name": "泥道栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "gongLen"
+      ],
+      "desc": "顺着墙面、坐在栌斗里的横栱。上面叠四层柱头枋。"
+    },
+    "chonggong": {
+      "name": "瓜子栱、慢栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "gongLen"
+      ],
+      "desc": "第二跳头上的两层横栱（重栱），下短上长。"
+    },
+    "linggong": {
+      "name": "令栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "liang-1944",
+        "zhang-liu-zang-2007"
+      ],
+      "params": [
+        "gongLen"
+      ],
+      "desc": "最外一跳（上层昂头）上的横栱，托着替木和橑檐槫。"
+    },
+    "shuatou": {
+      "name": "耍头",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "params": [
+        "shuatou"
+      ],
+      "desc": "令栱上伸出的木头，端头斜削。伸出长度按照片估计。"
+    },
+    "dou": {
+      "name": "散斗、交互斗",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "sandou"
+      ],
+      "desc": "栱头、昂头上的小斗，把上一层托住。"
+    },
+    "timu": {
+      "name": "替木",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "liang-1944",
+        "yzfs"
+      ],
+      "params": [
+        "gongLen",
+        "timu"
+      ],
+      "desc": "令栱上的长木，垫在橑檐槫下。长度按梁思成测量，截面按《营造法式》。"
+    },
+    "fang": {
+      "name": "柱头枋、罗汉枋",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "fang"
+      ],
+      "desc": "顺着柱缝叠起的四层柱头枋，和第二跳上的罗汉枋，把各朵斗拱连成一圈。"
+    },
+    "bujian": {
+      "name": "补间铺作",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "liang-1944",
+        "commons-foguang"
+      ],
+      "params": [
+        "jumps"
+      ],
+      "desc": "两柱之间的斗拱，每间一朵。没有栌斗，坐在柱头枋上，只出两跳华栱（梁思成）。叠放的高度是推测。"
+    },
+    "rufu": {
+      "name": "明乳栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "liang-1944",
+        "yzfs"
+      ],
+      "params": [
+        "rufu"
+      ],
+      "desc": "外槽里，从檐柱上的铺作搭到内柱上的铺作，跨一间。做成弯弯的月梁（模型里是直的）。在平闇以下，从殿里看得见。"
+    },
+    "mingfu": {
+      "name": "四椽明栿",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "mingfu",
+        "innerJumps"
+      ],
+      "desc": "内槽里前后内柱之间的大梁，两端坐在内柱铺作第四跳上。也是月梁（模型里是直的）。"
+    },
+    "pingan": {
+      "name": "平闇",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "liang-1944",
+        "commons-foguang"
+      ],
+      "params": [
+        "pingan",
+        "pinganGrid"
+      ],
+      "desc": "小方格的天花，把上面的草栿遮住。内槽高、外槽低，内槽四边是斜的峻脚。方格尺寸按梁思成，高度按照片估计。"
+    },
+    "caofu": {
+      "name": "草栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "liang-1944",
+        "yzfs"
+      ],
+      "params": [
+        "caofu",
+        "caorufu"
+      ],
+      "desc": "平闇以上不加刨削的梁：内槽是四椽草栿，外槽是草乳栿。上面立驼峰、蜀柱托槫。尺寸、高低都是推测。"
+    },
+    "pingliang": {
+      "name": "平梁",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "pingliang"
+      ],
+      "desc": "最上面的短梁，两端托上平槫。"
+    },
+    "chashou": {
+      "name": "大叉手",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "chashou"
+      ],
+      "desc": "平梁上人字形的两根斜木，直接顶住脊槫，不用侏儒柱。梁思成说是营造学社多年调查里的唯一孤例。截面是推测。"
+    },
+    "tuofeng": {
+      "name": "驼峰、蜀柱",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "草栿上垫的木块和短柱，把槫托到实测的高度。"
+    },
+    "liaoyan": {
+      "name": "橑檐槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007",
+        "liang-1944"
+      ],
+      "params": [
+        "liaoTop",
+        "bracketH",
+        "liaoD"
+      ],
+      "desc": "斗拱最外端托着的圆木，椽子搭在上面。高度按现状均值，比设计低约 27 厘米。"
+    },
+    "tuan": {
+      "name": "压槽枋、下平槫、中平槫、上平槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007",
+        "zhang-2022-kaah"
+      ],
+      "params": [
+        "yacao",
+        "tuanGap",
+        "zhongPing",
+        "shangDrop",
+        "tuanD"
+      ],
+      "desc": "屋面中段的槫，庑殿顶四面围成一圈圈。水平间距约 2.21 米，高度按实测：下平槫在橑檐槫—中平槫的连线上，上平槫比橑檐槫—脊槫连线低 15 分°，屋面因此有折。"
+    },
+    "jituan": {
+      "name": "脊槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-liu-zang-2007"
+      ],
+      "params": [
+        "juH",
+        "tuanD"
+      ],
+      "desc": "屋脊下的槫，比橑檐槫高 4.81 米。前后橑檐槫相距约 21.6 米，举高只有它的两成多，所以屋顶平缓。"
+    },
+    "chuan": {
+      "name": "椽",
+      "layer": "椽",
+      "basis": "实测",
+      "src": [
+        "liang-1944",
+        "zhang-wang-xiong-2020"
+      ],
+      "params": [
+        "rafterD",
+        "rafterGap",
+        "eaveOut"
+      ],
+      "desc": "一层圆椽，从脊一直铺到檐口，不加飞子，出檐 3.74 米。椽径按梁思成，间距是推测。翼角的椽子和正身平行排列（简化，实物向角梁散开）。"
+    },
+    "jiaoliang": {
+      "name": "角梁",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "屋角沿 45° 斜出的大木，托着翼角。"
+    },
+    "wamian": {
+      "name": "瓦面",
+      "layer": "屋面",
+      "basis": "实测",
+      "src": [
+        "liang-1944",
+        "commons-foguang"
+      ],
+      "params": [
+        "tileRow",
+        "roofThick",
+        "lift"
+      ],
+      "desc": "筒瓦和板瓦。瓦陇间距按梁思成量的 52–53 厘米，比明清的瓦宽得多；屋面曲线由实测的槫高定出，翼角起翘按照片估计。"
+    },
+    "ji": {
+      "name": "正脊、垂脊",
+      "layer": "屋面",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "ridgeH"
+      ],
+      "desc": "庑殿顶五条脊：一条正脊、四条垂脊。正脊十九层瓦叠成。"
+    },
+    "chiwei": {
+      "name": "鸱尾",
+      "layer": "屋面",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "chiwei"
+      ],
+      "desc": "正脊两端的鸱尾，高 3.07 米。梁思成认为似是明代的琉璃，不一定是唐代原物。正脊正中的火珠没有做。"
+    },
+    "qiang": {
+      "name": "墙",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "params": [
+        "wallThick",
+        "gableWindow"
+      ],
+      "desc": "两山和后檐是厚墙，外面刷土红，下面一段砖。墙厚按照片估计。梁思成记两山后部有高直棂窗，今天的照片上看不到，模型没有开。"
+    },
+    "gongyan": {
+      "name": "栱眼壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-foguang"
+      ],
+      "params": [],
+      "desc": "阑额以上、柱头枋之间抹白灰的墙面；外圈柱头枋以上到压槽枋用木板封住（推测）。内槽前内额上的栱眼壁有唐代壁画（模型没有画）。"
+    },
+    "men": {
+      "name": "版门",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "liang-1944",
+        "commons-foguang"
+      ],
+      "params": [
+        "door"
+      ],
+      "desc": "中间五间装板门，每路门钉十一枚（梁思成）。明间的门开着，其余关着，照片上是这样。门洞大小按照片估计。"
+    },
+    "chuang": {
+      "name": "直棂窗",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "liang-1944",
+        "commons-foguang"
+      ],
+      "params": [
+        "window"
+      ],
+      "desc": "两尽间砖砌槛墙上的直棂窗，十五根直棂（梁思成）。高宽按照片估计。"
+    },
+    "fotan": {
+      "name": "佛坛、扇面墙",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "liang-1944"
+      ],
+      "params": [
+        "altar"
+      ],
+      "desc": "内槽里宽五间的佛坛，高 0.74 米，后面是扇面墙。坛上的三十多尊唐代彩塑没有做。"
+    }
+  }
+}
