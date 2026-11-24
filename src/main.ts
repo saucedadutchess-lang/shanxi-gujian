@@ -10,6 +10,9 @@ const $ = <T extends HTMLElement>(selector: string) => {
   return el;
 };
 
+// 嵌在古建入门里（?embed）：去掉站点页头，其余照常
+if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');
+
 const stage = createStage($<HTMLCanvasElement>('#stage'));
 const hall = new Hall();
 stage.scene.add(hall.group);

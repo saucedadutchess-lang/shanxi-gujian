@@ -1,0 +1,287 @@
+/* 古建入门：沿用建筑页的长页面版式（building.css），这里只加入门页自己的部分 */
+.in-hero {
+  padding: 36px 0 30px;
+  border-bottom: 1px solid var(--line);
+}
+
+.in-hero h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  letter-spacing: 0.15em;
+}
+
+.in-keys {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.in-keys a {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 12px;
+  padding: 14px 18px;
+  font-size: 20px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.in-keys a:hover {
+  border-color: var(--accent);
+}
+
+.in-keys b,
+.in-n {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+  font-weight: normal;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.in-keys b {
+  grid-row: span 2;
+}
+
+.in-keys small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.in-sec > h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.in-sec h3 {
+  margin-top: 28px;
+}
+
+.in-sec h4 {
+  margin: 0 0 4px;
+  font-size: 17px;
+}
+
+/* 六种屋顶 */
+.in-shapes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.in-shapes li {
+  padding: 10px 12px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.in-shapes img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 36 / 22;
+  margin-bottom: 8px;
+  object-fit: cover;
+  background: #e9e2d5;
+  border-radius: 5px;
+}
+
+.in-shapes p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.in-ex {
+  margin-top: 6px !important;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.in-small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.in-frame {
+  overflow: hidden;
+  background: #e9e2d5;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.in-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.in-roof {
+  height: 640px;
+  margin-top: 10px;
+}
+
+.in-model {
+  height: 460px;
+}
+
+/* 模型在左，按钮和说明在右 */
+.in-count,
+.in-struct {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.in-count-side p,
+.in-struct-side p {
+  margin: 0 0 10px;
+}
+
+.in-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.in-btns button,
+.in-layers button {
+  padding: 5px 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.in-btns button:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.in-btns button[aria-pressed='true'],
+.in-layers button[aria-pressed='true'] {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.in-part {
+  margin-top: 12px !important;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.in-struct-side .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.in-struct-side input[type='range'] {
+  width: 100%;
+  margin: 4px 0 12px;
+}
+
+.in-layers {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.in-layers li {
+  display: grid;
+  grid-template-columns: 5.5em 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.in-layers button {
+  width: 100%;
+}
+
+.in-layer-desc p {
+  margin: 0 !important;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.in-layer-desc .fact-meta {
+  font-size: 12px;
+}
+
+/* 没选中时说明收起来，只显示构件名 */
+.in-layers li:not(.on) .in-layer-desc p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.in-layers li:not(.on) .in-layer-desc .fact-meta {
+  display: none;
+}
+
+.in-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.in-two > div {
+  padding: 14px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.in-two p {
+  margin: 0 0 6px;
+}
+
+.in-tiers {
+  max-width: 560px;
+}
+
+.in-note {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--panel);
+  border-left: 3px solid var(--line);
+}
+
+.in-onsite {
+  margin-top: 22px;
+  padding: 12px 16px;
+  background: #f3e6d6;
+  border-radius: 8px;
+}
+
+.in-onsite b {
+  margin-right: 10px;
+  color: var(--accent);
+}

@@ -192,6 +192,32 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
   if (b.practical?.address) item(`${w} 地址`, b.practical.address);
 }
 
+// 古建入门（data/intro.json）：每条文字带类型、出处、位置；嵌入的模型构件要在参数表里
+{
+  const w = 'intro.json';
+  const it = read('intro.json');
+  const nanchanParts = read('models/nanchan.json').parts;
+  const foguangParts = read('models/foguang.json').parts;
+  const item = (where, x) => {
+    fact(where, x, { needKind: false });
+    if (!PAGE_KINDS.includes(x?.kind)) err(where, `类型 kind 必须是 ${PAGE_KINDS.join(' / ')}，现在是 ${x?.kind}`);
+    if (!x?.where) err(where, '缺出处里的位置 where');
+  };
+  if (!it.review) err(w, '缺审核状态 review');
+  for (const s of it.form?.shapes ?? []) if (!FORMS.includes(s.form)) err(`${w} 认形制`, `形制 ${s.form} 不在 ${FORMS.join('、')} 里`);
+  item(`${w} 认形制 名称出处`, it.form?.shapesSrc);
+  (it.form?.era?.facts ?? []).forEach((x, i) => item(`${w} 认形制 时代 ${i + 1}`, x));
+  item(`${w} 读等级 材`, it.grade?.rule);
+  item(`${w} 读等级 八等材`, it.grade?.tiers);
+  item(`${w} 读等级 铺作`, it.grade?.puzuo);
+  for (const [part] of it.grade?.count?.parts ?? []) if (!foguangParts[part]) err(`${w} 数出跳`, `佛光寺参数表里没有构件 ${part}`);
+  for (const [layer, part] of it.structure?.layers ?? []) {
+    if (!nanchanParts[part]) err(`${w} 拆结构`, `南禅寺参数表里没有构件 ${part}`);
+    else if (nanchanParts[part].layer !== layer) err(`${w} 拆结构`, `${part} 在 ${nanchanParts[part].layer} 层，不在 ${layer} 层`);
+  }
+  item(`${w} 试一试`, it.tryit);
+}
+
 fact('boundaries', boundaries, { needKind: false });
 fact('rivers', rivers, { needKind: false });
 fact('terrain', terrain, { needKind: false });

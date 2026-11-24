@@ -44,7 +44,14 @@ export function startViewer(cfg: ViewerConfig) {
   // 嵌在地图名片里（?mini）时只留模型和视角按钮，只能转、缩放，拆开、点构件、照片对照都在完整页面
   const query = new URLSearchParams(location.search);
   const MINI = query.has('mini');
-  if (query.has('embed') || MINI) document.body.classList.add('embed');
+  // 嵌在古建入门里（?bare）：去掉右边的面板，拆开、高亮由外面的页面发消息控制
+  const BARE = query.has('bare');
+  if (query.has('embed') || MINI || BARE) document.body.classList.add('embed');
+  if (BARE) {
+    document.documentElement.classList.add('bare');
+    document.body.classList.add('bare');
+  }
+  const tell = (type: string, extra: Record<string, unknown> = {}) => parent !== window && parent.postMessage({ type, ...extra }, location.origin);
   if (MINI) {
     document.documentElement.classList.add('mini');
     document.body.classList.add('mini');
@@ -178,7 +185,9 @@ export function startViewer(cfg: ViewerConfig) {
     ray.setFromCamera(new THREE.Vector2(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
     const visible = model.meshes.filter((m) => m.parent?.visible);
     const hit = ray.intersectObjects(visible, false)[0];
-    showPart(hit ? hit.object.userData.part : null, hit?.object.userData.col ?? null);
+    const part: string | null = hit ? hit.object.userData.part : null;
+    showPart(part, hit?.object.userData.col ?? null);
+    if (BARE) tell('model-part', { part, name: part ? MODEL.parts[part].name : null, layer: part ? MODEL.parts[part].layer : null, desc: part ? MODEL.parts[part].desc : null });
   });
 
   // ---------- 和实拍照片对照 ----------
@@ -240,6 +249,34 @@ export function startViewer(cfg: ViewerConfig) {
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-view]')) b.addEventListener('click', () => photoOn && setPhoto(null));
   new ResizeObserver(placeForPhoto).observe(wrap);
 
+  // ---------- 外面的页面发来的指令（古建入门用） ----------
+  // { cmd: 'explode', k } 拆开到几成；{ cmd: 'layer', layer } 高亮一层、其余变淡；{ cmd: 'part', part } 高亮一类构件；{ cmd: 'view', view } 换视角
+  function lightLayer(layer: Layer | null) {
+    for (const mesh of model.meshes) {
+      const on = layer !== null && MODEL.parts[mesh.userData.part]?.layer === layer;
+      for (const mat of [mesh.userData.material, mesh.userData.basisMaterial] as THREE.MeshStandardMaterial[]) {
+        if (!mat) continue;
+        mat.emissive.set(on ? 0xffb347 : 0x000000);
+        mat.emissiveIntensity = on ? 0.45 : 0;
+      }
+    }
+  }
+  window.addEventListener('message', (e) => {
+    if (e.origin !== location.origin || !e.data || typeof e.data.cmd !== 'string') return;
+    const d = e.data as { cmd: string; k?: number; layer?: Layer | null; part?: string | null; view?: View };
+    if (d.cmd === 'explode') {
+      explode.value = String(Math.min(1, Math.max(0, d.k ?? 0)));
+      explode.dispatchEvent(new Event('input'));
+    } else if (d.cmd === 'layer') {
+      model.highlight(null);
+      lightLayer(d.layer && (LAYERS as readonly string[]).includes(d.layer) ? d.layer : null);
+    } else if (d.cmd === 'part') {
+      lightLayer(null);
+      showPart(d.part && MODEL.parts[d.part] ? d.part : null, null);
+    } else if (d.cmd === 'view' && d.view) goTo(d.view);
+  });
+  if (!MINI) tell('model-ready');
+
   // 调试用：在控制台里看模型
   Object.assign(window, { [cfg.name]: { model, camera, controls, goTo } });
 
@@ -280,7 +317,6 @@ export function startViewer(cfg: ViewerConfig) {
     });
     controls.addEventListener('end', () => kick(1500));
     for (const b of document.querySelectorAll<HTMLButtonElement>('[data-view]')) b.addEventListener('click', () => kick(1600));
-    const tell = (type: string) => parent !== window && parent.postMessage({ type }, location.origin);
     THREE.DefaultLoadingManager.onLoad = () => {
       kick(1200);
       tell('model-ready');

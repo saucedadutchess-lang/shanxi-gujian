@@ -33,6 +33,10 @@ body {
   border-bottom: 1px solid var(--line);
 }
 
+body.embed > .site-header {
+  display: none;
+}
+
 .site-header h1 {
   margin: 0;
   font-size: 24px;
