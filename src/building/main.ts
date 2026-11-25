@@ -36,9 +36,9 @@ interface Page {
       with: string;
       rows: { label: string; a: string; b: string; src: string[]; kind: Kind; where?: string }[];
     };
-    structure?: { text: string; facts?: Item[] };
+    structure?: { text: string; facts?: Item[]; pending?: string };
   };
-  onsite?: { note: string; items: (Item & { n: number; title: string; at: [number, number]; photo?: string })[] };
+  onsite?: { note: string; items: (Item & { n: number; title: string; at?: [number, number]; photo?: string })[] };
   practical: { address?: Item; pending?: string };
 }
 
@@ -91,7 +91,7 @@ function render(p: Page) {
     <div class="bp-hero-text">
       <p class="bp-kicker">${esc(p.place)} · ${esc(unit.name)} · 第${esc(String(unit.record.batch))}批国保 ${tier}</p>
       <h1>${esc(p.name)}</h1>
-      <p class="bp-sub">${esc(building.year?.label ?? '')}${building.form ? ' · ' + esc(building.form.value.join('、')) : ''}</p>
+      <p class="bp-sub">${esc(building.year?.label ?? '')}${building.year?.check ? `（${esc(building.year.check)}）` : ''}${building.form ? ' · ' + esc(building.form.value.join('、')) : ''}</p>
       <dl class="bp-three">
         ${(
           [
@@ -160,7 +160,7 @@ function render(p: Page) {
         modelPage
           ? `<div class="bp-model" id="model-box"><button type="button" class="bp-model-open">在这里打开 3D 模型<small>要读入不少贴图，比较占内存，用完可以刷新页面</small></button></div>
              <p class="bp-go-row"><a class="bp-go" href="${modelPage}">在新页面全屏打开 →</a></p>`
-          : '<p class="todo">3D 模型还在做，做好后放在这里。</p>'
+          : `<p class="todo">${esc(k.structure.pending ?? '3D 模型还在做，做好后放在这里。')}</p>`
       }</div>`
     : '';
   const keys = add('keys', '三把钥匙', `<p class="bp-go-row"><a class="bp-go" href="./intro.html">第一次看？先读古建入门：三把钥匙各是什么、怎么用 →</a></p>` + formKey + gradeKey + structKey);
@@ -171,8 +171,8 @@ function render(p: Page) {
     ? add(
         'onsite',
         '到现场必看',
-        `<div class="bp-onsite">
-        ${hasPlan(p.model, p.plan) ? `<figure class="bp-plan">${planSvg(p.model, os.items, p.plan)}<figcaption><span class="tag">示意</span>${esc(os.note)}${p.plan ? meta(p.plan) : ''}</figcaption></figure>` : ''}
+        `<div class="bp-onsite"${hasPlan(p.model, p.plan) ? '' : ' style="grid-template-columns:minmax(0,1fr)"'}>
+        ${hasPlan(p.model, p.plan) ? `<figure class="bp-plan">${planSvg(p.model, os.items.flatMap((o) => (o.at ? [{ n: o.n, at: o.at, title: o.title }] : [])), p.plan)}<figcaption><span class="tag">示意</span>${esc(os.note)}${p.plan ? meta(p.plan) : ''}</figcaption></figure>` : ''}
         <ol class="bp-spots">${os.items
           .map(
             (o) => `<li data-n="${o.n}" id="spot-${o.n}"><b class="n">${o.n}</b><div><h3>${esc(o.title)}</h3><p>${esc(o.text)}</p>${meta(o)}</div>${

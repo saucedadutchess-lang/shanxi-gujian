@@ -186,7 +186,8 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
     item(wo, o);
     if (ns.has(o.n)) err(wo, '编号重复');
     ns.add(o.n);
-    if (!Array.isArray(o.at) || o.at.length !== 2) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
+    // 没有方位图的（没模型也没实测平面）不用写方位
+    if ((b.model || b.plan || o.at) && (!Array.isArray(o.at) || o.at.length !== 2)) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
     if (o.photo && !photoFiles.has(o.photo)) err(wo, `照片 ${o.photo} 不在 data/photos.json 里`);
   }
   if (b.practical?.address) item(`${w} 地址`, b.practical.address);

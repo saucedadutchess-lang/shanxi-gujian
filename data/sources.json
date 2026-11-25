@@ -378,5 +378,49 @@
     "author": "梁思成",
     "date": "1984",
     "note": "英文原名 A Pictorial History of Chinese Architecture，1984 年出版，有中文译本。书中按时代比较屋面、出檐和斗拱的变化。还没有对照原书，页码待补。"
+  },
+  "lin-liang-1935": {
+    "title": "晋汾古建筑预查纪略",
+    "author": "林徽因、梁思成",
+    "publisher": "《中国营造学社汇刊》",
+    "date": "1935",
+    "url": "https://www.aisixiang.com/data/98144.html",
+    "accessed": "2026-11-25",
+    "note": "读的是网上转载，卷期、页码没有对照原刊。作者只是顺路参观，没有测量。"
+  },
+  "shiji-39": {
+    "title": "史记 · 晋世家",
+    "author": "司马迁",
+    "url": "https://zh.wikisource.org/wiki/史記/卷039",
+    "accessed": "2026-11-25"
+  },
+  "shuijing-6": {
+    "title": "水经注 · 卷六",
+    "author": "郦道元",
+    "url": "https://zh.wikisource.org/wiki/水經注/06",
+    "accessed": "2026-11-25"
+  },
+  "sxtz-164": {
+    "title": "山西通志（四库全书本）· 卷一百六十四",
+    "url": "https://zh.wikisource.org/wiki/山西通志_(四庫全書本)/卷164",
+    "accessed": "2026-11-25",
+    "note": "清代官修方志，记宋代的事是后人追述。"
+  },
+  "gmw-jinci-2024": {
+    "title": "晋祠圣母殿",
+    "author": "张铭",
+    "publisher": "《光明日报》2024 年 10 月 11 日第 16 版",
+    "date": "2024",
+    "url": "https://epaper.gmw.cn/gmrb/html/2024-10/11/nw.D110000gmrb_20241011_4-16.htm",
+    "accessed": "2026-11-25"
+  },
+  "zhang-liu-jinci-2022": {
+    "title": "晋祠圣母殿保护与研究考略",
+    "author": "张国花、刘宝兰",
+    "publisher": "《山西建筑》2022 年第 8 期",
+    "date": "2022",
+    "url": "https://m.fx361.com/news/2022/0413/14454693.html",
+    "accessed": "2026-11-25",
+    "note": "网上只能看开头，没有读全文；文中转引彭海《晋祠圣母殿勘测收获——圣母殿创建年代析》。"
   }
 }

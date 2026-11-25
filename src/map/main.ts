@@ -320,6 +320,7 @@ const merge = (facts: (Fact | undefined)[]): Fact | undefined => {
 const BUILDING_PAGES: Record<string, string> = {
   '1-0079-3-032': './building.html?id=nanchan',
   '1-0080-3-033': './building.html?id=foguang',
+  '1-0085-3-038': './building.html?id=shengmudian',
 };
 const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang' };
 
