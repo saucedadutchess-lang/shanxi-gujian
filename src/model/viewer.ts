@@ -261,12 +261,26 @@ export function startViewer(cfg: ViewerConfig) {
       }
     }
   }
+  let fitTimer = 0;
+  function fitAll() {
+    const sphere = new THREE.Box3().setFromObject(model.group).getBoundingSphere(new THREE.Sphere());
+    const vf = (camera.fov * Math.PI) / 360;
+    const half = Math.min(vf, Math.atan(Math.tan(vf) * camera.aspect));
+    const need = (sphere.radius / Math.sin(half)) * 0.92;
+    const dir = camera.position.clone().sub(controls.target);
+    if (dir.length() >= need) return;
+    const t1 = controls.target.clone().lerp(sphere.center, 0.6);
+    flight = { p0: camera.position.clone(), t0: controls.target.clone(), p1: t1.clone().add(dir.setLength(need)), t1, f0: camera.fov, f1: camera.fov, start: performance.now() };
+  }
   window.addEventListener('message', (e) => {
     if (e.origin !== location.origin || !e.data || typeof e.data.cmd !== 'string') return;
     const d = e.data as { cmd: string; k?: number; layer?: Layer | null; part?: string | null; view?: View };
     if (d.cmd === 'explode') {
       explode.value = String(Math.min(1, Math.max(0, d.k ?? 0)));
       explode.dispatchEvent(new Event('input'));
+      // 小窗里拆开后各层会顶出画面：停手后往后退，把整个模型框进来
+      clearTimeout(fitTimer);
+      fitTimer = window.setTimeout(fitAll, 250);
     } else if (d.cmd === 'layer') {
       model.highlight(null);
       lightLayer(d.layer && (LAYERS as readonly string[]).includes(d.layer) ? d.layer : null);
