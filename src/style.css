@@ -39,27 +39,47 @@ body.embed > .site-header {
 
 .site-header h1 {
   margin: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
   font-size: 24px;
   letter-spacing: 0.2em;
 }
 
 .site-header p {
   margin: 0;
+  flex-shrink: 0;
+  white-space: nowrap;
   color: var(--muted);
 }
 
 .site-nav {
   display: flex;
-  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px 4px;
   margin-left: auto;
 }
 
 .site-nav a {
   padding: 4px 12px;
+  white-space: nowrap;
   font-size: 15px;
   color: var(--muted);
   text-decoration: none;
   border-radius: 6px;
+}
+
+/* 窗口窄时：导航链接不拆字，排不下就换行；再窄就收起副标题 */
+@media (max-width: 1240px) {
+  .site-nav a {
+    padding: 4px 7px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 960px) {
+  .site-header p {
+    display: none;
+  }
 }
 
 .site-nav a:hover {

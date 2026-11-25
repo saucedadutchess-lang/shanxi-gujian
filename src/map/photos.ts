@@ -61,7 +61,13 @@ export function wireGallery(root: HTMLElement) {
     fig.querySelector('.g-cap')!.textContent = p.caption + (p.date ? `（${p.date}）` : '');
     fig.querySelector('.g-count')!.textContent = `${i + 1} / ${list.length}`;
     strip.forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
-    strip[i].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // 只横向滚动小图条，不用 scrollIntoView：窗口矮时它会把整页往下拽
+    const bar = strip[i].closest<HTMLElement>('.g-strip');
+    if (bar) {
+      const r = strip[i].getBoundingClientRect(), c = bar.getBoundingClientRect();
+      if (r.left < c.left) bar.scrollLeft -= c.left - r.left;
+      else if (r.right > c.right) bar.scrollLeft += r.right - c.right;
+    }
   }
   fig.querySelector('.g-prev')!.addEventListener('click', () => show(i - 1));
   fig.querySelector('.g-next')!.addEventListener('click', () => show(i + 1));
