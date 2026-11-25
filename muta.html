@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>应县木塔 · 拆开看｜观晋</title>
+    <meta name="description" content="按公开论文里的实测尺寸生成的应县木塔三维模型，可以按明层、暗层拆开，看每个构件的尺寸和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html">地图</a>
+        <a href="./intro.html">古建入门</a>
+        <a href="./index.html">屋顶变形器</a>
+        <a href="./building.html?id=foguang">佛光寺东大殿</a>
+        <a href="./building.html?id=nanchan">南禅寺大殿</a>
+        <a href="./building.html?id=shengmudian">晋祠圣母殿</a>
+        <a href="./muta.html" aria-current="page">应县木塔</a>
+      </nav>
+    </header>
+    <main>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="应县木塔的三维模型"></canvas>
+        <div class="nc-views" role="group" aria-label="视角">
+          <button type="button" data-view="front" title="从南面看">正面</button>
+          <button type="button" data-view="corner" title="从东南看">斜看</button>
+          <button type="button" data-view="eave" title="站在月台上抬头看">檐下</button>
+          <button type="button" data-view="inside" title="首层里面，看大佛（素形）和藻井">塔内</button>
+          <button type="button" data-view="top" title="从高处看塔顶">俯瞰</button>
+        </div>
+        <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
+      </div>
+
+      <aside class="panel nc-panel">
+        <p class="nc-back"><a href="./map.html#1-0071-3-024">← 地图上的应县木塔</a></p>
+        <h2>应县木塔 <span class="badge" id="precision"></span></h2>
+        <p class="lead" id="precision-note"></p>
+
+        <section>
+          <div class="row"><label for="explode">拆开</label><output id="explode-out">合拢</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" />
+          <div class="nc-layers" id="layers" role="group" aria-label="显示哪些层"></div>
+        </section>
+
+        <section>
+          <h3>颜色</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="颜色">
+            <button type="button" role="radio" aria-checked="true" data-color="material">看材质</button>
+            <button type="button" role="radio" aria-checked="false" data-color="basis">看依据</button>
+          </div>
+          <ul class="nc-legend" id="legend"></ul>
+        </section>
+
+        <section>
+          <h3>倾斜</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="倾斜">
+            <button type="button" role="radio" aria-checked="true" data-lean="1">现状</button>
+            <button type="button" role="radio" aria-checked="false" data-lean="0">不倾斜</button>
+            <button type="button" role="radio" aria-checked="false" data-lean="10">夸大十倍</button>
+          </div>
+          <p class="nc-s">塔身向东北偏约 65 厘米（2004 年报告），二层明层最明显。这里让整座塔按这两点一起偏，是示意；逐根柱子的数没有找到。“夸大十倍”只为看清方向。</p>
+        </section>
+
+        <div hidden><img id="overlay" alt="" /><p id="overlay-credit"></p><div class="nc-photo-ctl"><output id="photo-op-out"></output><input type="range" id="photo-op" /><p id="photo-note"></p></div></div>
+
+        <section id="info" aria-live="polite">
+          <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>
+        </section>
+
+        <section class="sources">
+          <p>各层面阔、柱高取自李泽辉等 2021 年论文里整理的 1991 年前后和 2000 年两次测绘；层高、总高、台基取自王南等 2021 年的两篇论文；用材取自李泽辉等 2022 年论文；塔顶举折取自 2024 年论文的摘要；檐口和平坐的出挑从论文转载的剖面小图上量，误差约 0.3 米。读的都是公众号版。全部参数和出处在仓库的 <code>data/models/muta.json</code>。</p>
+          <p>斗拱只按层分了出跳数，五十多种斗拱的差别没有做；五层的斗、栱尺寸用到了各层。补间斗拱的昂没有做。首层墙的外皮、门的位置大小、门窗、栏杆、踏道、塔刹细部、暗层斜撑、塔顶屋架是估的；彩塑、壁画、楼梯、二层以上的藻井没有做，首层大佛只是一个等高的素形。</p>
+        </section>
+      </aside>
+    </main>
+    <script type="module" src="/src/muta/main.ts"></script>
+  </body>
+</html>

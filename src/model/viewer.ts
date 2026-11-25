@@ -31,6 +31,8 @@ export interface ViewerConfig {
   maxDistance: number;
   /** 名片小窗里室外视角往后退多少倍 */
   miniBack?: number;
+  /** 阴影范围（米），高的建筑要放大 */
+  shadowSpan?: number;
 }
 
 export function startViewer(cfg: ViewerConfig) {
@@ -63,6 +65,18 @@ export function startViewer(cfg: ViewerConfig) {
   const model = cfg.build();
   scene.add(model.group);
 
+  if (cfg.shadowSpan) {
+    const s = cfg.shadowSpan;
+    scene.traverse((o) => {
+      if (!(o instanceof THREE.DirectionalLight) || !o.castShadow) return;
+      const cam = o.shadow.camera;
+      cam.left = cam.bottom = -s;
+      cam.right = cam.top = s;
+      o.position.multiplyScalar(1.6);
+      cam.far = 260;
+      cam.updateProjectionMatrix();
+    });
+  }
   controls.minDistance = 1.5;
   controls.maxDistance = cfg.maxDistance;
   controls.maxPolarAngle = Math.PI * 0.62;

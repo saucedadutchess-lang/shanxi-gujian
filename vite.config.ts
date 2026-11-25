@@ -12,6 +12,7 @@ export default defineConfig({
         nanchan: 'nanchan.html',
         foguang: 'foguang.html',
         shengmudian: 'shengmudian.html',
+        muta: 'muta.html',
         building: 'building.html',
         intro: 'intro.html',
       },

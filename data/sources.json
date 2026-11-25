@@ -469,5 +469,71 @@
     "url": "https://www.thepaper.cn/newsDetail_forward_17472317",
     "accessed": "2026-11-25",
     "note": "只用了飞梁石柱约三十厘米见方、三十四根这一句，没有说测绘来源。"
+  },
+  "li-zehui-2021": {
+    "title": "应县木塔平面丈尺假说：从1933年的旧照谈起",
+    "author": "李泽辉、赵寿堂、李沁园、李大卫、徐扬、陈彤、刘畅",
+    "publisher": "《建筑史学刊》2021, 2(2): 56–70",
+    "date": "2021",
+    "url": "https://www.thepaper.cn/newsDetail_forward_14552300",
+    "accessed": "2026-11-25",
+    "note": "读的是公众号版（有删节），印刷版页码没核。图表里的实测数分“北测”（1991 年前后，原北京建筑工程学院）和“山测”（2000 年，山西省古建筑保护研究所）。"
+  },
+  "li-zehui-2022": {
+    "title": "营造尺和材分制：应县木塔五层木构表里数据采集与试解",
+    "author": "李泽辉、李大卫、刘畅",
+    "publisher": "《建筑史学刊》2022, 3(1): 36–53",
+    "date": "2022",
+    "url": "https://www.thepaper.cn/newsDetail_forward_17580348",
+    "accessed": "2026-11-25",
+    "note": "读的是公众号版。"
+  },
+  "wang-nan-2021a": {
+    "title": "天地圆方 塔像合一：应县木塔室内空间与塑像群构图比例探析",
+    "author": "王南、王卓男、郑虹玉",
+    "publisher": "《建筑史学刊》2021 年第 2 期",
+    "date": "2021",
+    "url": "https://www.thepaper.cn/newsDetail_forward_14226434",
+    "accessed": "2026-11-25",
+    "note": "读的是公众号版。实测为 2021 年，并转述 1991、2011 年的总高和台基高。"
+  },
+  "wang-nan-2021b": {
+    "title": "规矩方圆 浮图万千：中国古代佛塔构图比例探析",
+    "author": "王南",
+    "publisher": "《建筑史学刊》公众号",
+    "date": "2021",
+    "url": "https://m.thepaper.cn/newsDetail_forward_12643683",
+    "accessed": "2026-11-25",
+    "note": "木塔部分据陈明达 1966 年实测图。"
+  },
+  "li-zhao-2024": {
+    "title": "应县木塔屋架尺度设计再考",
+    "author": "李泽辉、赵寿堂",
+    "publisher": "《古建园林技术》2024 年第 5 期，120–126 页",
+    "date": "2024",
+    "url": "https://search.napstic.cn/literature/periodical/010gjyljs202405024",
+    "accessed": "2026-11-25",
+    "note": "只读到摘要。"
+  },
+  "tydao-muta-2015": {
+    "title": "山西纪实：拆开应县木塔给你看，令人震慑的匠心营造",
+    "publisher": "太原道网站",
+    "date": "2015",
+    "url": "http://www.tydao.com/2015/0717/150720muta.htm",
+    "accessed": "2026-11-25",
+    "note": "只看到检索摘要：转述各层檐下和平坐斗拱出几跳（副阶双杪，一、二层双杪双下昂，三层三杪，四层双杪，五层半杪承单杪；平坐二至四层三杪，五层双杪）。摘要没有分清哪句出自哪一页，待对照陈明达《应县木塔》。"
+  },
+  "xhmrdx-2020": {
+    "title": "应县木塔的倾斜与保护（新华每日电讯报道）",
+    "publisher": "《新华每日电讯》2020-10-19，澎湃新闻转载",
+    "date": "2020",
+    "url": "https://www.thepaper.cn/newsDetail_forward_9619557",
+    "accessed": "2026-11-25",
+    "note": "题目按内容写的简称。倾斜的数转引自山西省文物局 2004 年报告和中国文化遗产研究院的监测。"
+  },
+  "commons-muta": {
+    "title": "应县木塔的照片",
+    "publisher": "维基共享资源贡献者",
+    "note": "存在 public/photos/yingxian/，每张的原图链接、作者、授权见 data/photos.json。没有测绘数字的部分按照片估计，参数表里标“推测”。"
   }
 }

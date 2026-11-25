@@ -1,0 +1,1099 @@
+{
+  "_说明": "应县木塔（佛宫寺释迦塔）模型的参数表。程序（src/muta/）按这里的数字算出每个构件。依据：实测＝论文里给出的测绘数，或从论文转载的实测剖面小图上量的数（where 里写明）；推测＝按照片、比例或惯例估计。南面朝 +z，东面 +x。高度从台基面算起。",
+  "building": "应县木塔",
+  "unitId": "1-0071-3-024",
+  "precision": "依据图纸复原",
+  "precisionNote": "各层面阔、柱高、层高、塔顶举折、总高、用材取自公开论文里的实测数；檐口和平坐的出挑从剖面小图上量，误差约 0.3 米；斗拱出跳、墙厚、门窗、屋面做法大多是推测。倾斜是示意：只按报告里的几个数让整座塔一起偏，没有逐根柱子的数。",
+  "params": {
+    "fujie": {
+      "value": [
+        12482,
+        12554
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "每面面阔的折线图（北测）",
+      "label": "副阶每面面阔：柱脚、柱头"
+    },
+    "foot": {
+      "value": [
+        9441,
+        9294,
+        8914,
+        8509,
+        8071
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "每面面阔的折线图（北测）",
+      "label": "一至五层外槽每面面阔：柱脚",
+      "note": "一层柱脚比柱头窄，论文自己认为不可靠；照实测画"
+    },
+    "head": {
+      "value": [
+        9553,
+        9148,
+        8800,
+        8439,
+        8004
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "每面面阔的折线图（北测）",
+      "label": "一至五层外槽每面面阔：柱头"
+    },
+    "pzFoot": {
+      "value": [
+        9198,
+        9071,
+        8524,
+        7919
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "每面面阔的折线图（北测）",
+      "label": "二至五层平坐每面面阔：柱脚"
+    },
+    "pzHead": {
+      "value": [
+        9332,
+        8914,
+        8509,
+        8069
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "每面面阔的折线图（北测）",
+      "label": "二至五层平坐每面面阔：柱头"
+    },
+    "ming": {
+      "value": [
+        4163,
+        4164,
+        3809,
+        3722,
+        3689
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "明间、次间的折线图（按数值判断是山测）",
+      "label": "一至五层明间面阔（柱头）",
+      "note": "次间是每面面阔减明间再平分"
+    },
+    "mingF": {
+      "value": 4180,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 01",
+      "label": "副阶明间面阔",
+      "note": "照片上三间差不多宽，取每面的三分之一"
+    },
+    "inner": {
+      "value": [
+        5278,
+        5231,
+        5074,
+        5044,
+        4798
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "内外槽面阔的表（北测）",
+      "label": "一至五层内槽每面面阔：柱头"
+    },
+    "innerFoot": {
+      "value": [
+        5320,
+        5367,
+        5137,
+        5110,
+        4825
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "内槽面阔的折线图（北测）",
+      "label": "一至五层内槽每面面阔：柱脚"
+    },
+    "colH": {
+      "value": [
+        4193,
+        8812,
+        2843,
+        2798,
+        2802,
+        2690
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "柱高的表，四个数的均值",
+      "label": "柱高（地面到普拍枋下皮）：副阶、一至五层",
+      "note": "内柱高没有数，按和外柱同高画"
+    },
+    "storey": {
+      "value": [
+        14570,
+        8820,
+        8590,
+        7750
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "where": "各层层高（2021 年测绘）",
+      "label": "一至四层层高",
+      "note": "陈明达的数是 14650、8840、8850、7830（王南转引），差几厘米到 26 厘米"
+    },
+    "total": {
+      "value": 61990,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "where": "总高（2021 年测绘）",
+      "label": "木塔总高（不含台基）",
+      "note": "1991 年 62.213 米、2011 年 62.266 米；通行的 67.31 米连台基，和 1991、2011 年连台基的 65.88、65.84 米差 1.4 米"
+    },
+    "plat": {
+      "value": [
+        40650,
+        35470,
+        3572
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "wang-nan-2021b",
+        "wang-nan-2021a"
+      ],
+      "where": "平面分析；2011 年台基高",
+      "label": "台基：下层方台边长、上层八角宽、总高",
+      "note": "1991 年台基高 3667"
+    },
+    "platLow": {
+      "value": 1500,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 01",
+      "label": "下层方台高",
+      "note": "上下两层各多高没有数"
+    },
+    "yuetai": {
+      "value": [
+        12600,
+        4300
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 03 俯看",
+      "label": "四面月台：宽、伸出",
+      "note": "按照片和台基边长的比例估"
+    },
+    "wallOut": {
+      "value": [
+        10380,
+        12100
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021b",
+        "li-zehui-2021"
+      ],
+      "where": "外筒内径 20.76 米；剖面变形图",
+      "label": "首层外墙：内皮、外皮离塔心",
+      "note": "内皮是实测（外筒内径的一半），外皮按剖面小图估"
+    },
+    "wallIn": {
+      "value": [
+        5125,
+        7700
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021b",
+        "li-zehui-2021"
+      ],
+      "where": "内筒内径 10.25 米；剖面变形图",
+      "label": "首层内墙：内皮、外皮离塔心",
+      "note": "内皮是实测（内筒内径的一半），外皮按剖面小图估"
+    },
+    "colDia": {
+      "value": [
+        540,
+        600
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 05",
+      "label": "柱径：上层、底层",
+      "note": "力学分析文章取 540、600 毫米，不是测绘报告"
+    },
+    "pupai": {
+      "value": [
+        480,
+        170
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 07",
+      "label": "普拍枋：宽、厚"
+    },
+    "lane": {
+      "value": [
+        370,
+        170
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "where": "按足材高、材厚取",
+      "label": "阑额：高、厚"
+    },
+    "cai": {
+      "value": [
+        259.3,
+        170
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "where": "五层用材",
+      "label": "单材高、材厚",
+      "note": "材厚论文给 5–6 寸，按 306 毫米一尺取 5.6 寸；这是五层的数，各层都用它"
+    },
+    "zucai": {
+      "value": 368.7,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "where": "五层用材",
+      "label": "足材高"
+    },
+    "gong": {
+      "value": {
+        "泥道栱": 1530,
+        "慢栱": 2081,
+        "令栱": 1040,
+        "替木": 1071
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "where": "五层横栱（尺换算，一尺 306 毫米）",
+      "label": "横栱长",
+      "note": "五层的数，各层都用它；尺长是论文的假说"
+    },
+    "ludou": {
+      "value": [
+        551,
+        422,
+        220,
+        147
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "where": "五层栌斗",
+      "label": "栌斗：上宽、下宽、平和欹高、耳高",
+      "note": "高 1.2 尺，耳、平、欹按《营造法式》8:4:8 分"
+    },
+    "sandou": {
+      "value": [
+        298,
+        207,
+        184
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "where": "五层散斗",
+      "label": "散斗：上宽、下宽、高"
+    },
+    "jumps": {
+      "value": {
+        "副阶": [
+          450,
+          850
+        ],
+        "一层": [
+          500,
+          950,
+          1400,
+          1850
+        ],
+        "二层": [
+          500,
+          950,
+          1400,
+          1850
+        ],
+        "三层": [
+          480,
+          920,
+          1350
+        ],
+        "四层": [
+          480,
+          900
+        ],
+        "五层": [
+          340,
+          673
+        ]
+      },
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "tydao-muta-2015",
+        "li-zhao-2024"
+      ],
+      "where": "各层出跳数；五层屋架",
+      "label": "外檐斗拱每跳离柱中",
+      "note": "出几跳据转述；出多远只有五层有数（橑檐枋到柱中 2.2 尺），其余按每跳 0.45 米估。五层实测各家不一（0.68–0.74 米）"
+    },
+    "pzJumps": {
+      "value": {
+        "二层": [
+          430,
+          820,
+          1200
+        ],
+        "三层": [
+          430,
+          820,
+          1200
+        ],
+        "四层": [
+          430,
+          820,
+          1150
+        ],
+        "五层": [
+          450,
+          900
+        ]
+      },
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "tydao-muta-2015"
+      ],
+      "where": "平坐出跳数",
+      "label": "平坐斗拱每跳离柱中",
+      "note": "出几跳据转述，出多远是估的"
+    },
+    "pzDrop": {
+      "value": [
+        1640,
+        1640,
+        1640,
+        1270
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021b"
+      ],
+      "where": "二层平坐柱头距台基地面 12.93 米",
+      "label": "平坐柱头比楼面低多少",
+      "note": "二层由层高 14.57 减 12.93 得出；三、四层照用，五层少一跳，减一足材"
+    },
+    "pzOut": {
+      "value": [
+        1600,
+        1480,
+        1330,
+        1470
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "剖面变形图（东西方向），从网页小图上量，误差约 300 毫米",
+      "label": "平坐边缘离平坐柱中"
+    },
+    "eaveOut": {
+      "value": [
+        2600,
+        3800,
+        3900,
+        3400,
+        2930,
+        2840
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021",
+        "commons-muta"
+      ],
+      "where": "剖面变形图（东西方向），从网页小图上量，误差约 300 毫米",
+      "label": "檐口离柱中：副阶、一至五层",
+      "note": "一层从图上量是 3200，1963 年照片上一层檐明显比二层宽，按 3800 画"
+    },
+    "eaveSlope": {
+      "value": 0.4,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "剖面变形图（东西方向），从网页小图上量，误差约 300 毫米",
+      "label": "檐口到橑檐枋的坡度"
+    },
+    "roofSlope": {
+      "value": 0.52,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "剖面变形图（东西方向），从网页小图上量，误差约 300 毫米",
+      "label": "腰檐屋面的坡度",
+      "note": "图上量约 0.5"
+    },
+    "jia": {
+      "value": [
+        2.2,
+        6.5,
+        6.5,
+        7,
+        7
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "li-zhao-2024"
+      ],
+      "where": "摘要",
+      "label": "塔顶每架平长（尺）：橑檐枋到柱中，再往里四架",
+      "note": "一尺 306 毫米"
+    },
+    "ju": {
+      "value": [
+        1.0,
+        3,
+        3.5,
+        4.5,
+        5.5
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "li-zhao-2024"
+      ],
+      "where": "摘要",
+      "label": "塔顶每架举高（尺）",
+      "note": "第一段 1 尺由总举高 17.5 尺减后四段得出"
+    },
+    "sha": {
+      "value": [
+        3045,
+        9490
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "北测",
+      "label": "脊槫上皮到刹座上皮、刹座上皮到刹顶"
+    },
+    "shaShape": {
+      "value": [
+        1300,
+        750
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "where": "剖面变形图（东西方向），从网页小图上量，误差约 300 毫米",
+      "label": "塔刹：覆钵半径、圆球半径",
+      "note": "轮廓从剖面小图上描，细部是示意"
+    },
+    "tile": {
+      "value": [
+        320,
+        250
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 05",
+      "label": "瓦陇间距、屋面厚"
+    },
+    "rafter": {
+      "value": [
+        130,
+        300
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 07",
+      "label": "椽径、椽距"
+    },
+    "lift": {
+      "value": 380,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 05",
+      "label": "翼角比檐口中段高多少"
+    },
+    "rail": {
+      "value": 1050,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "where": "照片 07",
+      "label": "平坐栏杆高"
+    },
+    "zao": {
+      "value": 12825,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "where": "首层",
+      "label": "首层藻井顶离地"
+    },
+    "fo": {
+      "value": 10320,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "where": "首层大佛通高（2021 年）",
+      "label": "首层大佛通高",
+      "note": "1991 年约 10.2 米，2011 年约 10.375 米，陈明达说约 11 米"
+    },
+    "lean": {
+      "value": [
+        400,
+        650
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "xhmrdx-2020"
+      ],
+      "where": "2004 年山西省文物局报告",
+      "label": "向东北偏：二层柱头处、塔顶",
+      "note": "报告说塔身整体向东北倾 650 毫米，没有说在哪个高度；二层柱头偏移按一根柱子 500 多毫米估成平均 400。逐柱的数没有找到"
+    }
+  },
+  "parts": {
+    "taiji": {
+      "name": "台基",
+      "layer": "台基",
+      "basis": "实测",
+      "src": [
+        "wang-nan-2021b",
+        "wang-nan-2021a"
+      ],
+      "params": [
+        "plat",
+        "platLow",
+        "yuetai"
+      ],
+      "desc": "两层石台：下面方，上面八角。四面有月台。"
+    },
+    "loumian": {
+      "name": "楼面",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "params": [
+        "storey",
+        "pzOut"
+      ],
+      "desc": "每个明层的楼板，伸到外面就是平坐（挑台）。"
+    },
+    "fo": {
+      "name": "大佛（素形）",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "params": [
+        "fo"
+      ],
+      "desc": "首层释迦像只做了一个素形，用来看高矮，不是造像的样子。"
+    },
+    "zhu": {
+      "name": "外槽柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "foot",
+        "head",
+        "ming",
+        "colH",
+        "colDia"
+      ],
+      "desc": "每层外圈二十四根柱子，一面三间。"
+    },
+    "neizhu": {
+      "name": "内槽柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "inner",
+        "innerFoot",
+        "colH"
+      ],
+      "desc": "每层里圈八根柱子，站在八个角上，中间空出来放佛像。"
+    },
+    "fjz": {
+      "name": "副阶柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "fujie",
+        "mingF",
+        "colH"
+      ],
+      "desc": "最底下一圈围廊的柱子，也是二十四根。"
+    },
+    "anzhu": {
+      "name": "暗层柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "pzFoot",
+        "pzHead",
+        "pzDrop"
+      ],
+      "desc": "从外面看不到的暗层里的柱子，上面托着平坐。"
+    },
+    "xiecheng": {
+      "name": "暗层斜撑",
+      "layer": "柱",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "pzHead"
+      ],
+      "desc": "暗层里的斜撑，使一圈柱子像一个箍。位置是示意，斜撑有后代加的。"
+    },
+    "qiang": {
+      "name": "首层厚墙",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021b",
+        "li-zehui-2021"
+      ],
+      "params": [
+        "wallOut",
+        "wallIn"
+      ],
+      "desc": "首层里外两圈厚墙，把柱子包在里面，南北开门。"
+    },
+    "men": {
+      "name": "格子门窗",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "ming"
+      ],
+      "desc": "上面各层的门窗。1935 年以前次间是夹泥墙加斜撑，后来拆掉换成了格子门窗。"
+    },
+    "ban": {
+      "name": "板壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "head"
+      ],
+      "desc": "门窗四周和暗层外面的木板。"
+    },
+    "gongyan": {
+      "name": "栱眼壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "ludou"
+      ],
+      "desc": "斗拱之间的泥壁，有残存的画。"
+    },
+    "lane": {
+      "name": "阑额",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "params": [
+        "lane"
+      ],
+      "desc": "柱头之间的横枋。"
+    },
+    "pupai": {
+      "name": "普拍枋",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "pupai"
+      ],
+      "desc": "压在柱头上的一圈平枋，斗拱坐在它上面。"
+    },
+    "ludou": {
+      "name": "栌斗",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "params": [
+        "ludou"
+      ],
+      "desc": "每朵斗拱最底下的大斗。"
+    },
+    "huagong": {
+      "name": "华栱",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2022",
+        "tydao-muta-2015"
+      ],
+      "params": [
+        "cai",
+        "zucai",
+        "jumps",
+        "pzJumps"
+      ],
+      "desc": "一层层往外挑的栱。材的大小是实测，挑多远大多是估的。"
+    },
+    "ang": {
+      "name": "下昂",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "tydao-muta-2015"
+      ],
+      "params": [
+        "jumps"
+      ],
+      "desc": "一、二层檐下斜着伸出来的长条，像杠杆一样挑住出檐。"
+    },
+    "henggong": {
+      "name": "横栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "params": [
+        "gong",
+        "cai"
+      ],
+      "desc": "顺着墙面的栱。"
+    },
+    "dou": {
+      "name": "散斗",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "params": [
+        "sandou"
+      ],
+      "desc": "栱头上的小斗。"
+    },
+    "fang": {
+      "name": "柱头枋",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "params": [
+        "cai",
+        "zucai"
+      ],
+      "desc": "一层层叠在柱头线上的枋，把一圈斗拱连起来。"
+    },
+    "liaoyan": {
+      "name": "橑檐枋",
+      "layer": "槫",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2022"
+      ],
+      "params": [
+        "jumps",
+        "cai"
+      ],
+      "desc": "斗拱最外端托着的枋，椽子搭在上面。"
+    },
+    "liang": {
+      "name": "乳栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "head",
+        "inner"
+      ],
+      "desc": "里外两圈柱子之间的短梁。断面是估的。"
+    },
+    "dafu": {
+      "name": "六椽栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "inner"
+      ],
+      "desc": "横过塔心的大梁，上面铺楼板。根数和断面是示意。"
+    },
+    "caofu": {
+      "name": "塔顶屋架",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "li-zhao-2024"
+      ],
+      "params": [
+        "jia",
+        "ju"
+      ],
+      "desc": "塔顶里面托槫的梁和蜀柱，搭法是示意。"
+    },
+    "zaojing": {
+      "name": "首层藻井",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "wang-nan-2021a"
+      ],
+      "params": [
+        "zao"
+      ],
+      "desc": "大佛头顶的八角藻井，只做了素形。"
+    },
+    "tuan": {
+      "name": "槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "li-zhao-2024"
+      ],
+      "params": [
+        "jia",
+        "ju"
+      ],
+      "desc": "塔顶一圈圈的槫，从檐口到塔刹，越往上越陡。"
+    },
+    "chuan": {
+      "name": "椽、飞子",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "rafter"
+      ],
+      "desc": "铺瓦前的一根根木条，角上散开。"
+    },
+    "jiaoliang": {
+      "name": "角梁",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "lift"
+      ],
+      "desc": "八个角上斜出的梁。"
+    },
+    "wamian": {
+      "name": "瓦面",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "li-zehui-2021",
+        "commons-muta"
+      ],
+      "params": [
+        "eaveOut",
+        "eaveSlope",
+        "roofSlope",
+        "tile",
+        "lift"
+      ],
+      "desc": "六层屋檐：最下面是副阶，往上每个明层一层。"
+    },
+    "ji": {
+      "name": "垂脊",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "tile"
+      ],
+      "desc": "八条斜脊。"
+    },
+    "shazuo": {
+      "name": "刹座",
+      "layer": "屋面",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "sha",
+        "shaShape"
+      ],
+      "desc": "塔顶上砖砌的座。"
+    },
+    "tasha": {
+      "name": "塔刹",
+      "layer": "屋面",
+      "basis": "实测",
+      "src": [
+        "li-zehui-2021"
+      ],
+      "params": [
+        "sha",
+        "shaShape"
+      ],
+      "desc": "铁做的塔刹。总高是实测，轮廓是描的。"
+    },
+    "langan": {
+      "name": "平坐栏杆",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [
+        "rail",
+        "pzOut"
+      ],
+      "desc": "挑台边的木栏杆。"
+    },
+    "bian": {
+      "name": "匾",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-muta"
+      ],
+      "params": [],
+      "desc": "南面第三层檐下的“释迦塔”匾，大小是示意。"
+    }
+  }
+}
