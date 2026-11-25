@@ -703,5 +703,68 @@
     "url": "https://search.napstic.cn/literature/periodical/010ggbwyyk202408001",
     "accessed": "2026-11-25",
     "note": "只读到国家哲学社会科学文献中心检索页上的摘要，作者名没看到，正文没读。"
+  },
+  "du-xianzhou-1963": {
+    "title": "永乐宫的建筑",
+    "author": "杜仙洲",
+    "publisher": "《文物》1963 年第 8 期；山西省永乐宫壁画保护研究院网站转载",
+    "date": "1963",
+    "url": "https://sxrcylg.cn/index.php?a=index&aid=1035&c=View&m=home",
+    "accessed": "2026-11-25",
+    "note": "读的是永乐宫壁画保护研究院网站上的转载（页头写“来源：网络”，文末注选自《文物》1963 年 8 期），页码没核。三清殿只给总面宽、总进深，没给各间尺寸。"
+  },
+  "thepaper-yonglegong-2024": {
+    "title": "永乐宫壁画背后，是两个画工班子之间的激烈竞争",
+    "author": "澎湃政务号",
+    "publisher": "澎湃新闻·澎湃号·政务",
+    "date": "2024",
+    "url": "https://www.thepaper.cn/newsDetail_forward_27134436",
+    "accessed": "2026-11-25",
+    "note": "2024-04-23，图片由山西省永乐宫壁画艺术博物馆提供。引了王逊《永乐宫三清殿壁画题材试探》（《文物》1963 年第 8 期）。三清殿西半部由谁画是作者的推断。"
+  },
+  "chinanews-yonglegong-2013": {
+    "title": "永乐宫古建修缮和消防工程报道（原标题网页乱码，没读出来）",
+    "author": "中国新闻网",
+    "publisher": "中国新闻网",
+    "date": "2013",
+    "url": "https://www.chinanews.com.cn/sh/2013/11-26/5547510.shtml",
+    "accessed": "2026-11-25",
+    "note": "2013-11-26，中国新闻网社会频道。网页编码错乱，标题和来源行读不出来；正文能读。"
+  },
+  "scol-yonglegong-2026": {
+    "title": "穿越七百余年 邂逅山西永乐宫的传世之美",
+    "author": "吴晓铃",
+    "publisher": "川观新闻（四川日报）",
+    "date": "2026",
+    "url": "https://cbgc.scol.com.cn/news/7780487",
+    "accessed": "2026-11-25",
+    "note": "2026-07-22，四川博物院“观妙入真——永乐宫的建筑艺术与传承”展的报道。"
+  },
+  "xu-2014": {
+    "title": "论碳十四测年技术测定中国古代建筑建造年代的基本方法——以山西万荣稷王庙大殿年代研究为例",
+    "author": "徐怡涛",
+    "publisher": "《文物》2014 年第 9 期，91–96、70 页；北京大学考古文博学院网站 PDF",
+    "date": "2014",
+    "url": "https://fh.pku.edu.cn/docs/2018-11/20181115002748321228.pdf",
+    "accessed": "2026-11-25",
+    "note": "国家文物局“指南针计划”万荣稷王庙大殿精细测绘课题成果。给了各间面阔和总进深，没给进深三间各自的尺寸。"
+  },
+  "xinhua-jinanxunji-2026": {
+    "title": "新华走笔丨晋南寻稷",
+    "author": "马志异",
+    "publisher": "新华每日电讯，新华网转载",
+    "date": "2026",
+    "url": "https://www.news.cn/local/20261016/84aeb8f2ac5b45d6bf9bb07577210cc3/c.html",
+    "accessed": "2026-11-25",
+    "note": "2026-10-16。"
+  },
+  "xinhua-fengshou-2026": {
+    "title": "山西古建里 藏着古人最朴素的丰收心愿",
+    "author": "新华社",
+    "publisher": "新华网",
+    "date": "2026",
+    "url": "https://www.news.cn/20260923/c43ae0facbf648c491d9228e321f6cd0/c.html",
+    "accessed": "2026-11-25",
+    "note": "2026-09-23，图片报道。"
   }
 }
