@@ -98,7 +98,12 @@ function render(p: Page) {
     <div class="bp-hero-text">
       <p class="bp-kicker">${esc(p.place)} · ${esc(unit.name)} · 第${esc(String(unit.record.batch))}批国保 ${tier}</p>
       <h1>${esc(p.name)}</h1>
-      <p class="bp-sub">${esc(building.year?.label ?? '')}${building.year?.check ? `（${esc(building.year.check)}）` : ''}${building.form ? ' · ' + esc(building.form.value.join('、')) : ''}</p>
+      <p class="bp-sub">${[
+        building.year ? esc(building.year.label) + (building.year.check ? `（${esc(building.year.check)}）` : '') : '',
+        building.form ? esc(building.form.value.join('、')) : '',
+      ]
+        .filter(Boolean)
+        .join(' · ')}</p>
       <dl class="bp-three">
         ${(
           [

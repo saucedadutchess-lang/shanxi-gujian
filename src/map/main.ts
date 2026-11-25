@@ -323,6 +323,7 @@ const BUILDING_PAGES: Record<string, string> = {
   '1-0085-3-038': './building.html?id=shengmudian',
   '1-0071-3-024': './building.html?id=muta',
   '1-0091-3-044': './building.html?id=huayansi',
+  '1-0088-3-041': './building.html?id=shanhuasi',
 };
 const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang', '1-0085-3-038': 'shengmudian', '1-0071-3-024': 'muta' };
 
