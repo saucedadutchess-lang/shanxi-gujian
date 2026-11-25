@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>晋祠圣母殿 · 拆开看｜观晋</title>
+    <meta name="description" content="按公开的平面图、剖面图尺寸生成的晋祠圣母殿三维模型，可以一层层拆开，看每个构件的尺寸和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html">地图</a>
+        <a href="./intro.html">古建入门</a>
+        <a href="./index.html">屋顶变形器</a>
+        <a href="./building.html?id=foguang">佛光寺东大殿</a>
+        <a href="./building.html?id=nanchan">南禅寺大殿</a>
+        <a href="./building.html?id=shengmudian" aria-current="page">晋祠圣母殿</a>
+      </nav>
+    </header>
+    <main>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="晋祠圣母殿的三维模型"></canvas>
+        <div class="nc-views" role="group" aria-label="视角">
+          <button type="button" data-view="front" title="站在殿前看正面（殿朝东）">正面</button>
+          <button type="button" data-view="corner" title="从东南角看，正面和南山面都看得到">斜看</button>
+          <button type="button" data-view="eave" title="走到檐下，抬头看斗拱和出檐">檐下</button>
+          <button type="button" data-view="inside" title="进到殿里，抬头看梁架">殿内</button>
+          <button type="button" data-view="top" title="从高处看屋顶">俯瞰</button>
+        </div>
+        <img class="nc-overlay" id="overlay" alt="" hidden />
+        <p class="nc-credit" id="overlay-credit" hidden></p>
+        <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
+      </div>
+
+      <aside class="panel nc-panel">
+        <p class="nc-back"><a href="./building.html?id=shengmudian">← 晋祠圣母殿建筑页</a></p>
+        <h2>晋祠圣母殿 <span class="badge" id="precision"></span></h2>
+        <p class="lead" id="precision-note"></p>
+
+        <section>
+          <div class="row"><label for="explode">拆开</label><output id="explode-out">合拢</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" />
+          <div class="nc-layers" id="layers" role="group" aria-label="显示哪些层"></div>
+        </section>
+
+        <section>
+          <h3>颜色</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="颜色">
+            <button type="button" role="radio" aria-checked="true" data-color="material">看材质</button>
+            <button type="button" role="radio" aria-checked="false" data-color="basis">看依据</button>
+          </div>
+          <ul class="nc-legend" id="legend"></ul>
+        </section>
+
+        <section>
+          <h3>和实拍照片对照</h3>
+          <p class="desc nc-small">把模型叠在照片上，按照片里廊柱和台明角的位置反推出拍摄位置，看檐口、屋脊、斗拱对不对得上。转动模型时照片自动收起。</p>
+          <div class="nc-seg nc-photos" role="group" aria-label="对照照片">
+            <button type="button" data-photo="03">东南角</button>
+          </div>
+          <div class="nc-photo-ctl" hidden>
+            <div class="row"><label for="photo-op">照片透明度</label><output id="photo-op-out">50%</output></div>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" />
+            <p class="nc-s" id="photo-note"></p>
+          </div>
+        </section>
+
+        <section id="info" aria-live="polite">
+          <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>
+        </section>
+
+        <section class="sources">
+          <p>柱网、槫的高低、出檐、主要梁的断面取自张程雅 2022 年学位论文附的平面图和明间剖面图（看的是太原广播电视台 2024 年的转载）；用材和斗拱出跳取自周淼、胡石 2020 年发表在《文物》的用材表和斗拱图（看的是网上转载）；前檐柱高取自《太原日报》2025 年的报道摘要。都没有核到原始测绘。全部参数和出处在仓库的 <code>data/models/shengmudian.json</code>。</p>
+          <p>殿前八条木雕盘龙、匾额、殿内彩塑和神龛、鱼沼飞梁没有做；后檐有没有补间斗拱、山面内部的梁怎么搭，没有资料，后檐按没有补间画，山面按惯例推测；柱子没有做侧脚，翼角椽子没有散开。</p>
+        </section>
+      </aside>
+    </main>
+    <script type="module" src="/src/shengmudian/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,1240 @@
+{
+  "_说明": "晋祠圣母殿模型的参数表。程序（src/shengmudian/）按这里的数字算出每个构件。依据：实测＝公开的平面图、剖面图、斗拱图上标注的数，或从图上量的数（note 里写明“从图上量”和误差；图是转载件，原始测绘没有核到）；材分推算＝按《营造法式》比例由实测材广推出；推测＝按照片或惯例估计。柱号：A 前廊到 G 后廊，1–8 自南向北。殿朝东，模型里正面朝 +z，北端在 +x。标高从台明面算起。",
+  "building": "晋祠圣母殿",
+  "unitId": "1-0085-3-038",
+  "precision": "依据图纸复原",
+  "precisionNote": "柱网、槫的高低、出檐、主要梁的断面取自公开转载的平面图和剖面图上的标注；斗拱出跳、部分梁的高度是从图上量的，有几厘米误差；横栱长按《营造法式》推算；山花、丁栿、椽瓦、门窗、台帮按照片或惯例推测。原始测绘图没有核到。",
+  "params": {
+    "bays": {
+      "value": [
+        3100,
+        3725,
+        4030,
+        5000,
+        4030,
+        3725,
+        3100
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "平面图",
+      "label": "面阔各间（自南向北）",
+      "note": "通面阔 26.71 米"
+    },
+    "depths": {
+      "value": [
+        3100,
+        3735,
+        3735,
+        3745,
+        3735,
+        3100
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "平面图、明间剖面图",
+      "label": "进深各间（由前到后）",
+      "note": "通进深 21.15 米"
+    },
+    "colDia": {
+      "value": [
+        530,
+        460
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "平面图",
+      "label": "柱径：前廊柱、其余柱",
+      "note": "图上前廊柱标 530，其余标 460"
+    },
+    "puTop": {
+      "value": 3950,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "副阶普拍枋上皮标高",
+      "note": "图上 3950 这道线在柱头附近，没有写是哪一面；前檐平柱高 3790–3845 加普拍枋 135 约等于它，所以本项目读作普拍枋上皮"
+    },
+    "frontCol": {
+      "value": [
+        3817,
+        4065
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "tyrb-2025"
+      ],
+      "where": "检索摘要",
+      "label": "前檐柱高：平柱、角柱",
+      "note": "报道给出平柱 3790、3845，角柱 4038、4091，各取平均"
+    },
+    "shengqi": {
+      "value": 1,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "tyrb-2025",
+        "lin-liang-1935"
+      ],
+      "where": "检索摘要；“太原县 晋祠”",
+      "label": "柱子向角上逐根升高：按直线分配到各柱",
+      "note": "前檐平柱到角柱共升 248 毫米，中间柱按直线分配；两山、后檐没有数字，也按到角柱同样的升高画"
+    },
+    "hallTop": {
+      "value": 7964,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "殿身柱头标高",
+      "note": "图上 7940 这道线在殿身普拍枋附近，没有写是哪一面；取 9940 减去斗拱总高 1841、普拍枋 135，得柱头 7964，和图上差 24 毫米"
+    },
+    "pupai": {
+      "value": [
+        303,
+        135
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "图二（按足材 316 毫米换算）",
+      "label": "普拍枋：宽、厚",
+      "note": "从图上量，误差约 10 毫米"
+    },
+    "lane": {
+      "value": [
+        284,
+        142
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "图二（按足材 316 毫米换算）",
+      "label": "阑额：高、厚",
+      "note": "从图上量，误差约 10 毫米；副阶也按它画"
+    },
+    "zucai": {
+      "value": 316,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "表一",
+      "label": "足材广",
+      "note": "殿身 316，副阶 315"
+    },
+    "cai": {
+      "value": [
+        223,
+        160
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "表一",
+      "label": "单材广、厚",
+      "note": "营造尺 309 毫米，7.2 寸"
+    },
+    "fang": {
+      "value": [
+        207,
+        122
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "表一",
+      "label": "柱头枋、罗汉枋、令栱等的广、厚",
+      "note": "表上是范围 204–210 × 118–125，取中间值"
+    },
+    "ludou": {
+      "value": [
+        426,
+        102,
+        48,
+        89
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "图二（按足材 316 毫米换算）",
+      "label": "栌斗：宽、耳、平、欹",
+      "note": "宽和总高 239 从图上量，耳平欹按 4:2:4 分，和“华栱底皮距普拍枋 137”对得上"
+    },
+    "sandou": {
+      "value": [
+        238,
+        238,
+        149
+      ],
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "zhou-hu-2020"
+      ],
+      "where": "卷四 造斗之制；表一",
+      "label": "散斗：长、宽、高",
+      "note": "16×16×10 分°，1 分° 取材广的 1/15 即 14.9 毫米"
+    },
+    "gongLen": {
+      "value": {
+        "泥道栱": 924,
+        "瓜子栱": 924,
+        "令栱": 1073,
+        "慢栱": 1371
+      },
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "zhou-hu-2020"
+      ],
+      "where": "卷四 造栱之制；表一",
+      "label": "横栱长",
+      "note": "62、62、72、92 分°，1 分° 取 14.9 毫米；实物长度没有找到数字"
+    },
+    "jumpsU": {
+      "value": [
+        445,
+        774,
+        1075
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020",
+        "zhang-chengya-2022"
+      ],
+      "where": "图二（按足材 316 毫米换算）；明间剖面图",
+      "label": "上檐外跳累计",
+      "note": "总出跳 1075 由剖面图槫距算出，和图二量得的 1090 相符"
+    },
+    "jumpsUin": {
+      "value": [
+        452,
+        748,
+        1122
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "where": "图二（按足材 316 毫米换算）",
+      "label": "上檐里跳累计",
+      "note": "从图上量"
+    },
+    "jumpsL": {
+      "value": [
+        439,
+        800
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020",
+        "zhang-chengya-2022"
+      ],
+      "where": "图二（按足材 316 毫米换算）；明间剖面图",
+      "label": "下檐外跳累计",
+      "note": "图二量得 819，剖面图量得 787，取 800"
+    },
+    "angSlope": {
+      "value": 0.3,
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020",
+        "zhang-chengya-2022"
+      ],
+      "where": "图二（按足材 316 毫米换算）；明间剖面图",
+      "label": "真昂的斜度（高/长）",
+      "note": "从图上量，约 0.25–0.42，取 0.3"
+    },
+    "angTip": {
+      "value": [
+        500,
+        820,
+        420
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "昂尖伸出：上檐昂、昂形耍头、下檐平昂",
+      "note": "从图上量，误差约 50 毫米；下檐按照片 06 估"
+    },
+    "liaoTop": {
+      "value": 9940,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "上檐橑檐槫上皮标高"
+    },
+    "tuanTop": {
+      "value": [
+        11040,
+        11940,
+        13050,
+        14510
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "下平、中平、上平、脊槫上皮标高"
+    },
+    "tuanGap": {
+      "value": [
+        2970,
+        1860
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "槫距：橑檐到下平、其余"
+    },
+    "tuanD": {
+      "value": 320,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "槫径"
+    },
+    "panjian": {
+      "value": [
+        220,
+        140,
+        120,
+        120
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "襻间：高、厚；橑檐槫下替木：高、厚"
+    },
+    "eave": {
+      "value": [
+        1100,
+        530
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "檐出：檐椽、飞子",
+      "note": "上檐图上标注；下檐从图上量，约 1080 + 540，按同一个数画"
+    },
+    "lowerXia": {
+      "value": [
+        1560,
+        6325
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "副阶下平槫：离檐柱、上皮标高",
+      "note": "从图上量约 6340，按和橑檐槫之间坡度 0.36 取 6325；刚好落在 460×260 的梁上"
+    },
+    "lowerMeet": {
+      "value": 7400,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "副阶椽尾到殿身柱处的标高",
+      "note": "从图上量"
+    },
+    "beams": {
+      "value": {
+        "六椽栿（下）": [
+          510,
+          340
+        ],
+        "六椽栿（上）": [
+          500,
+          340
+        ],
+        "四椽栿": [
+          480,
+          260
+        ],
+        "平梁": [
+          340,
+          210
+        ],
+        "乳栿": [
+          360,
+          260
+        ],
+        "劄牵": [
+          350,
+          190
+        ]
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "上檐梁：六椽栿（下、上）、四椽栿、平梁、乳栿、劄牵（高×厚）",
+      "note": "图上直接标注断面"
+    },
+    "beamTop": {
+      "value": {
+        "六椽栿（下）": 10000,
+        "六椽栿（上）": 10780,
+        "四椽栿": 11670,
+        "平梁": 12640,
+        "乳栿": 9860,
+        "劄牵": 10660
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "上檐梁上皮标高",
+      "note": "从图上量，误差约 20 毫米"
+    },
+    "lowerBeams": {
+      "value": {
+        "四椽栿（上）": [
+          460,
+          260
+        ],
+        "四椽栿（下）": [
+          410,
+          260
+        ],
+        "乳栿": [
+          320,
+          220
+        ]
+      },
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "前廊四椽栿（上、下）、副阶乳栿（高×厚）",
+      "note": "460×260、320×220 是标注；前廊下面一根从图上量"
+    },
+    "lowerBeamTop": {
+      "value": [
+        6010,
+        5290,
+        5200
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "前廊四椽栿（上、下）、副阶乳栿上皮标高",
+      "note": "从图上量"
+    },
+    "tongzhu": {
+      "value": 6300,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "童柱柱脚标高（驼峰上皮）",
+      "note": "从图上量"
+    },
+    "chashou": {
+      "value": [
+        200,
+        120
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "叉手、托脚断面：高、厚",
+      "note": "图上看得到，没有标尺寸"
+    },
+    "dingfu": {
+      "value": [
+        360,
+        260,
+        10400
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 梁",
+      "label": "丁栿断面：高、厚；上皮标高",
+      "note": "剖面图上看不到，按乳栿断面画"
+    },
+    "wall": {
+      "value": [
+        1220,
+        6630
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "平面图、明间剖面图",
+      "label": "殿身墙：厚、里皮墙顶标高",
+      "note": "从图上量，墙有收分，这里按直墙画"
+    },
+    "platformOut": {
+      "value": [
+        2000,
+        1970
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "平面图",
+      "label": "台明出：前后、两山",
+      "note": "从图上量"
+    },
+    "platformH": {
+      "value": 1600,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "where": "照片 03",
+      "label": "殿前台帮高",
+      "note": "剖面图上正中台明高出桥面 400；两侧石砌台帮按照片里的人高估计。殿后、两侧地面实际多高不清楚"
+    },
+    "bridgeDrop": {
+      "value": 400,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "台明高出殿前桥面",
+      "note": "图上最下一段 400，本项目读作台明到殿前桥面"
+    },
+    "xg": {
+      "value": 9300,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "where": "照片 01、03",
+      "label": "上檐正脊半长（山花位置）",
+      "note": "按两张照片里鸱吻的位置反推，鸱吻中心离中线约 9.1 米，误差约 0.3 米"
+    },
+    "lift": {
+      "value": [
+        830,
+        900
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "翼角起翘：上檐、下檐",
+      "note": "从图上量檐口中段到角梁头的高差，误差约 100 毫米；冲出没有做"
+    },
+    "ridge": {
+      "value": [
+        15655,
+        17720
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "正脊上皮、脊刹顶标高",
+      "note": "图上标高线；15655 读作正脊上皮"
+    },
+    "chiwei": {
+      "value": 1700,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "where": "照片 01",
+      "label": "鸱吻高"
+    },
+    "rafter": {
+      "value": [
+        130,
+        270,
+        280
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "where": "照片 06、01",
+      "label": "椽径、椽距、瓦陇间距"
+    },
+    "roofThick": {
+      "value": 260,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "明间剖面图",
+      "label": "屋面厚（望板、灰背、瓦）",
+      "note": "按图上屋面厚度估"
+    },
+    "door": {
+      "value": [
+        2700,
+        3100
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "where": "照片 04",
+      "label": "版门一间：宽、高",
+      "note": "分位按平面图：中三间门，两边各一间窗"
+    },
+    "shrine": {
+      "value": [
+        6400,
+        5000,
+        1250
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "where": "平面图、明间剖面图",
+      "label": "神龛台座：宽、深、高",
+      "note": "从图上量；神龛木构和塑像没有做"
+    },
+    "rail": {
+      "value": 900,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "where": "照片 03",
+      "label": "台边石栏杆高"
+    }
+  },
+  "parts": {
+    "taiming": {
+      "name": "台明",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "platformOut",
+        "platformH"
+      ],
+      "desc": "殿的台基。平面大小照图，台帮高按照片估。"
+    },
+    "qiao": {
+      "name": "殿前桥面（示意）",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "bridgeDrop"
+      ],
+      "desc": "正中接鱼沼飞梁，这里只画一小段桥面，飞梁本身没有做。"
+    },
+    "langan": {
+      "name": "石栏杆",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "params": [
+        "rail"
+      ],
+      "desc": "台边的石栏杆，后代添的。"
+    },
+    "zhuchu": {
+      "name": "柱础",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "params": [
+        "colDia"
+      ],
+      "desc": "柱脚下的石础，大小按柱径估。"
+    },
+    "zhu": {
+      "name": "柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022",
+        "tyrb-2025"
+      ],
+      "params": [
+        "colDia",
+        "puTop",
+        "frontCol",
+        "shengqi",
+        "hallTop"
+      ],
+      "desc": "外圈是副阶（围廊）柱，里圈是殿身柱。殿前八根廊柱上的木雕盘龙没有做。"
+    },
+    "tongzhu": {
+      "name": "童柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022",
+        "lin-liang-1935"
+      ],
+      "params": [
+        "tongzhu",
+        "hallTop"
+      ],
+      "desc": "前檐殿身的四根柱子不落地，立在前廊大梁上，所以前廊能空出两间深。"
+    },
+    "qiang": {
+      "name": "殿身墙",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "wall"
+      ],
+      "desc": "殿身两侧和后面的厚墙，把柱子包在里面。"
+    },
+    "ban": {
+      "name": "廊内壁板",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "params": [
+        "hallTop"
+      ],
+      "desc": "门窗以上、檐下的封板，细部不清楚。"
+    },
+    "men": {
+      "name": "版门",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "door"
+      ],
+      "desc": "殿门在第二排柱子上，退进前廊两间。中三间开门。"
+    },
+    "chuang": {
+      "name": "直棂窗",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "door"
+      ],
+      "desc": "门两边各一间窗，样子按照片估。"
+    },
+    "shenkan": {
+      "name": "神龛台座",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "shrine"
+      ],
+      "desc": "殿内正中，上面是木构神龛和圣母像，没有做。"
+    },
+    "gongyan": {
+      "name": "栱眼壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "params": [
+        "hallTop"
+      ],
+      "desc": "斗拱之间的泥壁，照片上有的刷白、有画。"
+    },
+    "lane": {
+      "name": "阑额",
+      "layer": "额枋",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "lane"
+      ],
+      "desc": "柱头之间的横木。"
+    },
+    "pupai": {
+      "name": "普拍枋",
+      "layer": "额枋",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "pupai"
+      ],
+      "desc": "平放在柱头和阑额上的一道厚板，斗拱坐在它上面。"
+    },
+    "chengchuan": {
+      "name": "承椽枋",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "lowerMeet"
+      ],
+      "desc": "殿身柱间的横木，接住副阶的椽尾。"
+    },
+    "ludou": {
+      "name": "栌斗",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "ludou"
+      ],
+      "desc": "一朵斗拱最下面的大斗。"
+    },
+    "dou": {
+      "name": "散斗",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "sandou"
+      ],
+      "desc": "栱头、昂头上的小斗。"
+    },
+    "henggong": {
+      "name": "横栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "gongLen",
+        "fang"
+      ],
+      "desc": "顺着墙的栱：泥道栱、瓜子栱、慢栱、令栱。"
+    },
+    "huagong": {
+      "name": "华栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "zucai",
+        "cai",
+        "jumpsU",
+        "jumpsUin",
+        "jumpsL"
+      ],
+      "desc": "向外、向里伸出的栱，一层叫一跳。"
+    },
+    "ang": {
+      "name": "下昂",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020",
+        "lin-liang-1935"
+      ],
+      "params": [
+        "zucai",
+        "cai",
+        "angSlope",
+        "angTip",
+        "jumpsU"
+      ],
+      "desc": "斜插的昂。上檐柱头用一层，下檐补间也用；昂尾向里挑起。"
+    },
+    "pingang": {
+      "name": "平昂",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020",
+        "lin-liang-1935"
+      ],
+      "params": [
+        "zucai",
+        "cai",
+        "angTip",
+        "jumpsL"
+      ],
+      "desc": "看着像昂，其实是平放的：华栱外端做成昂嘴。下檐柱头两层都是，上檐补间也是。"
+    },
+    "shuatou": {
+      "name": "耍头",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "cai",
+        "angTip"
+      ],
+      "desc": "最上一跳和令栱相交的木头。上檐柱头、下檐补间的耍头也做成昂的样子。"
+    },
+    "fang": {
+      "name": "柱头枋、罗汉枋",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhou-hu-2020"
+      ],
+      "params": [
+        "fang"
+      ],
+      "desc": "把一朵朵斗拱连起来的长木。"
+    },
+    "timu": {
+      "name": "替木",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "panjian"
+      ],
+      "desc": "令栱上托橑檐槫的短木，按贯通画。"
+    },
+    "dafu": {
+      "name": "六椽栿、四椽栿",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "beams",
+        "beamTop"
+      ],
+      "desc": "殿内的大梁，跨三间，中间没有柱子。"
+    },
+    "rufu": {
+      "name": "乳栿、劄牵",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "beams",
+        "beamTop"
+      ],
+      "desc": "殿身前檐到第二排柱之间的短梁。"
+    },
+    "langfu": {
+      "name": "前廊四椽栿",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022",
+        "lin-liang-1935"
+      ],
+      "params": [
+        "lowerBeams",
+        "lowerBeamTop"
+      ],
+      "desc": "从廊柱直达第二排柱的长梁，童柱立在它上面。"
+    },
+    "fujie": {
+      "name": "副阶乳栿",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "lowerBeams",
+        "lowerBeamTop"
+      ],
+      "desc": "两侧和后面围廊的短梁。"
+    },
+    "pingliang": {
+      "name": "平梁",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "beams",
+        "beamTop"
+      ],
+      "desc": "最上一根短梁，托上平槫。"
+    },
+    "chashou": {
+      "name": "叉手、托脚",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "chashou"
+      ],
+      "desc": "斜撑。位置照图，断面是估的。"
+    },
+    "tuofeng": {
+      "name": "驼峰、蜀柱",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "beamTop"
+      ],
+      "desc": "两层梁之间的垫木和短柱。位置照图，大小是估的。"
+    },
+    "dingfu": {
+      "name": "丁栿、山面梁架",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "dingfu",
+        "xg"
+      ],
+      "desc": "从两山的柱子搭到梁上，托住山花一带的屋架。剖面图上看不到。"
+    },
+    "liaoyan": {
+      "name": "橑檐槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "liaoTop",
+        "tuanD",
+        "jumpsU",
+        "jumpsL"
+      ],
+      "desc": "斗拱最外端托住的那根槫。"
+    },
+    "tuan": {
+      "name": "平槫、脊槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "tuanTop",
+        "tuanGap",
+        "tuanD",
+        "lowerXia"
+      ],
+      "desc": "一道道架椽子的圆木。"
+    },
+    "panjian": {
+      "name": "襻间",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "panjian"
+      ],
+      "desc": "槫下面的方木。"
+    },
+    "chuan": {
+      "name": "椽、飞子",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "eave",
+        "rafter"
+      ],
+      "desc": "出檐长短照图，椽子粗细和疏密按照片估。"
+    },
+    "jiaoliang": {
+      "name": "角梁",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "lift"
+      ],
+      "desc": "四角斜出的大梁，断面是估的；翼角椽没有散开。"
+    },
+    "wamian": {
+      "name": "瓦面",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "tuanTop",
+        "eave",
+        "lift",
+        "roofThick",
+        "rafter"
+      ],
+      "desc": "举折照槫的标高。灰瓦、檐边绿琉璃按照片。"
+    },
+    "shanhua": {
+      "name": "山花",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-jinci"
+      ],
+      "params": [
+        "xg"
+      ],
+      "desc": "歇山顶两头的三角形。"
+    },
+    "ji": {
+      "name": "屋脊",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "zhang-chengya-2022",
+        "commons-jinci"
+      ],
+      "params": [
+        "ridge"
+      ],
+      "desc": "正脊、垂脊、戗脊、围脊，断面是估的。"
+    },
+    "chiwei": {
+      "name": "鸱吻、脊刹",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-jinci",
+        "zhang-chengya-2022"
+      ],
+      "params": [
+        "chiwei",
+        "ridge"
+      ],
+      "desc": "正脊两端的琉璃鸱吻和正中的脊刹，只做轮廓。"
+    }
+  }
+}

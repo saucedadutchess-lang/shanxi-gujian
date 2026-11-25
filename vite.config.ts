@@ -11,6 +11,7 @@ export default defineConfig({
         map: 'map.html',
         nanchan: 'nanchan.html',
         foguang: 'foguang.html',
+        shengmudian: 'shengmudian.html',
         building: 'building.html',
         intro: 'intro.html',
       },

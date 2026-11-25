@@ -322,7 +322,7 @@ const BUILDING_PAGES: Record<string, string> = {
   '1-0080-3-033': './building.html?id=foguang',
   '1-0085-3-038': './building.html?id=shengmudian',
 };
-const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang' };
+const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang', '1-0085-3-038': 'shengmudian' };
 
 /** 示意殿堂的参数换成屋顶变形器的网址，进去就摆好这个形制和年代 */
 function morphHref(s: MorphState) {
@@ -366,7 +366,7 @@ function select(id: string | null) {
         }
         <figcaption>${
           model
-            ? '<span class="tag tag-model">依据图纸复原</span>按论文实测尺寸生成的模型，彩塑、残损没有做'
+            ? '<span class="tag tag-model">依据图纸复原</span>按已发表的尺寸生成的模型，彩塑、残损没有做'
             : `<span class="tag">示意</span>${esc(t3!.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的模型`
         }</figcaption></figure>`
     : '';

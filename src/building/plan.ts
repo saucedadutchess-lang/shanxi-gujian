@@ -2,6 +2,7 @@
 // 还没有模型的，按建筑页 JSON 里的实测柱网 plan 画（开间、进深、内柱、门窗、佛坛），再把看点编号标上去。
 // 坐标和模型一致：x 向东、z 向南，单位米，原点在殿身中心。图上北在上。
 import { COLUMNS, Db, EAVE, SIZES, SQUARE, Wb } from '../nanchan/params';
+import * as sm from '../shengmudian/params';
 
 export interface Marker {
   n: number;
@@ -140,7 +141,26 @@ function grid(g: GridSpec): PlanData {
   return { walls, front, altar, columns, labels };
 }
 
-const PLANS: Record<string, () => PlanData> = { nanchan };
+/** 晋祠圣母殿：殿朝东，模型的 +z 是东、+x 是北 */
+function shengmudian(): PlanData {
+  const r = (x0: number, x1: number, z0: number, z1: number): Rect => ({ x0: z0, z0: -x1, x1: z1, z1: -x0 });
+  const { Wo, Do, Wb: W, Db: D, XS, ZS } = sm;
+  const [of, os] = sm.SIZES.platformOut;
+  const h = sm.SIZES.wall[0] / 2;
+  const [sw, sd] = sm.SIZES.shrine;
+  return {
+    platform: r(-Wo - os, Wo + os, -Do - of, Do + of),
+    eave: r(-sm.ROOF_L.W, sm.ROOF_L.W, -sm.ROOF_L.D, sm.ROOF_L.D),
+    walls: [r(-W - h, W + h, -D - h, -D + h), r(-W - h, -W + h, -D + h, ZS.C), r(W - h, W + h, -D + h, ZS.C)],
+    front: [r(XS[1], XS[2], ZS.C - 0.2, ZS.C + 0.2), r(XS[5], XS[6], ZS.C - 0.2, ZS.C + 0.2)],
+    altar: [r(-sw / 2, sw / 2, 0.25 - sd, 0.25)],
+    // 不落地的童柱不画
+    columns: sm.COLUMNS.filter((c) => c.foot === 0).map((c) => ({ x: c.z, z: -c.x, w: c.dia, d: c.dia, square: false })),
+    labels: [{ x: ZS.C + 1.1, z: 0.2, text: '门' }, { x: -2.2, z: 0.2, text: '神龛' }, { x: ZS.B, z: 0.2, text: '前廊' }],
+  };
+}
+
+const PLANS: Record<string, () => PlanData> = { nanchan, shengmudian };
 export const hasPlan = (model?: string, spec?: GridSpec) => !!spec || (!!model && model in PLANS);
 
 const f = (v: number) => v.toFixed(2);
