@@ -535,5 +535,58 @@
     "title": "应县木塔的照片",
     "publisher": "维基共享资源贡献者",
     "note": "存在 public/photos/yingxian/，每张的原图链接、作者、授权见 data/photos.json。没有测绘数字的部分按照片估计，参数表里标“推测”。"
+  },
+  "qi-li-zhang-1979": {
+    "title": "山西应县释迦塔牌题记的探讨",
+    "author": "祁英涛、李世温、张畅耕",
+    "publisher": "《文物》1979 年第 4 期",
+    "date": "1979",
+    "url": "https://m.sohu.com/a/929241375_121124776/",
+    "accessed": "2026-11-25",
+    "note": "读的是搜狐 2025 年的转载，页码没核。"
+  },
+  "wang-nan-2020": {
+    "title": "应县木塔：云薄万栱的古今传奇",
+    "author": "王南",
+    "publisher": "《光明日报》2020-07-25 第 10 版，中国社会科学网转载",
+    "date": "2020",
+    "url": "https://cssn.cn/kgxc/kgxc_kgsb/202207/t20220728_5431444.shtml",
+    "accessed": "2026-11-25",
+    "note": "演讲稿，读的是转载。"
+  },
+  "wang-nan-2020b": {
+    "title": "千年一塔看应县，穿越千年感受古代文明",
+    "author": "王南",
+    "publisher": "人文清华讲坛实录，澎湃号 2020-06-26",
+    "date": "2020",
+    "url": "https://www.thepaper.cn/newsDetail_forward_7996436",
+    "accessed": "2026-11-25"
+  },
+  "zhao-ping-2022": {
+    "title": "千古一塔",
+    "author": "赵平",
+    "publisher": "选自《应县木塔志》，山西省文化和旅游厅 2022-02-02 发布",
+    "date": "2022",
+    "url": "https://m.thepaper.cn/baijiahao_16565265",
+    "accessed": "2026-11-25",
+    "note": "地方志书的选段，部分内容是传说。"
+  },
+  "shanhe-2022": {
+    "title": "应县木塔当然是值得看的，但应县不止有木塔",
+    "author": "山河小岁月",
+    "publisher": "腾讯新闻 2022-09-07",
+    "date": "2022",
+    "url": "https://news.qq.com/rain/a/20220907A02JYH00",
+    "accessed": "2026-11-25",
+    "note": "公众号文章，转述梁思成 1933 年的记录和林徽因 1933 年 10 月《大公报》的文章，原文没有读到。"
+  },
+  "sc-zhang-2024": {
+    "title": "应县木塔结构内力分析",
+    "author": "张鹏程、黄文锦、李顺时",
+    "publisher": "中国民族建筑，搜狐 2024-01-05",
+    "date": "2024",
+    "url": "https://www.sohu.com/a/749747514_120678132",
+    "accessed": "2026-11-25",
+    "note": "力学分析文章，只取柱子的根数。"
   }
 }

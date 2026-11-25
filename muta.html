@@ -17,7 +17,7 @@
         <a href="./building.html?id=foguang">佛光寺东大殿</a>
         <a href="./building.html?id=nanchan">南禅寺大殿</a>
         <a href="./building.html?id=shengmudian">晋祠圣母殿</a>
-        <a href="./muta.html" aria-current="page">应县木塔</a>
+        <a href="./building.html?id=muta" aria-current="page">应县木塔</a>
       </nav>
     </header>
     <main>
@@ -30,11 +30,13 @@
           <button type="button" data-view="inside" title="首层里面，看大佛（素形）和藻井">塔内</button>
           <button type="button" data-view="top" title="从高处看塔顶">俯瞰</button>
         </div>
+        <img class="nc-overlay" id="overlay" alt="" hidden />
+        <p class="nc-credit" id="overlay-credit" hidden></p>
         <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
       </div>
 
       <aside class="panel nc-panel">
-        <p class="nc-back"><a href="./map.html#1-0071-3-024">← 地图上的应县木塔</a></p>
+        <p class="nc-back"><a href="./building.html?id=muta">← 应县木塔建筑页</a></p>
         <h2>应县木塔 <span class="badge" id="precision"></span></h2>
         <p class="lead" id="precision-note"></p>
 
@@ -63,7 +65,21 @@
           <p class="nc-s">塔身向东北偏约 65 厘米（2004 年报告），二层明层最明显。这里让整座塔按这两点一起偏，是示意；逐根柱子的数没有找到。“夸大十倍”只为看清方向。</p>
         </section>
 
-        <div hidden><img id="overlay" alt="" /><p id="overlay-credit"></p><div class="nc-photo-ctl"><output id="photo-op-out"></output><input type="range" id="photo-op" /><p id="photo-note"></p></div></div>
+        
+
+        <section>
+          <h3>和实拍照片对照</h3>
+          <p class="desc nc-small">把模型叠在照片上，按照片里柱头的位置反推出拍摄位置，看檐口、平坐、斗拱对不对得上。转动模型时照片自动收起。</p>
+          <div class="nc-seg nc-photos" role="group" aria-label="对照照片">
+            <button type="button" data-photo="01">东南面仰看</button>
+            <button type="button" data-photo="05">南面二、三层</button>
+          </div>
+          <div class="nc-photo-ctl" hidden>
+            <div class="row"><label for="photo-op">照片透明度</label><output id="photo-op-out">50%</output></div>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" />
+            <p class="nc-s" id="photo-note"></p>
+          </div>
+        </section>
 
         <section id="info" aria-live="polite">
           <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>

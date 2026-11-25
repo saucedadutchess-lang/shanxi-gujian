@@ -51,6 +51,8 @@ export interface Tier {
   ming: number;
   jumps: number[];
   ang: number;
+  /** 下昂把橑檐枋压低多少（毫米） */
+  drop: number;
   /** 橑檐枋上皮 */
   liao: number;
   /** 橑檐枋、檐口到塔心（面中） */
@@ -61,9 +63,10 @@ const LIAO_H = 0.26;
 const tier = (name: string, y: number, h: number, f: number, hd: number, mg: number, eo: number): Tier => {
   const jumps = dict('jumps', name);
   const a = apo(hd);
+  const drop = name === '一层' || name === '二层' ? raw('angDrop')[name === '一层' ? 0 : 1] : 0;
   return {
-    name, y, top: y + h, foot: f, head: hd, ming: mg, jumps, ang: ANG[name] ?? 0,
-    liao: y + h + PUPAI[1] + T(jumps.length + 1) / 1000 + LIAO_H,
+    name, y, top: y + h, foot: f, head: hd, ming: mg, jumps, ang: ANG[name] ?? 0, drop,
+    liao: y + h + PUPAI[1] + T(jumps.length + 1) / 1000 + LIAO_H - drop / 1000,
     reach: a + jumps[jumps.length - 1] / 1000, eave: a + eo,
   };
 };
@@ -106,7 +109,7 @@ export const SIZES = {
   wallOut: list('wallOut'), wallIn: list('wallIn'), dia: list('colDia'),
   eaveSlope: P.eaveSlope.value as number, roofSlope: P.roofSlope.value as number,
   tileRow: list('tile')[0], tau: list('tile')[1], rafterD: list('rafter')[0], rafterGap: list('rafter')[1],
-  lift: num('lift'), rail: num('rail'), zao: num('zao'), fo: num('fo'), lean: list('lean'), sha: list('shaShape'),
+  lift: num('lift'), rail: num('rail'), bian: list('bian'), zao: num('zao'), fo: num('fo'), lean: list('lean'), sha: list('shaShape'),
 };
 /** 向东北偏多少（米），随高度 */
 export function drift(y: number): number {

@@ -196,7 +196,15 @@ interface SetSpec {
   steal: number[];
   /** 里跳 */
   inner: number;
+  /** 最外几跳压低多少（毫米），分到 lowN 跳上 */
+  drop?: number;
+  lowN?: number;
 }
+/** 第 i 跳压低多少 */
+const lo = (s: SetSpec, i: number) => {
+  const n = s.lowN ?? 0;
+  return n ? (s.drop ?? 0) * Math.max(0, Math.min(1, (i - (s.jumps.length - n) + 1) / n)) : 0;
+};
 /** 一条出跳的线：stretch 用于转角的斜出跳 */
 function armLine(c: C, f: Frame, s: SetSpec, stretch: number, inside: boolean) {
   const n = s.jumps.length;
@@ -204,16 +212,16 @@ function armLine(c: C, f: Frame, s: SetSpec, stretch: number, inside: boolean) {
     const j = raw * stretch;
     const back = inside ? Math.min(raw, s.inner) : 60;
     if (i >= n - s.ang) {
-      const y = T(i + 1) - F.cai - 30;
+      const y = T(i + 1) - F.cai - 30 - lo(s, i);
       f.put(c, 'ang', 'bracket', ang(inside ? -500 : 0, j + 520 * stretch, j, y), 0, 0, 0);
-      f.dou(c, 0, T(i) + douY, j);
+      f.dou(c, 0, T(i) + douY - lo(s, i), j);
     } else {
-      f.put(c, 'huagong', 'bracket', gong(-back - (inside ? HALF : 0), j + HALF, F.zu, F.caiT, inside, true), 0, T(i), 0);
-      f.dou(c, 0, T(i) + douY, j);
+      f.put(c, 'huagong', 'bracket', gong(-back - (inside ? HALF : 0), j + HALF, F.zu, F.caiT, inside, true), 0, T(i) - lo(s, i), 0);
+      f.dou(c, 0, T(i) + douY - lo(s, i), j);
       if (inside) f.dou(c, 0, T(i) + douY, -back);
     }
   });
-  f.put(c, 'huagong', 'bracket', shua(inside ? -300 : 0, (s.jumps[n - 1] + 26 * U) * stretch), 0, T(n), 0);
+  f.put(c, 'huagong', 'bracket', shua(inside ? -300 : 0, (s.jumps[n - 1] + 26 * U) * stretch), 0, T(n) - lo(s, n - 1), 0);
 }
 function putSet(c: C, o: THREE.Vector3, n: THREE.Vector3, s: SetSpec, eave: boolean) {
   const f = new Frame(o, n);
@@ -222,10 +230,10 @@ function putSet(c: C, o: THREE.Vector3, n: THREE.Vector3, s: SetSpec, eave: bool
   f.heng(c, F.nidao, T(0), 0);
   armLine(c, f, s, 1, true);
   s.jumps.forEach((j, i) => {
-    if (i === last - 1) f.heng(c, F.ling, T(last), j);
-    else if (!s.steal.includes(i)) f.heng(c, F.ling, T(i + 1), j);
+    if (i === last - 1) f.heng(c, F.ling, T(last) - lo(s, i), j);
+    else if (!s.steal.includes(i)) f.heng(c, F.ling, T(i + 1) - lo(s, i), j);
   });
-  if (eave) f.put(c, 'henggong', 'bracket', gong(-F.timu / 2, F.timu / 2, F.zu - F.cai, F.caiT * 0.9), 0, T(last + 1) - (F.zu - F.cai), s.jumps[last - 1], true);
+  if (eave) f.put(c, 'henggong', 'bracket', gong(-F.timu / 2, F.timu / 2, F.zu - F.cai, F.caiT * 0.9), 0, T(last + 1) - (F.zu - F.cai) - lo(s, last - 1), s.jumps[last - 1], true);
 }
 /** 转角：两面各一条出跳线，角上一条斜的 */
 function cornerSet(c: C, k: number, a: number, y: number, s: SetSpec) {
@@ -239,7 +247,7 @@ function cornerSet(c: C, k: number, a: number, y: number, s: SetSpec) {
     armLine(c, f, s, 1, false);
     // 横栱从本面伸到角线
     s.jumps.forEach((j, i) => {
-      const y1 = i === last - 1 ? T(last) : T(i + 1);
+      const y1 = (i === last - 1 ? T(last) : T(i + 1)) - lo(s, i);
       if (i < last - 1 && s.steal.includes(i)) return;
       const e = j * T8;
       const [p, q] = sgn > 0 ? [-F.ling / 2, e] : [-e, F.ling / 2];
@@ -505,7 +513,7 @@ export function buildMuta(): MutaModel {
     }
   };
 
-  const spec = (t: Tier): SetSpec => ({ jumps: t.jumps, ang: t.ang, steal: t.jumps.length >= 4 ? [0, 2] : [0], inner: 500 });
+  const spec = (t: Tier): SetSpec => ({ jumps: t.jumps, ang: t.ang, steal: t.jumps.length >= 4 ? [0, 2] : [0], inner: 500, drop: t.drop, lowN: t.ang });
   const eaveRoof = (idx: number, t: Tier, inner: number) => {
     const tau = SIZES.tau + 0.16;
     const yE = t.liao + tau - (t.eave - t.reach) * SIZES.eaveSlope;
@@ -679,8 +687,8 @@ export function buildMuta(): MutaModel {
     const p = v3(0, t.top + 0.75, t.reach + 0.35);
     const q = new THREE.Quaternion().setFromAxisAngle(v3(1, 0, 0), 0.22);
     const m4 = new THREE.Matrix4().compose(p, q, v3(1, 1, 1));
-    parts[5].add('bian', 'rail', new THREE.BoxGeometry(1.7, 2.6, 0.1), m4, [0, 1]);
-    parts[5].add('bian', 'board', new THREE.PlaneGeometry(1.4, 2.3), m4.clone().multiply(new THREE.Matrix4().makeTranslation(0, 0, 0.06)), [0, 1]);
+    parts[5].add('bian', 'rail', new THREE.BoxGeometry(SIZES.bian[1], SIZES.bian[0], 0.1), m4, [0, 1]);
+    parts[5].add('bian', 'board', new THREE.PlaneGeometry(SIZES.bian[1] - 0.3, SIZES.bian[0] - 0.3), m4.clone().multiply(new THREE.Matrix4().makeTranslation(0, 0, 0.06)), [0, 1]);
   }
 
   // ---- 塔顶 ----

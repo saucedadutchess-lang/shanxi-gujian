@@ -33,6 +33,8 @@ export interface ViewerConfig {
   miniBack?: number;
   /** 阴影范围（米），高的建筑要放大 */
   shadowSpan?: number;
+  /** 最大仰角对应的极角；高塔要能抬头看 */
+  maxPolar?: number;
 }
 
 export function startViewer(cfg: ViewerConfig) {
@@ -79,7 +81,7 @@ export function startViewer(cfg: ViewerConfig) {
   }
   controls.minDistance = 1.5;
   controls.maxDistance = cfg.maxDistance;
-  controls.maxPolarAngle = Math.PI * 0.62;
+  controls.maxPolarAngle = cfg.maxPolar ?? Math.PI * 0.62;
   stage.beforeRender.push(() => {
     if (camera.position.y < 0.4) camera.position.y = 0.4;
   });

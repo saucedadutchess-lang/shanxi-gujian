@@ -3,6 +3,7 @@
 // 坐标和模型一致：x 向东、z 向南，单位米，原点在殿身中心。图上北在上。
 import { COLUMNS, Db, EAVE, SIZES, SQUARE, Wb } from '../nanchan/params';
 import * as sm from '../shengmudian/params';
+import * as mt from '../muta/params';
 
 export interface Marker {
   n: number;
@@ -34,6 +35,8 @@ interface PlanData {
   altar?: Rect[];
   columns: { x: number; z: number; w: number; d: number; square: boolean }[];
   labels: Label[];
+  /** 不是矩形的轮廓（八角塔） */
+  polys?: { cls: string; pts: [number, number][] }[];
 }
 
 /** 建筑页 JSON 里的实测柱网（没有模型时用）。开间从正面看由左到右，进深由前到后 */
@@ -160,7 +163,44 @@ function shengmudian(): PlanData {
   };
 }
 
-const PLANS: Record<string, () => PlanData> = { nanchan, shengmudian };
+/** 应县木塔：南面朝 +z，坐标和地图一致 */
+function muta(): PlanData {
+  const T8 = mt.T8;
+  const at = (k: number, t: number, n: number): [number, number] => {
+    const a = (k * Math.PI) / 4;
+    return [Math.sin(a) * n + Math.cos(a) * t, Math.cos(a) * n - Math.sin(a) * t];
+  };
+  const oct = (a: number) => [0, 1, 2, 3, 4, 5, 6, 7].map((k) => at(k, a * T8, a));
+  const [sq, po] = mt.SIZES.plat;
+  const polys: NonNullable<PlanData['polys']> = [
+    { cls: 'yuetai', pts: [[-sq / 2, -sq / 2], [sq / 2, -sq / 2], [sq / 2, sq / 2], [-sq / 2, sq / 2]] },
+    { cls: 'platform', pts: oct(po / 2) },
+    { cls: 'eave', pts: oct(mt.FUJIE.eave) },
+  ];
+  for (const [[a0, a1], door] of [[mt.SIZES.wallOut, 3.2], [mt.SIZES.wallIn, 3]] as [number[], number][])
+    for (let k = 0; k < 8; k++) {
+      const seg = (p: [number, number][]) => polys.push({ cls: 'wall', pts: p.map(([t, n]) => at(k, t, n)) });
+      if (k % 4 === 0) {
+        seg([[-a0 * T8, a0], [-door / 2, a0], [-door / 2, a1], [-a1 * T8, a1]]);
+        seg([[door / 2, a0], [a0 * T8, a0], [a1 * T8, a1], [door / 2, a1]]);
+      } else seg([[-a0 * T8, a0], [a0 * T8, a0], [a1 * T8, a1], [-a1 * T8, a1]]);
+    }
+  polys.push({ cls: 'altar', pts: oct(2.6) });
+  const columns: PlanData['columns'] = [];
+  const put = (side: number, ts: number[], d: number) => {
+    for (let k = 0; k < 8; k++) for (const t of ts) {
+      const [x, z] = at(k, t, mt.apo(side));
+      columns.push({ x, z, w: d, d, square: false });
+    }
+  };
+  const t1 = mt.TIERS[0];
+  put(mt.FUJIE.foot, [-mt.FUJIE.ming / 2, mt.FUJIE.ming / 2, mt.FUJIE.foot / 2], 0.52);
+  put(t1.foot, [-t1.ming / 2, t1.ming / 2, t1.foot / 2], mt.SIZES.dia[1]);
+  put(mt.INNER[0].foot, [mt.INNER[0].foot / 2], mt.SIZES.dia[1]);
+  return { walls: [], front: [], columns, polys, labels: [{ x: 0, z: 13.4, text: '门' }, { x: 0, z: -12.7, text: '门' }] };
+}
+
+const PLANS: Record<string, () => PlanData> = { nanchan, shengmudian, muta };
 export const hasPlan = (model?: string, spec?: GridSpec) => !!spec || (!!model && model in PLANS);
 
 const f = (v: number) => v.toFixed(2);
@@ -170,7 +210,8 @@ const rect = (r: Rect, cls: string) =>
 /** 画成 SVG 字符串；标记带 data-n，页面上用来和列表联动 */
 export function planSvg(model: string | undefined, markers: Marker[], spec?: GridSpec) {
   const p = spec ? grid(spec) : PLANS[model!]();
-  const all = [p.platform, p.eave, p.yuetai, ...p.walls].filter((r): r is Rect => !!r);
+  const polyBox = (p.polys ?? []).map(({ pts }): Rect => ({ x0: Math.min(...pts.map((q) => q[0])), x1: Math.max(...pts.map((q) => q[0])), z0: Math.min(...pts.map((q) => q[1])), z1: Math.max(...pts.map((q) => q[1])) }));
+  const all = [...polyBox, p.platform, p.eave, p.yuetai, ...p.walls].filter((r): r is Rect => !!r);
   const ex0 = Math.min(...all.map((r) => r.x0), ...markers.map((m) => m.at[0]));
   const ex1 = Math.max(...all.map((r) => r.x1), ...markers.map((m) => m.at[0]));
   const ez0 = Math.min(...all.map((r) => r.z0), ...markers.map((m) => m.at[1]));
@@ -206,6 +247,7 @@ export function planSvg(model: string | undefined, markers: Marker[], spec?: Gri
     ${p.yuetai ? rect(p.yuetai, 'yuetai') : ''}
     ${p.platform ? rect(p.platform, 'platform') : ''}
     ${p.eave ? rect(p.eave, 'eave') : ''}
+    ${(p.polys ?? []).map((q) => `<polygon class="${q.cls}" points="${q.pts.map((v) => `${f(v[0])},${f(v[1])}`).join(' ')}"/>`).join('')}
     ${(p.altar ?? []).map((a) => rect(a, 'altar')).join('')}
     ${p.walls.map((w) => rect(w, 'wall')).join('')}
     ${p.front.map((w) => rect(w, 'front')).join('')}
