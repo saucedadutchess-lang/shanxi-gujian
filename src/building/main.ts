@@ -170,7 +170,7 @@ function render(p: Page) {
       ${(k.structure.facts ?? []).map((x) => `<p>${esc(x.text)}${meta(x)}</p>`).join('')}
       ${
         modelPage
-          ? `<div class="bp-model" id="model-box"><button type="button" class="bp-model-open">在这里打开 3D 模型<small>要读入不少贴图，比较占内存，用完可以刷新页面</small></button></div>
+          ? `${k.structure.pending ? `<p class="todo">${esc(k.structure.pending)}</p>` : ''}<div class="bp-model" id="model-box"><button type="button" class="bp-model-open">在这里打开 3D 模型<small>要读入不少贴图，比较占内存，用完可以刷新页面</small></button></div>
              <p class="bp-go-row"><a class="bp-go" href="${modelPage}">在新页面全屏打开 →</a></p>`
           : `<p class="todo">${esc(k.structure.pending ?? '3D 模型还在做，做好后放在这里。')}</p>`
       }</div>`

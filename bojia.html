@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>薄伽教藏殿 · 拆开看｜观晋</title>
+    <meta name="description" content="按 1933 年调查报告和 2023 年论文里的实测数字生成的大同华严寺薄伽教藏殿三维模型（示意），可以一层层拆开，看每个构件的尺寸和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html">地图</a>
+        <a href="./intro.html">古建入门</a>
+        <a href="./index.html">屋顶变形器</a>
+        <a href="./building.html?id=foguang">佛光寺东大殿</a>
+        <a href="./building.html?id=nanchan">南禅寺大殿</a>
+        <a href="./building.html?id=shengmudian">晋祠圣母殿</a>
+        <a href="./building.html?id=muta">应县木塔</a>
+        <a href="./building.html?id=huayansi" aria-current="page">华严寺</a>
+        <a href="./building.html?id=shanhuasi">善化寺</a>
+        <a href="./building.html?id=yonglegong">永乐宫</a>
+        <a href="./building.html?id=jiwangmiao">稷王庙</a>
+      </nav>
+    </header>
+    <main>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="薄伽教藏殿的三维模型"></canvas>
+        <div class="nc-views" role="group" aria-label="视角">
+          <button type="button" data-view="front" title="站在殿前看正面（殿朝东）">正面</button>
+          <button type="button" data-view="corner" title="从东南角看，正面和南山面都看得到">斜看</button>
+          <button type="button" data-view="eave" title="走到檐下，抬头看斗拱和出檐">檐下</button>
+          <button type="button" data-view="inside" title="进到殿里，抬头看梁架">殿内</button>
+          <button type="button" data-view="top" title="从高处看屋顶">俯瞰</button>
+        </div>
+        <img class="nc-overlay" id="overlay" alt="" hidden />
+        <p class="nc-credit" id="overlay-credit" hidden></p>
+        <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
+      </div>
+
+      <aside class="panel nc-panel">
+        <p class="nc-back"><a href="./building.html?id=huayansi">← 华严寺建筑页</a></p>
+        <h2>薄伽教藏殿 <span class="badge" id="precision"></span></h2>
+        <p class="lead" id="precision-note"></p>
+
+        <section>
+          <div class="row"><label for="explode">拆开</label><output id="explode-out">合拢</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" />
+          <div class="nc-layers" id="layers" role="group" aria-label="显示哪些层"></div>
+        </section>
+
+        <section>
+          <h3>颜色</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="颜色">
+            <button type="button" role="radio" aria-checked="true" data-color="material">看材质</button>
+            <button type="button" role="radio" aria-checked="false" data-color="basis">看依据</button>
+          </div>
+          <ul class="nc-legend" id="legend"></ul>
+        </section>
+
+        <section>
+          <h3>和实拍照片对照</h3>
+          <p class="desc nc-small">还没做：这座殿只找到一张正面近景照片（<code>huayan/03.jpg</code>），叠合校验留到下一版。</p>
+          <div class="nc-photo-ctl" hidden>
+            <div class="row"><label for="photo-op">照片透明度</label><output id="photo-op-out">50%</output></div>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" />
+            <p class="nc-s" id="photo-note"></p>
+          </div>
+        </section>
+
+        <section id="info" aria-live="polite">
+          <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>
+        </section>
+
+        <section class="sources">
+          <p>柱网取自赵寿堂、李泽辉、李大卫《大同华严寺薄伽教藏殿尺度设计再读》（《建筑史学刊》2023 年第 4 期，2021 年三维扫描后复原的尺数），柱高、柱径、材栔、阑额、乳栿、补间蜀柱、屋面 24 度的坡、飞子只出三寸取自梁思成、刘敦桢《大同古建筑调查报告》（1933，读的是网站转录）；侧脚和两跳总长取自赵寿堂等。全部参数和出处在仓库的 <code>data/models/bojia.json</code>。</p>
+          <p>没有找到测绘图，所以整体标“示意”：1933 年没调查平棋以上，那部分梁架和各槫的高低按《营造法式》推测；出檐、台明、鸱吻按《营造法式》或照片估。壁藏和天宫楼阁只做了位置和大致体量，辽代塑像没有做。</p>
+        </section>
+      </aside>
+    </main>
+    <script type="module" src="/src/bojia/main.ts"></script>
+  </body>
+</html>

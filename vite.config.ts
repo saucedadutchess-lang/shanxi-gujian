@@ -13,6 +13,7 @@ export default defineConfig({
         foguang: 'foguang.html',
         shengmudian: 'shengmudian.html',
         muta: 'muta.html',
+        bojia: 'bojia.html',
         building: 'building.html',
         intro: 'intro.html',
       },

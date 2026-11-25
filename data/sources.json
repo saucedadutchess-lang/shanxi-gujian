@@ -454,6 +454,11 @@
     "publisher": "维基共享资源贡献者",
     "note": "存在 public/photos/jinci/，每张的原图链接、作者、授权见 data/photos.json。模型里没有测绘数字的部分按这些照片估计，参数表里标“推测”。"
   },
+  "commons-huayan": {
+    "title": "大同华严寺实拍照片（维基共享资源）",
+    "publisher": "维基共享资源贡献者",
+    "note": "存在 public/photos/huayan/，每张的原图链接、作者、授权见 data/photos.json。薄伽教藏殿模型里没有测绘数字的部分（台明高、翼角、屋脊、门窗高低）按照片 03 估计，参数表里标“推测”。"
+  },
   "sxwb-jinci-2025": {
     "title": "山西晋祠，何以传奇？",
     "publisher": "《山西晚报》，人民日报客户端 2025-05-11 转载",

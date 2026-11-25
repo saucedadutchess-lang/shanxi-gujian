@@ -327,7 +327,11 @@ const BUILDING_PAGES: Record<string, string> = {
   '1-0093-3-046': './building.html?id=yonglegong',
   '5-0224-3-030': './building.html?id=jiwangmiao',
 };
-const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang', '1-0085-3-038': 'shengmudian', '1-0071-3-024': 'muta' };
+const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang', '1-0085-3-038': 'shengmudian', '1-0071-3-024': 'muta', '1-0091-3-044': 'bojia' };
+/** 名片里 3D 的说明：精度不是“依据图纸复原”的，或者模型只是单位里的一座殿，在这里写 */
+const MODEL_CAPTION: Record<string, [string, string]> = {
+  bojia: ['示意', '下寺薄伽教藏殿：柱网、柱高、斗拱、屋面坡度按实测数字，平棋以上梁架、出檐、壁藏是推测，塑像没有做'],
+};
 
 /** 示意殿堂的参数换成屋顶变形器的网址，进去就摆好这个形制和年代 */
 function morphHref(s: MorphState) {
@@ -371,7 +375,9 @@ function select(id: string | null) {
         }
         <figcaption>${
           model
-            ? '<span class="tag tag-model">依据图纸复原</span>按已发表的尺寸生成的模型，彩塑、残损没有做'
+            ? MODEL_CAPTION[model]
+              ? `<span class="tag">${MODEL_CAPTION[model][0]}</span>${esc(MODEL_CAPTION[model][1])}`
+              : '<span class="tag tag-model">依据图纸复原</span>按已发表的尺寸生成的模型，彩塑、残损没有做'
             : `<span class="tag">示意</span>${esc(t3!.caption)}。屋顶变形器按形制和年代摆的通用殿堂，不是这座建筑的模型`
         }</figcaption></figure>`
     : '';
@@ -379,7 +385,7 @@ function select(id: string | null) {
     hasPhotos || spin
       ? `<div class="media">${
           hasPhotos && spin
-            ? `<div class="media-tabs" role="tablist" aria-label="看照片还是 3D"><button type="button" role="tab" data-tab="photo" aria-selected="true">实拍照片</button><button type="button" role="tab" data-tab="3d" aria-selected="false">${model ? '3D 复原' : '3D 示意'}</button></div>`
+            ? `<div class="media-tabs" role="tablist" aria-label="看照片还是 3D"><button type="button" role="tab" data-tab="photo" aria-selected="true">实拍照片</button><button type="button" role="tab" data-tab="3d" aria-selected="false">${model && !MODEL_CAPTION[model] ? '3D 复原' : '3D 示意'}</button></div>`
             : ''
         }${hasPhotos ? `<div class="media-photo">${galleryBlock(u.id)}</div>` : ''}${spinBlock}</div>`
       : '';
