@@ -147,5 +147,7 @@ export const SIZES = {
   chashou: list('chashou'), dingfu: list('dingfu'), wall: list('wall'),
   platformOut: list('platformOut'), platformH: m('platformH'), bridgeDrop: m('bridgeDrop'),
   ridge: list('ridge'), chiwei: m('chiwei'), rafterGap: m('rafter', 1), xg: XG,
-  door: list('door'), shrine: list('shrine'), rail: m('rail'),
+  door: list('door'), shrine: list('shrine'), kan: list('kan'),
+  cejiao: P.cejiao.value as number[], chong: list('chong'), long: list('long'), bian: list('bian'),
+  qiao: list('qiaoSize'), qiaoZhu: m('qiaoZhu', 0), rail: m('rail'),
 };

@@ -13,6 +13,24 @@ import {
   COLUMNS, Db, Do, F, H, HALL_TOP, LOW, MODEL, R, RAFTER_R, ROOF_L, ROOF_U, SIZES, T, Wb, Wo, XS, YL, YU, ZS, col, type Column, type Row,
 } from './params';
 
+/** 殿名匾的字：聖母殿，竖排 */
+function nameBoard() {
+  const cv = document.createElement('canvas');
+  cv.width = 256;
+  cv.height = 768;
+  const g = cv.getContext('2d')!;
+  g.fillStyle = '#2f2a26';
+  g.fillRect(0, 0, 256, 768);
+  g.fillStyle = '#b6a27a';
+  g.font = '200px "Songti SC", "STSong", "SimSun", serif';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  [...'聖母殿'].forEach((ch, i) => g.fillText(ch, 128, 140 + i * 244));
+  const t = new THREE.CanvasTexture(cv);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 // ---------- 材质 ----------
 function makeMaterials() {
   const tint = (hex: number) => new THREE.Color(hex).multiplyScalar(2.6);
@@ -28,6 +46,7 @@ function makeMaterials() {
     fang: wood(0x5c4a40),
     rafter: wood(0x54504a, 0.35, 1.2, true, 0.5),
     plank: wood(0x64402f, 0.6, 0.3, false, 0.8, 0.5),
+    gable: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 0.6, 0.3, false, 0.8, 0.5), color: tint(0x64402f), side: THREE.DoubleSide }),
     nail: new THREE.MeshStandardMaterial({ color: 0x4a3c34, roughness: 0.6, metalness: 0.3 }),
     paper: new THREE.MeshStandardMaterial({ color: new THREE.Color(0.34, 0.31, 0.28), roughness: 1, side: THREE.DoubleSide }),
     floorIn: new THREE.MeshStandardMaterial({ ...photo('brick_floor_003', 1.3, 1.3, false, 0.15, 0.6), color: new THREE.Color(0.62, 0.57, 0.5) }),
@@ -41,6 +60,9 @@ function makeMaterials() {
     plaster: plastered(new THREE.Color(1.35, 1.28, 1.14), 'plastered_wall_04', 0.5, false),
     redWall: plastered(new THREE.Color(0.62, 0.4, 0.34), 'red_plaster_weathered', 0.4, false),
     brick: new THREE.MeshStandardMaterial({ ...photo('brick_wall_08', 0.75, 0.75, false, 0.25, 0.45), color: new THREE.Color(1.2, 1.12, 0.98) }),
+    water: new THREE.MeshStandardMaterial({ color: 0x2c4a40, roughness: 0.15 }),
+    long: new THREE.MeshStandardMaterial({ ...photo('rough_wood', 1.5, 1.5, false, 0.4, 0.6), color: tint(0x847562) }),
+    bianText: new THREE.MeshStandardMaterial({ map: nameBoard(), roughness: 0.8 }),
     stone: new THREE.MeshStandardMaterial({ ...photo('plastered_wall_04', 0.6, 0.6), color: new THREE.Color(0.95, 0.9, 0.8) }),
   };
 }
@@ -279,6 +301,77 @@ function sidesOf(ring: '副阶' | '殿身'): Side[] {
   ];
 }
 
+/** 侧脚：每高一米，柱脚向外多少米 */
+function lean(k: Column): [number, number] {
+  const [w, d] = k.ring === '副阶' ? [Wo, Do] : [Wb, Db];
+  if (k.ring === '内柱') return [0, 0];
+  const on = (v: number, e: number) => Math.abs(Math.abs(v) - e) < 0.01;
+  return [on(k.x, w) ? Math.sign(k.x) * SIZES.cejiao[1] : 0, on(k.z, d) ? Math.sign(k.z) * SIZES.cejiao[0] : 0];
+}
+
+/** 沿曲线的一根粗细变化的管子 */
+function taper(pts: THREE.Vector3[], rad: (q: number) => number, seg = 90, rs = 9) {
+  const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
+  const g = new THREE.TubeGeometry(curve, seg, 1, rs, false);
+  const pos = g.getAttribute('position');
+  for (let i = 0; i <= seg; i++) {
+    const o = curve.getPointAt(i / seg);
+    const r = rad(i / seg);
+    for (let j = 0; j <= rs; j++) {
+      const n = i * (rs + 1) + j;
+      pos.setXYZ(n, o.x + (pos.getX(n) - o.x) * r, o.y + (pos.getY(n) - o.y) * r, o.z + (pos.getZ(n) - o.z) * r);
+    }
+  }
+  g.computeVertexNormals();
+  return g;
+}
+
+/** 木雕盘龙（示意）：尾在下，绕柱两圈，颈离开柱子，头朝殿的正中 */
+function dragon(c: C, k: Column) {
+  const s = k.x > 0 ? -1 : 1;
+  const [thick, y0] = SIZES.long;
+  const r = thick / 2;
+  const [lx, lz] = lean(k);
+  const yT = k.top - 0.55;
+  const at = (a: number, y: number, rr: number) => v3(k.x + lx * (k.top - y) + s * Math.sin(a) * rr, y, k.z + lz * (k.top - y) + Math.cos(a) * rr);
+  const cr = k.dia / 2 + r * 0.75;
+  const pts: THREE.Vector3[] = [];
+  const turns = 2, n = 40;
+  // 从柱后绕起，绕到柱前偏里侧抬起头
+  for (let i = 0; i <= n; i++) pts.push(at(-Math.PI * 2 * turns * (1 - i / n) + 0.5, y0 + (yT - y0) * (i / n), cr * (0.96 + 0.04 * (i / n))));
+  const head = at(1.15, yT + 0.2, cr + 0.5);
+  pts.push(at(0.75, yT + 0.2, cr + 0.12), at(0.95, yT + 0.32, cr + 0.3), head);
+  const put = (g: THREE.BufferGeometry, m = new THREE.Matrix4()) => c.add('panlong', 'long', g, m);
+  put(taper(pts, (q) => r * (0.3 + 0.7 * Math.min(1, q * 2.2)) * (q > 0.9 ? 0.85 : 1), 160));
+  // 头：颅、吻、下颌、双角
+  const dir = v3(s * Math.sin(1.35), -0.15, Math.cos(1.35)).normalize();
+  const side = new THREE.Vector3().crossVectors(UP, dir).normalize();
+  const along = (f: number, u: number, w: number) => head.clone().addScaledVector(dir, f).addScaledVector(UP, u).addScaledVector(side, w);
+  const ell = (p: THREE.Vector3, a: number, b: number, d: number) => {
+    const m4 = new THREE.Matrix4().makeBasis(side, new THREE.Vector3().crossVectors(dir, side), dir).scale(v3(a, b, d));
+    put(new THREE.SphereGeometry(1, 12, 8), m4.setPosition(p));
+  };
+  ell(along(0.02, 0.02, 0), 0.12, 0.11, 0.16);
+  ell(along(0.2, 0.02, 0), 0.085, 0.055, 0.15);
+  ell(along(0.16, -0.07, 0), 0.07, 0.03, 0.13);
+  for (const w of [1, -1]) {
+    put(taper([along(-0.02, 0.08, w * 0.06), along(-0.14, 0.2, w * 0.1), along(-0.22, 0.36, w * 0.12)], (q) => 0.03 * (1 - 0.7 * q), 12, 6));
+    ell(along(0.07, 0.09, w * 0.07), 0.03, 0.03, 0.03);
+  }
+  // 两条前腿、一条后腿，爪三趾
+  const leg = (a: number, y: number, da: number, dy: number, reach: number) => {
+    const p0 = at(a, y, cr), p1 = at(a + da * 0.5, y + dy * 0.35, cr + reach * 0.6), p2 = at(a + da, y + dy, cr + reach * 0.5);
+    put(taper([p0, p1, p2], (q) => r * (0.75 - 0.3 * q), 18, 7));
+    for (const w of [-1, 0, 1]) {
+      const tip = p2.clone().add(v3(w * 0.07, -0.1 + Math.abs(w) * 0.03, 0.06));
+      put(taper([p2, p2.clone().lerp(tip, 0.5).add(v3(0, 0.02, 0.03)), tip], (q) => 0.028 * (1 - 0.6 * q), 8, 5));
+    }
+  };
+  leg(0.4, yT + 0.05, 0.9, -0.28, 0.3);
+  leg(0.2, yT - 0.05, -0.9, 0.12, 0.28);
+  leg(-2.6, y0 + (yT - y0) * 0.55, 0.9, -0.25, 0.22);
+}
+
 export function buildShengmudian(): BuiltModel {
   const mats = makeMaterials();
   const c: C = new Collector<MatKey>(MODEL);
@@ -302,25 +395,63 @@ export function buildShengmudian(): BuiltModel {
     box(c, 'taiming', 'brick', x1 * 2 - 0.1, ph - 0.2, z1 * 2 - 0.1, 0, -ph / 2 - 0.1, 0);
     box(c, 'taiming', 'stone', x1 * 2, 0.2, z1 * 2, 0, -0.1, 0);
     box(c, 'taiming', 'floorIn', x1 * 2 - 0.8, 0.012, z1 * 2 - 0.8, 0, 0.006, 0);
-    const bw = 5, drop = SIZES.bridgeDrop;
-    box(c, 'qiao', 'stone', bw, ph - drop, 4, 0, (-drop - ph) / 2, z1 + 2);
-    for (let i = 0; i < 2; i++) box(c, 'qiao', 'stone', bw, (drop * (2 - i)) / 3, 0.35, 0, -drop + (drop * (2 - i)) / 6, z1 + 0.35 * (i + 0.5));
-    const rail = (ax: number, az: number, bx: number, bz: number) => {
+    const [bl, bw, nl, nw] = SIZES.qiao;
+    const drop = SIZES.bridgeDrop;
+    for (let i = 0; i < 2; i++) box(c, 'taiming', 'stone', bw, (drop * (2 - i)) / 3, 0.35, 0, -drop + (drop * (2 - i)) / 6, z1 + 0.35 * (i + 0.5));
+    const rail = (ax: number, az: number, bx: number, bz: number, part = 'langan', ay = 0, by = 0) => {
       const len = Math.hypot(bx - ax, bz - az);
       const n = Math.max(1, Math.round(len / 1.9));
       const at = (q: number) => [ax + (bx - ax) * q, az + (bz - az) * q];
       for (let i = 0; i <= n; i++) {
         const [x, z] = at(i / n);
-        box(c, 'langan', 'stone', 0.24, SIZES.rail + 0.25, 0.24, x, (SIZES.rail + 0.25) / 2, z);
+        const y = ay + ((by - ay) * i) / n;
+        box(c, part, 'stone', 0.24, SIZES.rail + 0.25, 0.24, x, y + (SIZES.rail + 0.25) / 2, z);
         if (i < n) {
           const [p, q] = at((i + 1) / n);
-          boxBetween(c, 'langan', 'stone', v3(x, SIZES.rail / 2, z), v3(p, SIZES.rail / 2, q), 0.14, SIZES.rail);
+          const y2 = ay + ((by - ay) * (i + 1)) / n;
+          boxBetween(c, part, 'stone', v3(x, y + SIZES.rail / 2, z), v3(p, y2 + SIZES.rail / 2, q), 0.14, SIZES.rail);
         }
       }
     };
     const e = 0.25;
     rail(-x1 + e, z1 - e, -bw / 2, z1 - e);
     rail(bw / 2, z1 - e, x1 - e, z1 - e);
+    // 鱼沼飞梁（示意）：东西向的平桥，南北两翼斜下到地面
+    {
+      const zm = z1 + bl / 2, ze = z1 + bl;
+      const th = 0.34;
+      const P = 'feiliang';
+      box(c, P, 'stone', bw, th, bl - 0.7, 0, -drop - th / 2, zm + 0.35);
+      box(c, P, 'water', nl - 0.6, 0.03, bl - 2.4, 0, -ph + 0.015, zm);
+      for (const s of [1, -1]) {
+        box(c, P, 'stone', 0.5, 0.2, bl - 2.4, s * (nl / 2 - 0.1), -ph + 0.1, zm);
+        box(c, P, 'stone', (nl - bw) / 2, 0.2, 0.5, (s * (nl + bw)) / 4, -ph + 0.1, ze - 1.2);
+        const a = v3((s * bw) / 2, -drop - th / 2, zm), b = v3((s * nl) / 2, -ph - th / 2 + 0.12, zm);
+        boxBetween(c, P, 'stone', a, b, nw, th);
+        for (const q of [1, -1]) {
+          rail(s * (bw / 2 - 0.15), zm + (q * nw) / 2 - q * 0.15, s * (nl / 2), zm + (q * nw) / 2 - q * 0.15, P, -drop, -ph + 0.12);
+          const [z0, zz] = q > 0 ? [zm + nw / 2 - 0.15, ze] : [z1 + 0.7, zm - nw / 2 + 0.15];
+          rail(s * (bw / 2 - 0.15), z0, s * (bw / 2 - 0.15), zz, P, -drop, -drop);
+        }
+      }
+      // 东头的台阶
+      for (let i = 0; i < 4; i++) {
+        const h = ((ph - drop) * (4 - i)) / 5;
+        box(c, P, 'stone', bw, h, 0.36, 0, -ph + h / 2, ze + (i + 0.5) * 0.36);
+      }
+      const zw = SIZES.qiaoZhu;
+      const pile = (x: number, z: number, top: number) => {
+        const h = top + ph - 0.3;
+        if (h < 0.1) return;
+        const g = new THREE.CylinderGeometry(zw * 0.54, zw * 0.54, h, 8).rotateY(Math.PI / 8);
+        c.add(P, 'stone', g, new THREE.Matrix4().makeTranslation(x, -ph + h / 2, z));
+        c.add(P, 'bracket', douGeo(0.5, 0.5, 0.12, 0.06, 0.12), new THREE.Matrix4().makeTranslation(x, -ph + h, z));
+      };
+      for (let i = 0; i < 8; i++) for (const s of [1, -1]) pile(s * (bw / 2 - 0.35), z1 + 1.6 + ((bl - 3.2) * i) / 7, -drop - th);
+      for (const s of [1, -1])
+        for (const k of [0.2, 0.45, 0.7])
+          for (const q of [-1, 0, 1]) pile(s * (bw / 2 + ((nl - bw) / 2) * k), zm + q * (nw / 2 - 0.4), -drop - th - (ph - drop - 0.12) * k);
+    }
   }
 
   // ---- 柱、柱础 ----
@@ -330,18 +461,31 @@ export function buildShengmudian(): BuiltModel {
     const h = k.top - k.foot;
     const r1 = r0 * 0.92;
     const pts = [new THREE.Vector2(0, 0), new THREE.Vector2(r0, 0), new THREE.Vector2(r1, h - 0.15), new THREE.Vector2(r1 * 0.86, h), new THREE.Vector2(0, h)];
-    const mesh = new THREE.Mesh(new THREE.LatheGeometry(pts, 24), k.row === 'A' ? mats.column : mats.red);
+    const lathe = new THREE.LatheGeometry(pts, 24);
+    const [lx, lz] = lean(k);
+    if (lx || lz) {
+      // 侧脚：柱头不动，柱脚向外
+      const pos = lathe.getAttribute('position');
+      for (let i = 0; i < pos.count; i++) {
+        const dy = h - pos.getY(i);
+        pos.setXYZ(i, pos.getX(i) + lx * dy, pos.getY(i), pos.getZ(i) + lz * dy);
+      }
+      lathe.computeVertexNormals();
+    }
+    const mesh = new THREE.Mesh(lathe, k.row === 'A' ? mats.column : mats.red);
     mesh.position.set(k.x, k.foot, k.z);
     mesh.userData = { part: k.foot > 0 ? 'tongzhu' : 'zhu', col: k.id };
     layers['柱'].add(mesh);
     columnMeshes.push(mesh);
-    if (k.foot === 0) c.add('zhuchu', 'stone', new THREE.CylinderGeometry(r0 * 1.15, r0 * 1.75, 0.14, 24), new THREE.Matrix4().makeTranslation(k.x, 0.06, k.z));
+    if (k.foot === 0) c.add('zhuchu', 'stone', new THREE.CylinderGeometry(r0 * 1.15, r0 * 1.75, 0.14, 24), new THREE.Matrix4().makeTranslation(k.x + lx * h, 0.06, k.z + lz * h));
     else {
       const g = tuofengGeo(1.1, 0.3, 0.42, 1);
       g.rotateY(Math.PI / 2);
-      c.add('tuofeng', 'beam', g, new THREE.Matrix4().makeTranslation(k.x, k.foot - 0.3, k.z));
+      c.add('tuofeng', 'beam', g, new THREE.Matrix4().makeTranslation(k.x + lx * h, k.foot - 0.3, k.z + lz * h));
     }
   }
+
+  for (const k of COLUMNS) if (k.row === 'A') dragon(c, k);
 
   // ---- 阑额、普拍枋 ----
   const [puW, puH] = SIZES.pupai;
@@ -361,6 +505,31 @@ export function buildShengmudian(): BuiltModel {
     const y = LOW.meet - 0.18;
     const off = v3(s.out[0], 0, s.out[1]).multiplyScalar(0.14);
     boxBetween(c, 'chengchuan', 'beam', v3(a.x, y, a.z).add(off), v3(b.x, y, b.z).add(off), 0.16, 0.3);
+  }
+
+  // ---- 匾额 ----
+  {
+    const [w1, h1, w2, h2] = SIZES.bian;
+    const board = (w: number, hh: number, x: number, y: number, z: number, tilt: number, face: MatKey) => {
+      const m4 = new THREE.Matrix4().makeRotationX(tilt).setPosition(x, y, z);
+      const add = (mat: MatKey, a: number, b: number, d: number, dx: number, dy: number, dz: number) =>
+        c.add('bian', mat, worldUV(new THREE.BoxGeometry(a, b, d), a, b, d), m4.clone().multiply(new THREE.Matrix4().makeTranslation(dx, dy, dz)));
+      add(face, w, hh, 0.05, 0, 0, 0);
+      const e = 0.11;
+      for (const s of [1, -1]) {
+        add('long', w + e, e, 0.12, 0, (s * hh) / 2, 0.02);
+        add('long', e, hh, 0.12, (s * w) / 2, 0, 0.02);
+      }
+      return m4;
+    };
+    const m4 = board(w1, h1, 0, 8.95, Db + 1.2, 0.35, 'beam');
+    c.add('bian', 'bianText', new THREE.PlaneGeometry(w1 * 0.5, h1 * 0.82), m4.multiply(new THREE.Matrix4().makeTranslation(0, 0, 0.04)));
+    // 前廊七间的横匾：越往两边越小
+    for (let i = 0; i < 7; i++) {
+      const a = col(`A${i + 1}`), b = col(`A${i + 2}`);
+      const k = [0.42, 0.75, 0.9, 1, 0.9, 0.75, 0.42][i];
+      board(w2 * k, h2 * Math.max(0.65, k), (a.x + b.x) / 2, (a.top + b.top) / 2 - 0.02, Do + 0.42, 0.4, 'dou');
+    }
   }
 
   // ---- 铺作 ----
@@ -548,6 +717,20 @@ export function buildShengmudian(): BuiltModel {
       const a = sx * (Wb - h), b = sx * (Wb + h);
       wall(Math.min(a, b), Math.max(a, b), -Db + h, ZS.C + 0.25, [sx, 0]);
     }
+    // 墙肩：墙顶向柱中斜收（剖面图）
+    const shoulder = (x0: number, z0: number, x1: number, z1: number, out: [number, number]) => {
+      const len = Math.hypot(x1 - x0, z1 - z0);
+      const sh = new THREE.Shape();
+      sh.moveTo(-h, 0);
+      sh.lineTo(h, 0);
+      sh.lineTo(0.2, 0.36);
+      sh.lineTo(-0.2, 0.36);
+      const g = new THREE.ExtrudeGeometry(sh, { depth: len, bevelEnabled: false });
+      const m4 = new THREE.Matrix4().makeRotationY(Math.atan2(x1 - x0, z1 - z0)).setPosition(x0, wTop, z0);
+      c.add('qiang', 'redWall', g, m4, out);
+    };
+    shoulder(-Wb, -Db, Wb, -Db, [0, -1]);
+    for (const sx of [1, -1]) shoulder(sx * Wb, -Db, sx * Wb, ZS.C + 0.25, [sx, 0]);
     const laneB = HALL_TOP - laneH;
     // 墙顶到阑额：封板；前檐童柱间：承椽枋到阑额
     for (const s of hall) {
@@ -622,6 +805,27 @@ export function buildShengmudian(): BuiltModel {
     }
     const [sw, sd, sh] = SIZES.shrine;
     box(c, 'shenkan', 'brick', sw, sh, sd, 0, sh / 2, 0.25 - sd / 2, [0, 0]);
+    {
+      const [kl, kt] = SIZES.kan;
+      const cz = 0.25 - sd / 2;
+      const hx = sw / 2 - 0.3, hz = sd / 2 - 0.3;
+      const kan = (w: number, hh: number, d: number, x: number, y: number, zz: number, mat: MatKey = 'red') => box(c, 'shenkan', mat, w, hh, d, x, y, zz, [0, 0]);
+      for (const x of [-hx, -hx / 3, hx / 3, hx]) for (const zz of [hz, -hz]) kan(0.18, kl - sh, 0.18, x, (kl + sh) / 2, cz + zz);
+      for (const x of [-hx, hx]) kan(0.14, kl - sh, 0.14, x, (kl + sh) / 2, cz);
+      for (const zz of [hz, -hz]) {
+        kan(hx * 2, 0.3, 0.16, 0, kl - 0.15, cz + zz);
+        kan(hx * 2, 0.12, 0.12, 0, kl - 0.75, cz + zz);
+        kan(hx * 2, 0.25, 0.1, 0, sh + 0.12, cz + zz);
+      }
+      kan(hx * 2, kl - sh, 0.06, 0, (kl + sh) / 2, cz - hz + 0.1, 'plank');
+      for (const x of [-hx, hx]) {
+        kan(0.16, 0.3, hz * 2, x, kl - 0.15, cz);
+        kan(0.06, kl - sh, hz * 2, x, (kl + sh) / 2, cz, 'plank');
+      }
+      // 屋檐：外翘的一圈，顶是平的
+      const eave = new THREE.CylinderGeometry(Math.SQRT1_2 * 1.1, Math.SQRT1_2 * 0.98, kt - kl, 4, 1).rotateY(Math.PI / 4).scale(hx * 2 + 0.5, 1, hz * 2 + 0.5);
+      c.add('shenkan', 'fang', eave, new THREE.Matrix4().makeTranslation(0, (kl + kt) / 2, cz), [0, 0]);
+    }
   }
 
   // ---- 屋面、椽（上下两层） ----
@@ -641,11 +845,34 @@ export function buildShengmudian(): BuiltModel {
     }
     geo.setAttribute('color', new THREE.Float32BufferAttribute(colr, 3));
   };
-  const roofOf = (spec: RoofSpec, Y: number): RoofGeometry => {
+  const clamp = (v: number) => Math.min(1, Math.max(0, v));
+  const roofOf = (spec: RoofSpec, Y: number, ch: number): RoofGeometry => {
     const roof = buildRoof(spec);
     const s = roof.surface;
+    // 翼角冲出：越近角、越近檐口，越往外推
+    const skirt = spec.uc * spec.D;
+    const warp = (x: number, z: number): [number, number] => {
+      const ax = Math.abs(x), az = Math.abs(z);
+      const fx = clamp((ax - (spec.W - spec.liftLen)) / spec.liftLen), fz = clamp((az - (spec.D - spec.liftLen)) / spec.liftLen);
+      const kx = clamp((ax - (spec.W - skirt)) / skirt), kz = clamp((az - (spec.D - skirt)) / skirt);
+      return [x + Math.sign(x) * ch * fz * fz * kx, z + Math.sign(z) * ch * fx * fx * kz];
+    };
+    const warped = (p: number[]): number[] => {
+      const [x, z] = warp(p[0], p[2]);
+      return [x, p[1], z];
+    };
     const M = new THREE.Matrix4().makeTranslation(0, Y, 0);
     green(roof.ribs, spec);
+    for (const g of [roof.base, roof.ribs, roof.wood]) {
+      const pos = g.getAttribute('position');
+      for (let i = 0; i < pos.count; i++) {
+        const [x, z] = warp(pos.getX(i), pos.getZ(i));
+        pos.setX(i, x);
+        pos.setZ(i, z);
+      }
+    }
+    for (const pts of roof.hipRidges) for (const p of pts) [p.x, p.z] = warp(p.x, p.z);
+    for (const e of roof.tileEnds) e.pos = warped(e.pos) as typeof e.pos;
     c.add('wamian', 'tile', roof.base, M);
     c.add('wamian', 'rib', roof.ribs, M);
     c.add('wamian', 'under', roof.wood, M);
@@ -686,24 +913,37 @@ export function buildShengmudian(): BuiltModel {
       for (let i = 0; i < n; i++) seg(rafters, fn(uf + ((tp * 0.996 - uf) * i) / n, -spec.tau - r - 0.02), fn(uf + ((tp * 0.996 - uf) * (i + 1)) / n, -spec.tau - r - 0.02), lat, r);
     };
     const gap = SIZES.rafterGap;
+    // 翼角椽：离角 u0 以内的椽子，椽尾依次贴到角梁上，一根根散开
+    const u0 = Math.min(spec.uc, (spec.off + 2.4) / D);
+    const fan = (a: number, half: number) => {
+      const q = (a - (half - u0 * D)) / (u0 * D);
+      return q > 0 ? u0 * (1 - 0.7 * q) : 0;
+    };
     for (let kx = Math.floor((spec.W - 0.1) / gap), i = -kx; i <= kx; i++)
-      for (const sz of [1, -1]) one((u, dy) => s.front(i * gap, u, sz, dy), s.frontTop(Math.abs(i * gap)), v3(1, 0, 0));
+      for (const sz of [1, -1]) {
+        const x = i * gap, r0 = fan(Math.abs(x), spec.W);
+        one((u, dy) => warped(s.front(r0 ? x + (Math.sign(x) * (spec.W - r0 * D) - x) * (u / r0) : x, u, sz, dy)), r0 || s.frontTop(Math.abs(x)), v3(1, 0, 0));
+      }
     for (let kz = Math.floor((D - 0.1) / gap), i = -kz; i <= kz; i++)
-      for (const sx of [1, -1]) one((u, dy) => s.end(u, i * gap, sx, dy), s.endTop(Math.abs(i * gap)), v3(0, 0, 1));
+      for (const sx of [1, -1]) {
+        const z = i * gap, r0 = fan(Math.abs(z), D);
+        one((u, dy) => warped(s.end(u, r0 ? z + (Math.sign(z) * (D - r0 * D) - z) * (u / r0) : z, sx, dy)), r0 || s.endTop(Math.abs(z)), v3(0, 0, 1));
+      }
     const jh = 0.34;
     for (const sx of [1, -1])
       for (const sz of [1, -1]) {
         const hip = (u: number) => {
           const p = s.end(u, sz * D * (1 - u), sx, -spec.tau - 2 * r - jh / 2 + 0.06);
-          return v3(p[0], p[1] + Y, p[2]);
+          const w = warped(p);
+          return v3(w[0], w[1] + Y, w[2]);
         };
         const pts = [-0.012, 0.15, 0.4, 0.7, 0.98].map((v) => hip(v < 0 ? v : spec.uc * v));
         run(pts, (p, qv) => boxBetween(c, 'jiaoliang', 'beam', p, qv, 0.24, jh));
       }
     return roof;
   };
-  roofOf(ROOF_L, YL);
-  const roofU = roofOf(ROOF_U, YU);
+  roofOf(ROOF_L, YL, SIZES.chong[1]);
+  const roofU = roofOf(ROOF_U, YU, SIZES.chong[0]);
   // 围脊：副阶屋面贴着殿身柱的一道脊
   {
     const e = 0.2, y = LOW.meet + 0.42;
@@ -712,7 +952,7 @@ export function buildShengmudian(): BuiltModel {
     for (const s of [1, -1]) box(c, 'ji', 'glaze', 0.26, 0.3, (Db + e) * 2, s * (Wb + e), y, 0);
   }
   // 山花、悬鱼
-  if (roofU.gable) c.add('shanhua', 'plank', roofU.gable, new THREE.Matrix4().makeTranslation(0, YU, 0));
+  if (roofU.gable) c.add('shanhua', 'gable', roofU.gable, new THREE.Matrix4().makeTranslation(0, YU, 0));
   const xg = roofU.surface.xg;
   const ridgeY = YU + roofU.topY;
   for (const sx of [1, -1]) c.add('shanhua', 'red', fishGeometry(), new THREE.Matrix4().makeTranslation(sx * (xg + 0.06), ridgeY - 0.35, 0).multiply(new THREE.Matrix4().makeRotationY(Math.PI / 2)));

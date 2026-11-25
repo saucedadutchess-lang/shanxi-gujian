@@ -131,7 +131,7 @@
 
 **佛光寺东大殿模型**（2026-11-23）：页面 `foguang.html`，代码在 `src/foguang/`（`params.ts`、`model.ts`、`main.ts`），参数表 `data/models/foguang.json`。生成模型的小工具（收集几何体、斗、驼峰、拆开和着色）在 `src/model/kit.ts`，查看器（视角、拆开、点构件、看依据、照片叠合）在 `src/model/viewer.ts`，南禅寺和佛光寺共用；南禅寺的 `model.ts` 还用它自己的一份小工具，以后可以改成用 kit。坐标：正面朝 +z（实物朝西），北端在 -x；柱号 B 前檐、C 前内柱、D 中缝、E 后内柱、F 后檐，0–7 自北向南。斗拱按 20.5 ÷ 21 压低、外跳向下斜，让橑檐槫落在实测的现状高度（做法和已知简化在 `docs/sources.md`）。瓦陇间距用 `RoofSpec.tileRow`。
 
-**晋祠圣母殿模型**（2026-11-25）：页面 `shengmudian.html`，代码在 `src/shengmudian/`，参数表 `data/models/shengmudian.json`，复用 `src/model/` 的小工具和查看器。坐标：正面朝 +z（实物朝东），北端在 +x；柱号 A 前廊到 G 后廊，1–8 自南向北；殿身 B–F × 2–7，B3–B6 是不落地的童柱。斗拱用毫米。两层檐各一个 `RoofSpec`，下檐是 `ring`。读图判断、推测和没做的部分在 `docs/sources.md`。
+**晋祠圣母殿模型**（2026-11-25）：页面 `shengmudian.html`，代码在 `src/shengmudian/`，参数表 `data/models/shengmudian.json`，复用 `src/model/` 的小工具和查看器。坐标：正面朝 +z（实物朝东），北端在 +x；柱号 A 前廊到 G 后廊，1–8 自南向北；殿身 B–F × 2–7，B3–B6 是不落地的童柱。斗拱用毫米。两层檐各一个 `RoofSpec`，下檐是 `ring`。第二版加了侧脚、翼角冲出和散椽、墙肩，以及示意的盘龙、匾额、神龛、鱼沼飞梁；彩塑没做。读图判断、推测和没做的部分在 `docs/sources.md`。
 
 **建筑页**（2026-11-23）：页面 `building.html?id=<id>`，代码在 `src/building/`（`main.ts` 渲染，`plan.ts` 按模型参数表画到现场必看的方位图），内容在 `data/buildings/<id>.json`，`check-data.mjs` 检查每条的类型、出处和页码位置。顺序：名片三句话（取 `curated.json`）、时间轴、故事与典故、三把钥匙（认形制配屋顶变形器示意图，读等级用对比表，拆结构点了才嵌入模型页 `?embed`）、到现场必看（方位图编号和列表联动，配实拍照片）、实用信息（地址、附近国保直线距离；开放时间、门票、交通没有可靠出处前不写）、出处列表、勘误入口（GitHub issue）。地图名片里链到建筑页（`src/map/main.ts` 的 `BUILDING_PAGES`），地图支持 `map.html#<单位 id>` 直接打开名片。做下一座 S 级时加一个 JSON，有模型的在 `plan.ts` 里加平面；没有模型的在 JSON 里写 `plan`（朝向、开间、进深、柱径、内柱、门窗、佛坛，带出处），按实测柱网画方位图。不在图范围内的看点写 `far: true`，不写 `at`。看点坐标 `at` 一律是地图方向（x 向东、z 向南），朝向不是南的建筑（佛光寺东大殿朝西）图仍上北下南。
 
