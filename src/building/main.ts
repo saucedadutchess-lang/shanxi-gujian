@@ -25,6 +25,8 @@ interface Page {
   model?: string;
   /** 没有模型时，到现场必看的方位图按这里的实测柱网画 */
   plan?: GridSpec & Item;
+  /** 一页讲几座殿时，每座一张方位图；看点用 hall 指明在第几张（从 0 数） */
+  plans?: (GridSpec & Item & { title: string })[];
   review: string;
   timeline: (Item & { date: string })[];
   stories: { title: string; paras: Item[] }[];
@@ -38,7 +40,7 @@ interface Page {
     };
     structure?: { text: string; facts?: Item[]; pending?: string };
   };
-  onsite?: { note: string; items: (Item & { n: number; title: string; at?: [number, number]; photo?: string })[] };
+  onsite?: { note: string; items: (Item & { n: number; title: string; at?: [number, number]; hall?: number; photo?: string })[] };
   practical: { address?: Item; pending?: string };
 }
 
@@ -167,12 +169,18 @@ function render(p: Page) {
 
   // ---------- 到现场必看 ----------
   const os = p.onsite;
+  const planned = !!p.plans || hasPlan(p.model, p.plan);
+  const markersOf = (hall?: number) => (os?.items ?? []).flatMap((o) => (o.at && (hall === undefined || (o.hall ?? 0) === hall) ? [{ n: o.n, at: o.at, title: o.title }] : []));
+  const planHtml = () =>
+    p.plans
+      ? p.plans.map((s, i) => `<h4>${esc(s.title)}</h4>${planSvg(undefined, markersOf(i), s)}<p class="bp-plan-src">${esc(s.text)}${meta(s)}</p>`).join('')
+      : planSvg(p.model, markersOf(), p.plan);
   const onsite = os
     ? add(
         'onsite',
         '到现场必看',
-        `<div class="bp-onsite"${hasPlan(p.model, p.plan) ? '' : ' style="grid-template-columns:minmax(0,1fr)"'}>
-        ${hasPlan(p.model, p.plan) ? `<figure class="bp-plan">${planSvg(p.model, os.items.flatMap((o) => (o.at ? [{ n: o.n, at: o.at, title: o.title }] : [])), p.plan)}<figcaption><span class="tag">示意</span>${esc(os.note)}${p.plan ? meta(p.plan) : ''}</figcaption></figure>` : ''}
+        `<div class="bp-onsite"${planned ? '' : ' style="grid-template-columns:minmax(0,1fr)"'}>
+        ${planned ? `<figure class="bp-plan">${planHtml()}<figcaption><span class="tag">示意</span>${esc(os.note)}${p.plan ? meta(p.plan) : ''}</figcaption></figure>` : ''}
         <ol class="bp-spots">${os.items
           .map(
             (o) => `<li data-n="${o.n}" id="spot-${o.n}"><b class="n">${o.n}</b><div><h3>${esc(o.title)}</h3><p>${esc(o.text)}</p>${meta(o)}</div>${

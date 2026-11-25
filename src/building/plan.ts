@@ -49,8 +49,14 @@ export interface GridSpec {
   colDia: [number, number];
   /** 内柱：ring = 内柱一周，退进一间（金箱斗底槽）；none = 殿内无柱 */
   inner: 'ring' | 'none';
-  /** 前檐每间是门还是窗 */
-  front: ('门' | '窗')[];
+  /** 不在轴线交点上的内柱（殿身坐标：x 从正面看向右，z 向正面） */
+  innerAt?: [number, number][];
+  /** 佛坛、壁藏等：[x0, z0, x1, z1]，殿身坐标 */
+  boxes?: [number, number, number, number][];
+  /** 图上的字：殿身坐标 */
+  texts?: { at: [number, number]; text: string }[];
+  /** 前檐每间是门、窗（槛墙加窗）还是实墙 */
+  front: ('门' | '窗' | '墙')[];
   /** 佛坛：占内槽第几到第几根柱之间（从 0 数），从后内柱往前几间深 */
   altar?: { from: number; to: number; depth: number };
   /** 后内柱一列砌扇面墙 */
@@ -119,13 +125,18 @@ function grid(g: GridSpec): PlanData {
       if (i === 0 || i === nx || j === 0 || j === nz) col(i, j, g.colDia[0]);
       else if (g.inner === 'ring' && (i === 1 || i === nx - 1 || j === 1 || j === nz - 1)) col(i, j, g.colDia[1]);
     }
+  for (const [a, b] of g.innerAt ?? []) {
+    const [x, z] = to(a, b);
+    columns.push({ x, z, w: g.colDia[1], d: g.colDia[1], square: false });
+  }
   const walls = [
     box(-W / 2 - h, -D / 2 - h, W / 2 + h, -D / 2 + h), // 后檐墙
     box(-W / 2 - h, -D / 2, -W / 2 + h, D / 2), // 两山墙
     box(W / 2 - h, -D / 2, W / 2 + h, D / 2),
   ];
-  // 前檐：窗间画槛墙加窗那一道，门间留空
+  // 前檐：窗间画槛墙加窗那一道，实墙间画整道墙（华严寺大雄宝殿四面没有窗），门间留空
   const front = g.front.flatMap((k, i) => (k === '窗' ? [box(xs[i], D / 2 - h * 0.6, xs[i + 1], D / 2 + h * 0.6)] : []));
+  g.front.forEach((k, i) => k === '墙' && walls.push(box(xs[i], D / 2 - h, xs[i + 1], D / 2 + h)));
   const labels: Label[] = [];
   const doors = g.front.map((k, i) => (k === '门' ? i : -1)).filter((i) => i >= 0);
   if (doors.length) {
@@ -139,6 +150,11 @@ function grid(g: GridSpec): PlanData {
     altar.push(box(xs[g.altar.from], rear, xs[g.altar.to], front0));
     const [ax, az] = to((xs[g.altar.from] + xs[g.altar.to]) / 2, (rear + front0) / 2);
     labels.push({ x: ax, z: az + 0.2, text: '佛坛', anchor: 'middle' });
+  }
+  for (const b of g.boxes ?? []) altar.push(box(...b));
+  for (const t of g.texts ?? []) {
+    const [x, z] = to(...t.at);
+    labels.push({ x, z: z + 0.2, text: t.text, anchor: 'middle' });
   }
   if (g.fanWall && g.inner === 'ring') walls.push(box(xs[1], zs[nz - 1] - 0.25, xs[nx - 1], zs[nz - 1] + 0.25));
   return { walls, front, altar, columns, labels };

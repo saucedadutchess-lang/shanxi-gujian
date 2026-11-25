@@ -588,5 +588,68 @@
     "url": "https://www.sohu.com/a/749747514_120678132",
     "accessed": "2026-11-25",
     "note": "力学分析文章，只取柱子的根数。"
+  },
+  "zhao-li-li-2023": {
+    "title": "大同华严寺薄伽教藏殿尺度设计再读",
+    "author": "赵寿堂、李泽辉、李大卫",
+    "publisher": "《建筑史学刊》2023, 4(4): 160–170",
+    "date": "2023",
+    "url": "https://www.jgcm.ac.cn/jah/cn/article/Y2023/I4/160",
+    "accessed": "2026-11-25",
+    "note": "2021 年三维扫描。附表（各间实测值）在刊外附录，没有读到。"
+  },
+  "zhou-qian-2023": {
+    "title": "大同华严寺大雄宝殿抗震构造研究",
+    "author": "周乾",
+    "publisher": "《工程抗震与加固改造》2023 年第 1 期",
+    "date": "2023",
+    "url": "https://news.qq.com/rain/a/20230521A06J0L00",
+    "accessed": "2026-11-25",
+    "note": "读的是作者在腾讯新闻上的转载，页码没核。"
+  },
+  "hankun-2026": {
+    "title": "一寺藏辽金 梵宇冠西京",
+    "author": "寒鲲",
+    "publisher": "《北京青年报》2026-08-31，腾讯新闻转载",
+    "date": "2026",
+    "url": "https://news.qq.com/rain/a/20260831A03CH100",
+    "accessed": "2026-11-25",
+    "note": "报纸文章，没有注明所据资料。"
+  },
+  "liaoshi-41": {
+    "title": "辽史·地理志五（卷四十一）",
+    "author": "脱脱",
+    "publisher": "维基文库",
+    "date": "1344",
+    "url": "https://zh.wikisource.org/wiki/遼史/卷41",
+    "accessed": "2026-11-25",
+    "note": "电子本，没有对照点校本。寺名作“华岩寺”。"
+  },
+  "jinshi-6": {
+    "title": "金史·世宗纪上（卷六）",
+    "author": "脱脱",
+    "publisher": "维基文库",
+    "date": "1344",
+    "url": "https://zh.wikisource.org/wiki/金史/卷6",
+    "accessed": "2026-11-25",
+    "note": "电子本，没有对照点校本。"
+  },
+  "sxwl-huayansi-2022": {
+    "title": "大同华严寺：满蘸着辽金文化的千年古寺",
+    "author": "山西文旅融媒体中心",
+    "publisher": "澎湃新闻转载",
+    "date": "2022",
+    "url": "https://m.thepaper.cn/baijiahao_19670782",
+    "accessed": "2026-11-25",
+    "note": "宣传文章。"
+  },
+  "liang-liu-1933": {
+    "title": "大同古建筑调查报告",
+    "author": "梁思成、刘敦桢",
+    "publisher": "《中国营造学社汇刊》第四卷第三、四期；大同古城保护和修复研究会网站转录",
+    "date": "1933",
+    "url": "http://www.dtgcbh.cn/dtgcbhxfyjh/wabs/201701/23851463a5554d17b0195e16cb9fc9eb.shtml",
+    "accessed": "2026-11-25",
+    "note": "读的是网站上的全文转录，没有对照汇刊原件，页码没核；转录页没写发布人和日期。文中“外檐柱头铺作，系五铺作双抄”说的是薄伽教藏殿，不是大雄宝殿。"
   }
 }

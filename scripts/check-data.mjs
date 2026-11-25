@@ -162,15 +162,17 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
   (k.form?.facts ?? []).forEach((x, i) => item(`${w} 认形制 ${i + 1}`, x));
   (k.structure?.facts ?? []).forEach((x, i) => item(`${w} 拆结构 ${i + 1}`, x));
   // 没有模型时方位图按实测柱网画：尺寸要带出处，门窗要和开间对上
-  if (b.plan) {
-    const wp = `${w} 平面 plan`;
-    fact(wp, b.plan, { needKind: false });
-    if (!PAGE_KINDS.includes(b.plan.kind)) err(wp, `类型 kind 不对：${b.plan.kind}`);
-    if (!b.plan.where) err(wp, '缺出处里的位置 where');
+  for (const [i, pl] of [...(b.plan ? [b.plan] : []), ...(b.plans ?? [])].entries()) {
+    const wp = `${w} 平面 ${i + 1}`;
+    fact(wp, pl, { needKind: false });
+    if (!PAGE_KINDS.includes(pl.kind)) err(wp, `类型 kind 不对：${pl.kind}`);
+    if (!pl.where) err(wp, '缺出处里的位置 where');
     const nums = (a) => Array.isArray(a) && a.length > 0 && a.every((v) => typeof v === 'number' && v > 0);
-    if (!nums(b.plan.bays) || !nums(b.plan.depths)) err(wp, '开间 bays、进深 depths 要写成米数数组');
-    if (!['S', 'W', 'N', 'E'].includes(b.plan.facing)) err(wp, '朝向 facing 要写 S / W / N / E');
-    if (b.plan.front?.length !== b.plan.bays?.length) err(wp, '前檐门窗 front 要和开间一一对应');
+    if (!nums(pl.bays) || !nums(pl.depths)) err(wp, '开间 bays、进深 depths 要写成米数数组');
+    if (!['S', 'W', 'N', 'E'].includes(pl.facing)) err(wp, '朝向 facing 要写 S / W / N / E');
+    if (b.plans && !pl.title) err(wp, '缺标题 title');
+    if (pl.front?.length !== pl.bays?.length) err(wp, '前檐门窗 front 要和开间一一对应');
+    for (const k of pl.front ?? []) if (!['门', '窗', '墙'].includes(k)) err(wp, `前檐 front 每间只能写 门 / 窗 / 墙，现在有 ${k}`);
   }
   if (k.grade) {
     item(`${w} 读等级 规则`, k.grade.rule);
@@ -187,7 +189,8 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
     if (ns.has(o.n)) err(wo, '编号重复');
     ns.add(o.n);
     // 没有方位图的（没模型也没实测平面）不用写方位
-    if ((b.model || b.plan || o.at) && !o.far && (!Array.isArray(o.at) || o.at.length !== 2)) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
+    if (o.hall !== undefined && !b.plans?.[o.hall]) err(wo, `hall ${o.hall} 没有对应的平面`);
+    if ((b.model || b.plan || b.plans || o.at) && !o.far && (!Array.isArray(o.at) || o.at.length !== 2)) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
     if (o.photo && !photoFiles.has(o.photo)) err(wo, `照片 ${o.photo} 不在 data/photos.json 里`);
   }
   if (b.practical?.address) item(`${w} 地址`, b.practical.address);

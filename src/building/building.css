@@ -705,3 +705,16 @@ body.bp-page {
   stroke: #b9ab94;
   stroke-width: 0.08;
 }
+
+/* 一页几座殿时，每张方位图有标题和出处 */
+.bp-plan h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.bp-plan-src {
+  margin: 4px 0 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
