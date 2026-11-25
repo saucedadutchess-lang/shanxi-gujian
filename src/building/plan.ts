@@ -273,7 +273,7 @@ export function planSvg(model: string | undefined, markers: Marker[], spec?: Gri
     ${lbl(p.yuetai, '月台', (r) => r.x1 - 0.3, (r) => r.z1 - 0.4)}
     ${p.labels.map((l) => `<text class="lbl" ${fs} x="${f(l.x)}" y="${f(l.z)}" text-anchor="${l.anchor ?? 'middle'}">${l.text}</text>`).join('')}
     <g class="scale"><path style="stroke-width:${f(0.06 * k)}" d="M${f(sx)} ${f(sz)}h${sl}"/><path style="stroke-width:${f(0.06 * k)}" d="M${f(sx)} ${f(sz - 0.15 * k)}v${f(0.3 * k)}M${f(sx + sl)} ${f(sz - 0.15 * k)}v${f(0.3 * k)}"/><text ${fs} x="${f(sx + sl / 2)}" y="${f(sz - 0.3 * k)}" text-anchor="middle">${sl} 米</text></g>
-    <g class="north" transform="translate(${f(x1 - 0.9 * k)} ${f(z0 + 1.1 * k)}) scale(${f(k)})"><path d="M0 -0.8L0.35 0.3L0 0.1L-0.35 0.3Z"/><text y="-1">北</text></g>
+    <g class="north" transform="translate(${f(x1 - 0.9 * k)} ${f(z0 + 1.6 * k)}) scale(${f(k)})"><path d="M0 -0.8L0.35 0.3L0 0.1L-0.35 0.3Z"/><text y="-1">北</text></g>
     ${marks}
   </svg>`;
 }

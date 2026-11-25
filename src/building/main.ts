@@ -72,7 +72,12 @@ function render(p: Page) {
     const s = sources[sid];
     if (!s.author) return `《${s.title}》`;
     const names = s.author.split('、');
-    return `${names[0]}${names.length > 1 ? '等' : ''}${s.date ? ' ' + s.date : ''}`;
+    const who = `${names[0]}${names.length > 1 ? '等' : ''}`;
+    // 同一作者同一年有两条出处时（如梁思成 1944 的佛光寺文章和《中国建筑史》），后登记的那条改写书名，免得读者分不清
+    const twin = Object.entries(sources).find(([k, o]) => o.author === s.author && o.date === s.date && k !== sid);
+    const ids = Object.keys(sources);
+    if (twin && ids.indexOf(sid) > ids.indexOf(twin[0])) return `${who}《${s.title}》`;
+    return `${who}${s.date ? ' ' + s.date : ''}`;
   };
   const refs = (src: string[], where?: string) =>
     `${src.map((s) => `<a href="#src-${esc(s)}">${esc(short(s))}</a>`).join('；')}${where ? `，${esc(where)}` : ''}`;

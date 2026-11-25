@@ -651,5 +651,23 @@
     "url": "http://www.dtgcbh.cn/dtgcbhxfyjh/wabs/201701/23851463a5554d17b0195e16cb9fc9eb.shtml",
     "accessed": "2026-11-25",
     "note": "读的是网站上的全文转录，没有对照汇刊原件，页码没核；转录页没写发布人和日期。文中“外檐柱头铺作，系五铺作双抄”说的是薄伽教藏殿，不是大雄宝殿。"
+  },
+  "liang-zgjzs": {
+    "title": "中国建筑史",
+    "author": "梁思成",
+    "publisher": "第六章第六节 五代·宋·辽·金之实物；读书网（dushu.com）转录",
+    "date": "1944",
+    "url": "https://www.dushu.com/showbook/101723/1058145.html",
+    "accessed": "2026-11-25",
+    "note": "网站拒绝抓取，“华严寺大雄宝殿”条的文字取自搜索结果里的摘录，没有对照印本，页码没核。"
+  },
+  "sxwlt-huayansi-2020": {
+    "title": "大同华严寺：边边角角皆风景",
+    "author": "山西省文化和旅游厅",
+    "publisher": "澎湃新闻政务号，2020-12-25；来源：华严寺官方微信",
+    "date": "2020",
+    "url": "https://m.thepaper.cn/baijiahao_10543970",
+    "accessed": "2026-11-25",
+    "note": "图片说明写大雄宝殿一座鸱吻是金代原物、一座是清代补制，没说哪边；鸱吻高约 4.5 米。"
   }
 }

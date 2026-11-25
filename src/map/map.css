@@ -190,7 +190,8 @@
   pointer-events: none;
 }
 
-.label {
+/* 只管地图上的点位名字（#labels 里），别碰页面上别处同名的 .label，比如时间轴的“拖到” */
+.labels .label {
   position: absolute;
   top: 0;
   left: 0;
@@ -204,14 +205,14 @@
     0 0 2px #fbf8f2;
 }
 
-.label.strong {
+.labels .label.strong {
   font-size: 13px;
   font-weight: 600;
   color: var(--ink);
 }
 
-.label.rank-s,
-.label.rank-ss {
+.labels .label.rank-s,
+.labels .label.rank-ss {
   padding: 2px 8px;
   font-size: 14px;
   line-height: 18px;
@@ -221,22 +222,22 @@
   box-shadow: 0 2px 6px rgb(60 40 25 / 0.25);
 }
 
-.label.rank-s {
+.labels .label.rank-s {
   color: #fff;
   background: var(--accent);
 }
 
-.label.rank-ss {
+.labels .label.rank-ss {
   color: var(--accent);
   background: rgb(255 252 246 / 0.95);
   border: 1.5px solid var(--accent);
 }
 
-.label.sel:not(.rank-s, .rank-ss) {
+.labels .label.sel:not(.rank-s, .rank-ss) {
   color: var(--accent);
 }
 
-.label.sel.rank-ss {
+.labels .label.sel.rank-ss {
   color: #fff;
   background: var(--accent);
 }
