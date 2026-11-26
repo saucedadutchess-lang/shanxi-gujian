@@ -1,0 +1,1052 @@
+{
+  "_说明": "大同善化寺大雄宝殿模型的参数表。程序（src/wudian/hall.ts，四座单檐庑殿殿共用）按这里的数字算出每个构件。这座殿没有找到测绘数字：只有材广和椽架平长（陈明达，转引王一臻、徐怡涛 2023）和梁思成《中国建筑史》的文字描述是可靠的，其余多是推测。依据：实测＝资料里写出的数或做法；材分推算＝由材广按《营造法式》比例推出；推测＝按《营造法式》或照片估计（note 里写明）。殿朝南，正面朝 +z，东在 +x；檐柱行 A 前檐到 F 后檐，缝 1–8 自西向东。标高从台明面算起。",
+  "building": "善化寺大雄宝殿",
+  "unitId": "1-0088-3-041",
+  "precision": "示意",
+  "precisionNote": "各间面阔、进深、柱高、举高都没有找到实测数字，只有材广 260 毫米、椽架平长 2250–2540 毫米和“七间五间、外檐双杪计心、中间四缝减柱”这些描述。尺寸按《营造法式》和照片推测，只能看个大概，所以标“示意”。殿内藻井、平棋、塑像没有做。",
+  "params": {
+    "bays": {
+      "value": [
+        5200,
+        5850,
+        6000,
+        6600,
+        6000,
+        5850,
+        5200
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "chinacom-shanhuasi-2020",
+        "commons-shanhua"
+      ],
+      "where": "大雄宝殿一段；照片 01",
+      "label": "面阔七间（从正面看自左向右）",
+      "note": "各间尺寸没有找到。总面阔网上有 40.7 米、41.80 米两说（游记和百科，没注出处），这里取 40.7 米，按照片里当心间最宽、尽间最窄分配"
+    },
+    "depths": {
+      "value": [
+        5080,
+        5080,
+        5080,
+        5080,
+        5080
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "wang-xu-2023",
+        "liang-zgjzs"
+      ],
+      "where": "第 47 页注 5（转引陈明达）；善化寺大雄宝殿条",
+      "label": "进深五间（从前到后）",
+      "note": "梁思成：深五间。陈明达量的椽架平长 2250–2540 毫米，按十架椽、每间两椽、取上限 2540 均分，合 25.4 米（网上另有 25.5 米、26.18 米两说）"
+    },
+    "jia": {
+      "value": [
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "zhihu-shanhua-2020"
+      ],
+      "where": "大雄宝殿一段",
+      "label": "每间几架椽",
+      "note": "游记写进深五间十架椽，转述郭黛姮《中国古代建筑史》第三卷的剖面图，原书没读到"
+    },
+    "innerCols": {
+      "value": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          5,
+          4
+        ],
+        [
+          6,
+          1
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          1
+        ],
+        [
+          7,
+          4
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          7,
+          2
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "liang-zgjzs",
+        "zhihu-shanhua-2020"
+      ],
+      "where": "善化寺大雄宝殿条；大雄宝殿一段",
+      "label": "内柱：[第几缝, 第几行]",
+      "note": "梁思成：中间四缝省去部分内柱。游记：减去两排中间的八根柱子，成了类似金厢斗底槽的布局，内槽偏后。模型按里外两圈、中间四缝省去第二、三行共八根做；“内槽偏后”没做（没有尺寸）"
+    },
+    "innerPlan": {
+      "value": "里外两圈，中间四缝减去八根",
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "liang-zgjzs",
+        "zhihu-shanhua-2020"
+      ],
+      "where": "善化寺大雄宝殿条；大雄宝殿一段",
+      "label": "内柱布置",
+      "note": "游记另说内外柱不同高，是厅堂和殿堂混合的做法"
+    },
+    "colH": {
+      "value": 6400,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01",
+      "label": "明间檐柱高",
+      "note": "没找到实测柱高；照片 01 里当心间檐柱高和当心间面阔差不多"
+    },
+    "shengqi": {
+      "value": 400,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "bili-shanhua-2025"
+      ],
+      "where": "第 3、4 条",
+      "label": "角柱比明间平柱高多少",
+      "note": "网上学习笔记转述教科书，说正面角柱比平柱生起 40–42 厘米，比《营造法式》多一倍；原书没读到"
+    },
+    "cejiao": {
+      "value": [
+        0.01,
+        0.008
+      ],
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 柱",
+      "label": "侧脚：正面、山面每高一米柱脚向外多少米",
+      "note": "按《营造法式》正面百分之一、侧面千分之八"
+    },
+    "colDia": {
+      "value": [
+        620,
+        650,
+        650
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 柱",
+      "label": "柱径：檐柱、内柱、角柱",
+      "note": "按《营造法式》殿阁柱径两材两栔到三材估"
+    },
+    "cai": {
+      "value": [
+        260,
+        173
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "wang-xu-2023"
+      ],
+      "where": "第 47 页注 5（转引陈明达《营造法式大木作研究》第 160、167 页）",
+      "label": "单材：广、厚",
+      "note": "材广 260 毫米是转引的数；厚按广的三分之二。1 分° 取材广的 1/15，约 17.3 毫米"
+    },
+    "qi": {
+      "value": 104,
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 栱",
+      "label": "栔高",
+      "note": "6 分°"
+    },
+    "jumps": {
+      "value": [
+        30,
+        26
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 总铺作次序",
+      "label": "外跳每跳长",
+      "note": "五铺作双杪（出两跳），跳长没找到，按《营造法式》"
+    },
+    "puzuo": {
+      "value": [
+        "华",
+        "华"
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "liang-zgjzs"
+      ],
+      "where": "善化寺大雄宝殿条",
+      "label": "柱头铺作逐跳：华栱或下昂",
+      "note": "外檐斗拱出双杪计心重栱"
+    },
+    "jixin": {
+      "value": 1,
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "liang-zgjzs"
+      ],
+      "where": "善化寺大雄宝殿条",
+      "label": "计心造（每跳头上都有横栱）：1 是，0 否"
+    },
+    "bujian": {
+      "value": {
+        "前后檐": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "两山": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "bili-shanhua-2025"
+      ],
+      "where": "第 4 条",
+      "label": "补间铺作朵数（每间）",
+      "note": "网上学习笔记：斗栱均为五铺作，补间只一朵"
+    },
+    "diagBu": {
+      "value": [
+        3,
+        4,
+        5
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "bili-shanhua-2025"
+      ],
+      "where": "第 4 条",
+      "label": "前檐哪几间的补间出斜栱",
+      "note": "笔记：当心间出 60° 斜栱，左右次间出 45° 斜栱。模型都按 45° 做"
+    },
+    "timu": {
+      "value": [
+        208,
+        173
+      ],
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 侏儒柱",
+      "label": "替木：高、厚"
+    },
+    "tuanD": {
+      "value": 416,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 栋",
+      "label": "槫径"
+    },
+    "lane": {
+      "value": [
+        520,
+        347
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 阑额",
+      "label": "阑额：广、厚"
+    },
+    "pupai": {
+      "value": [
+        624,
+        260
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 阑额（普拍方）",
+      "label": "普拍枋：宽、高"
+    },
+    "beam": {
+      "value": [
+        728,
+        485
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 梁",
+      "label": "最下一层梁（乳栿）：高、厚"
+    },
+    "upper": {
+      "value": [
+        728,
+        485,
+        364,
+        139
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 梁、侏儒柱",
+      "label": "上层梁：高、厚；叉手：高、厚",
+      "note": "游记：较高的内柱支撑六椽栿，两边以劄牵支撑，上面再承四椽栿、平梁和叉手"
+    },
+    "rise": {
+      "value": 0.24,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua",
+        "zhou-qian-2023"
+      ],
+      "where": "照片 01；引言（总高 17.4 米）",
+      "label": "举高：前后橑檐槫距离的几分之几",
+      "note": "没找到实测。照片 01 里屋面比《营造法式》殿阁的三分之一平缓得多；同城华严寺大雄宝殿按论文总高反推约 1:4.6，这里取 1:4.2。学习笔记说这座殿还没有推山，模型也没推山"
+    },
+    "rafter": {
+      "value": [
+        150,
+        280,
+        400
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-shanhua"
+      ],
+      "where": "卷五 椽；照片 01",
+      "label": "椽径、椽距、瓦陇间距"
+    },
+    "eave": {
+      "value": 1700,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-shanhua"
+      ],
+      "where": "卷五 檐；照片 01",
+      "label": "檐椽出"
+    },
+    "lift": {
+      "value": 450,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01",
+      "label": "翼角起翘"
+    },
+    "chong": {
+      "value": 550,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01",
+      "label": "翼角冲出"
+    },
+    "ridge": {
+      "value": [
+        1300,
+        3000
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01、05",
+      "label": "正脊高（脊槫上皮以上）、鸱吻高",
+      "note": "按照片估"
+    },
+    "platform": {
+      "value": [
+        3000,
+        2500
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "liang-zgjzs",
+        "commons-shanhua"
+      ],
+      "where": "善化寺大雄宝殿条；照片 01",
+      "label": "台基：高、出",
+      "note": "梁思成：阶基甚崇高。高度网上有 2.24 米、3 米多、3.3 米几说，都没注出处，模型取 3 米"
+    },
+    "wall": {
+      "value": 1300,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01",
+      "label": "墙厚"
+    },
+    "front": {
+      "value": [
+        "墙",
+        "板门",
+        "墙",
+        "板门",
+        "墙",
+        "板门",
+        "墙"
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "commons-shanhua",
+        "bili-shanhua-2025"
+      ],
+      "where": "照片 01；第 3 条",
+      "label": "前檐各间（自左向右）",
+      "note": "照片里当心间和两梢间开门，门上有格窗；其余是墙。格窗没做"
+    },
+    "back": {
+      "value": [
+        "墙",
+        "墙",
+        "墙",
+        "墙",
+        "墙",
+        "墙",
+        "墙"
+      ],
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01",
+      "label": "后檐各间",
+      "note": "后檐没有照片，按墙做"
+    },
+    "door": {
+      "value": [
+        4300,
+        0
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 01",
+      "label": "门洞高"
+    },
+    "fotan": {
+      "value": {
+        "佛坛": [
+          -17000,
+          -9000,
+          17000,
+          -3800
+        ]
+      },
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 08",
+      "label": "佛坛平面（x0, z0, x1, z1）",
+      "note": "五方佛一字排开，只按照片示意位置"
+    },
+    "fotanH": {
+      "value": 1300,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "where": "照片 08",
+      "label": "坛高"
+    },
+    "ludou": {
+      "value": [
+        32,
+        32,
+        8,
+        4,
+        8
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 斗",
+      "label": "栌斗：长、宽、耳、平、欹",
+      "note": "1 分° 取材广的 1/15，约 17.3 毫米"
+    },
+    "sandou": {
+      "value": [
+        16,
+        14,
+        4,
+        2,
+        4
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 斗",
+      "label": "散斗：长、宽、耳、平、欹"
+    },
+    "gongLen": {
+      "value": {
+        "泥道栱": 62,
+        "瓜子栱": 62,
+        "令栱": 72,
+        "慢栱": 92
+      },
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 栱",
+      "label": "横栱长",
+      "note": "实物各栱长度没有读到数字"
+    },
+    "zhe": {
+      "value": [
+        0.1,
+        0.05,
+        0.025
+      ],
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 举折",
+      "label": "举折：从脊往下各缝比直线低（举高的几分之几）",
+      "note": "按《营造法式》“每尺折一寸，每架自上递减半”"
+    },
+    "flyRatio": {
+      "value": 0.6,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 檐",
+      "label": "飞子出：檐椽出的几成",
+      "note": "《营造法式》“其檐自次角补间铺作心，椽头皆生出向外……飞子……各以檐出十分之六”"
+    },
+    "roofThick": {
+      "value": 250,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷十三 用瓦",
+      "label": "屋面厚（望板、泥背、瓦）",
+      "note": "示意值"
+    }
+  },
+  "parts": {
+    "taiming": {
+      "name": "台明",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "liang-zgjzs",
+        "commons-shanhua"
+      ],
+      "params": [
+        "platform"
+      ],
+      "desc": "殿坐在砖砌的台上，正面中间有踏道。"
+    },
+    "zhuchu": {
+      "name": "柱础",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "colDia"
+      ],
+      "desc": "柱子平放在石础上。础的大小按柱径估。"
+    },
+    "fotan": {
+      "name": "佛坛、神坛",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "params": [
+        "fotan",
+        "fotanH"
+      ],
+      "desc": "殿里安放塑像的坛，只做了位置和大致体量，塑像没有做。"
+    },
+    "zhu": {
+      "name": "檐柱",
+      "layer": "柱",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua",
+        "bili-shanhua-2025"
+      ],
+      "params": [
+        "colH",
+        "shengqi",
+        "cejiao",
+        "colDia"
+      ],
+      "desc": "外面一圈柱子。角上的高（生起），柱脚向外撇（侧脚）。"
+    },
+    "neizhu": {
+      "name": "内柱",
+      "layer": "柱",
+      "basis": "推测",
+      "src": [
+        "liang-zgjzs",
+        "zhihu-shanhua-2020"
+      ],
+      "params": [
+        "colDia",
+        "innerPlan"
+      ],
+      "desc": "殿里的柱子。减柱造：只留下资料里写的几根，比檐柱高，直接顶到上面的梁下。"
+    },
+    "qiang": {
+      "name": "檐墙、山墙",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "params": [
+        "wall",
+        "front",
+        "back"
+      ],
+      "desc": "下面一段砖，上面抹灰刷红。"
+    },
+    "gezi": {
+      "name": "门",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "params": [
+        "front",
+        "door"
+      ],
+      "desc": "前檐开门的几间；门的高低按照片估。"
+    },
+    "chuang": {
+      "name": "窗",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "params": [
+        "front"
+      ],
+      "desc": "槛墙上的直棂窗。"
+    },
+    "gongyan": {
+      "name": "栱眼壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "斗拱之间抹灰的墙。"
+    },
+    "lane": {
+      "name": "阑额",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "lane"
+      ],
+      "desc": "柱头之间的横枋。"
+    },
+    "pupai": {
+      "name": "普拍枋",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "pupai"
+      ],
+      "desc": "压在柱头和阑额上的扁枋，斗拱坐在它上面。"
+    },
+    "ludou": {
+      "name": "栌斗",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "wang-xu-2023"
+      ],
+      "params": [
+        "cai",
+        "ludou"
+      ],
+      "desc": "一朵斗拱最下面的大斗。"
+    },
+    "dou": {
+      "name": "散斗",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "sandou"
+      ],
+      "desc": "垫在栱头上的小斗。"
+    },
+    "henggong": {
+      "name": "横栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "wang-xu-2023"
+      ],
+      "params": [
+        "cai",
+        "gongLen",
+        "jixin"
+      ],
+      "desc": "顺着墙的栱：泥道栱、瓜子栱、慢栱、令栱。"
+    },
+    "huagong": {
+      "name": "华栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "liang-zgjzs"
+      ],
+      "params": [
+        "cai",
+        "qi",
+        "jumps",
+        "puzuo"
+      ],
+      "desc": "向外、向里伸出的栱。"
+    },
+    "ang": {
+      "name": "下昂",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "liang-zgjzs"
+      ],
+      "params": [
+        "puzuo",
+        "jumps"
+      ],
+      "desc": "斜着向下伸出的长构件，外端是昂嘴。没做的殿这一项不出现。"
+    },
+    "shuatou": {
+      "name": "耍头",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "cai"
+      ],
+      "desc": "最上一跳上面伸出的构件，柱头上的和梁头连在一起。"
+    },
+    "fang": {
+      "name": "柱头枋、罗汉枋",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "cai"
+      ],
+      "desc": "顺墙一道道叠起来的方木，把各朵斗拱连起来。"
+    },
+    "timu": {
+      "name": "替木",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "timu"
+      ],
+      "desc": "令栱上托槫的短木。"
+    },
+    "rufu": {
+      "name": "乳栿、三椽栿、劄牵",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhihu-shanhua-2020",
+        "yzfs"
+      ],
+      "params": [
+        "beam",
+        "innerPlan"
+      ],
+      "desc": "从檐柱斗拱搭到内柱上的梁。"
+    },
+    "dafu": {
+      "name": "六椽栿、四椽栿",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "zhihu-shanhua-2020",
+        "yzfs"
+      ],
+      "params": [
+        "upper"
+      ],
+      "desc": "内柱上、一层层往上收的梁。"
+    },
+    "pingliang": {
+      "name": "平梁",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "upper"
+      ],
+      "desc": "最上一层梁，中间立蜀柱顶脊槫。"
+    },
+    "chashou": {
+      "name": "叉手",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "upper"
+      ],
+      "desc": "平梁上斜撑脊槫的两根木。"
+    },
+    "tuofeng": {
+      "name": "驼峰、蜀柱",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "梁和梁之间、梁和槫之间垫的木块和短柱。"
+    },
+    "liaofeng": {
+      "name": "橑檐槫",
+      "layer": "槫",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "tuanD",
+        "jumps"
+      ],
+      "desc": "斗拱最外一跳上的圆槫，屋檐压在它上面。"
+    },
+    "tuan": {
+      "name": "平槫、脊槫",
+      "layer": "槫",
+      "basis": "推测",
+      "src": [
+        "wang-xu-2023",
+        "yzfs"
+      ],
+      "params": [
+        "tuanD",
+        "depths"
+      ],
+      "desc": "顺着殿身的圆木，椽子搭在上面。两山的槫伸到角梁下。"
+    },
+    "chuan": {
+      "name": "椽、飞子",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "rafter",
+        "eave",
+        "flyRatio"
+      ],
+      "desc": "从脊到檐一根根排下来的圆椽，檐口外再接方飞子。"
+    },
+    "jiaoliang": {
+      "name": "角梁",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "lift",
+        "chong"
+      ],
+      "desc": "四角斜出的梁，戗脊下面就是它。"
+    },
+    "wamian": {
+      "name": "瓦面",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "rise",
+        "zhe",
+        "roofThick"
+      ],
+      "desc": "筒瓦屋面。四面坡，五条脊（庑殿顶）。"
+    },
+    "ji": {
+      "name": "正脊、戗脊",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "params": [
+        "ridge"
+      ],
+      "desc": "屋顶最高的一条脊和四角的斜脊。"
+    },
+    "chiwei": {
+      "name": "鸱吻",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "commons-shanhua"
+      ],
+      "params": [
+        "ridge"
+      ],
+      "desc": "正脊两头的大吻，样子没照实物做。"
+    }
+  }
+}

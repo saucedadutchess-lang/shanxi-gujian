@@ -53,6 +53,7 @@ export function paramText(table: ModelTable, fen: number, key: string): string {
   const unit = p.unit === 'mm' ? ' 毫米' : p.unit === '分' ? ' 分°' : '';
   const one = (x: number) => (p.unit === 'mm' ? `${x} 毫米` : p.unit === '分' ? `${x} 分°（${Math.round(x * fen * 1000)} 毫米）` : `${x}`);
   if (typeof v === 'number') return one(v);
+  if (typeof v === 'string') return v;
   if (Array.isArray(v)) return v.map(String).join('、') + unit;
   return Object.entries(v as Record<string, unknown>)
     .map(([k, x]) => `${k}：${Array.isArray(x) ? x.join('×') : x}`)

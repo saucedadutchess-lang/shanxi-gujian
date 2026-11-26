@@ -1,0 +1,1004 @@
+{
+  "_说明": "永乐宫三清殿模型的参数表。程序（src/wudian/hall.ts，四座单檐庑殿殿共用）按这里的数字算出每个构件。依据：实测＝杜仙洲《永乐宫的建筑》（《文物》1963 年第 8 期，读的是永乐宫壁画保护研究院网站上的转载）里写出的数；材分推算＝由材广按《营造法式》比例推出；推测＝按《营造法式》或照片估计（note 里写明）。殿朝南，正面朝 +z，东在 +x；檐柱行 A 前檐到 E 后檐，缝 1–8 自西向东。标高从台明面算起。现址是 1959–1964 年迁建后的位置。",
+  "building": "永乐宫三清殿",
+  "unitId": "1-0093-3-046",
+  "precision": "示意",
+  "precisionNote": "总面宽、总进深、明间柱高、生起、侧脚、柱径、材、阑额、举折、减柱和门窗有杜仙洲 1963 年的数字；各间开间、内柱的确切位置、出檐、翼角按推测，所以标“示意”。梢间的丁栿、殿内藻井、壁画、塑像没有做。",
+  "params": {
+    "bays": {
+      "value": [
+        3120,
+        4440,
+        4440,
+        4440,
+        4440,
+        4440,
+        3120
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "面阔七间（从正面看自左向右）",
+      "note": "杜仙洲只给总面宽 28.44 米，又说明间平柱高 5.34 米、超过开间约 90 厘米，推出明间约 4.44 米；次间、梢间也按 4.44 米，剩下的分给两尽间（各 3.12 米），都是推测"
+    },
+    "depths": {
+      "value": [
+        3820,
+        3820,
+        3820,
+        3820
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "进深四间（从前到后）",
+      "note": "总进深 15.28 米、八椽，按每间两椽均分"
+    },
+    "jia": {
+      "value": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "每间几架椽",
+      "note": "进深四间八椽"
+    },
+    "innerCols": {
+      "value": [
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          6,
+          3
+        ]
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "内柱：[第几缝, 第几行]",
+      "note": "“仅后半部设金柱八根，垒扇面墙三堵，作为安置偶像的神龛”；“明间和两次间前后用四柱，以两根四椽栿相对搭在内柱头上”。模型放在明间、次间四缝的中缝和后金柱缝（位置是推测）"
+    },
+    "innerPlan": {
+      "value": "后半部金柱八根，其余减去",
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "内柱布置",
+      "note": "梢间、尽间那两缝用丁栿把山面屋架搭到内柱上；模型没做丁栿，那两缝按通长梁示意"
+    },
+    "colH": {
+      "value": 5340,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "明间平柱高"
+    },
+    "shengqi": {
+      "value": 160,
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "角柱比明间平柱高多少",
+      "note": "角柱长度高出明间平柱 16 厘米，生起五寸二分"
+    },
+    "cejiao": {
+      "value": [
+        0.013,
+        0.017
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "侧脚：正面、山面每高一米柱脚向外多少米",
+      "note": "正面侧 1.3%，侧面侧 1.7%"
+    },
+    "colDia": {
+      "value": [
+        500,
+        600,
+        550
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "柱径：檐柱、内柱、角柱",
+      "note": "前后檐柱、金柱、山柱 50 厘米，角柱 55 厘米，内檐角金柱 60 厘米（模型内柱都按 60 厘米）"
+    },
+    "cai": {
+      "value": [
+        207,
+        135
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "单材：广、厚",
+      "note": "材高 20.7 厘米、厚 13.5 厘米，五等材。1 分° 取材广的 1/15，13.8 毫米"
+    },
+    "qi": {
+      "value": 83,
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 栱",
+      "label": "栔高"
+    },
+    "jumps": {
+      "value": [
+        30,
+        26,
+        26
+      ],
+      "unit": "分",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 总铺作次序",
+      "label": "外跳每跳长",
+      "note": "六铺作出三跳，跳长没给，按《营造法式》"
+    },
+    "puzuo": {
+      "value": [
+        "华",
+        "昂",
+        "昂"
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "铺作逐跳：华栱或下昂",
+      "note": "外檐斗栱六铺作单抄双下昂重栱造"
+    },
+    "jixin": {
+      "value": 1,
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "计心造（每跳头上都有横栱）：1 是，0 否",
+      "note": "重栱造"
+    },
+    "bujian": {
+      "value": {
+        "前后檐": [
+          1,
+          2,
+          2,
+          2,
+          2,
+          2,
+          1
+        ],
+        "两山": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "补间铺作朵数（每间）",
+      "note": "杜仙洲：补间铺作用两朵。尽间和山面窄，模型只放一朵（推测）"
+    },
+    "timu": {
+      "value": [
+        166,
+        138
+      ],
+      "unit": "mm",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 侏儒柱",
+      "label": "替木：高、厚"
+    },
+    "tuanD": {
+      "value": 331,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 栋",
+      "label": "槫径"
+    },
+    "lane": {
+      "value": [
+        400,
+        135
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "阑额：广、厚",
+      "note": "栏额高 40 厘米（折 29 分），宽 13.5 厘米"
+    },
+    "pupai": {
+      "value": [
+        414,
+        166
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 阑额（普拍方）",
+      "label": "普拍枋：宽、高"
+    },
+    "beam": {
+      "value": [
+        580,
+        386
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 梁",
+      "label": "最下一层梁（四椽栿）：高、厚",
+      "note": "杜仙洲：两根四椽栿相对搭在内柱头上"
+    },
+    "upper": {
+      "value": [
+        497,
+        331,
+        290,
+        110
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "du-xianzhou-1963"
+      ],
+      "where": "卷五 梁；三清殿一节",
+      "label": "上层梁：高、厚；叉手：高、厚",
+      "note": "杜仙洲：其上置瓜柱、柁墩等分别叠架劄牵、五架梁和平梁"
+    },
+    "rise": {
+      "value": 0.303,
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "举高：前后橑檐槫距离的几分之几",
+      "note": "屋顶举折比例为 1:3.3，在这四座殿宇中最为陡峻。正脊两端没有推山"
+    },
+    "rafter": {
+      "value": [
+        130,
+        260,
+        360
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-yongle"
+      ],
+      "where": "卷五 椽；照片 01",
+      "label": "椽径、椽距、瓦陇间距"
+    },
+    "eave": {
+      "value": 1500,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs",
+        "commons-yongle"
+      ],
+      "where": "卷五 檐；照片 01",
+      "label": "檐椽出",
+      "note": "网上有出檐“三米有余”的说法（应是从柱中算的总出），模型按《营造法式》和照片估"
+    },
+    "lift": {
+      "value": 650,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-yongle"
+      ],
+      "where": "照片 01",
+      "label": "翼角起翘",
+      "note": "照片里翼角翘得比辽代殿明显"
+    },
+    "chong": {
+      "value": 650,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-yongle"
+      ],
+      "where": "照片 01",
+      "label": "翼角冲出"
+    },
+    "ridge": {
+      "value": [
+        1100,
+        3000
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "where": "三清殿一节；照片 01",
+      "label": "正脊高（脊槫上皮以上）、鸱吻高",
+      "note": "鸱吻约 3 米高是杜仙洲写的；正脊高按照片估。琉璃的颜色、龙吻的样子没照实物做"
+    },
+    "platform": {
+      "value": [
+        2380,
+        1500
+      ],
+      "unit": "mm",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "台基：高、出",
+      "note": "砖砌台基高 2.38 米；下出没写，取 1.5 米（推测）。殿前大月台没做"
+    },
+    "wall": {
+      "value": 1100,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-yongle"
+      ],
+      "where": "照片 01、02",
+      "label": "墙厚",
+      "note": "两山和后檐是土坯砖墙"
+    },
+    "front": {
+      "value": [
+        "墙",
+        "槅扇",
+        "槅扇",
+        "槅扇",
+        "槅扇",
+        "槅扇",
+        "墙"
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "where": "三清殿一节；照片 01",
+      "label": "前檐各间（自左向右）",
+      "note": "前檐仅东西两尽间砌以檐墙，其余五间俱装槅扇"
+    },
+    "back": {
+      "value": [
+        "墙",
+        "墙",
+        "墙",
+        "板门",
+        "墙",
+        "墙",
+        "墙"
+      ],
+      "unit": "比例",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "后檐各间",
+      "note": "后檐明间装板门两扇，以通后殿，其余垒砌土坯砖墙"
+    },
+    "door": {
+      "value": [
+        3600,
+        0
+      ],
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-yongle"
+      ],
+      "where": "照片 01",
+      "label": "槅扇高",
+      "note": "槅扇上面的横窗做成木板"
+    },
+    "fotan": {
+      "value": {
+        "神坛": [
+          -8900,
+          -7000,
+          8900,
+          -2200
+        ]
+      },
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "where": "三清殿一节",
+      "label": "神坛平面（x0, z0, x1, z1）",
+      "note": "扇面墙前安放神像的地方，只示意位置；壁画没有做"
+    },
+    "fotanH": {
+      "value": 900,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "commons-yongle"
+      ],
+      "where": "照片 01",
+      "label": "坛高"
+    },
+    "ludou": {
+      "value": [
+        32,
+        32,
+        8,
+        4,
+        8
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 斗",
+      "label": "栌斗：长、宽、耳、平、欹",
+      "note": "1 分° 取材广的 1/15，13.8 毫米"
+    },
+    "sandou": {
+      "value": [
+        16,
+        14,
+        4,
+        2,
+        4
+      ],
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 斗",
+      "label": "散斗：长、宽、耳、平、欹"
+    },
+    "gongLen": {
+      "value": {
+        "泥道栱": 62,
+        "瓜子栱": 62,
+        "令栱": 72,
+        "慢栱": 92
+      },
+      "unit": "分",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷四 栱",
+      "label": "横栱长",
+      "note": "实物各栱长度没有读到数字"
+    },
+    "zhe": {
+      "value": [
+        0.1,
+        0.05,
+        0.025
+      ],
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 举折",
+      "label": "举折：从脊往下各缝比直线低（举高的几分之几）",
+      "note": "按《营造法式》“每尺折一寸，每架自上递减半”"
+    },
+    "flyRatio": {
+      "value": 0.6,
+      "unit": "比例",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷五 檐",
+      "label": "飞子出：檐椽出的几成",
+      "note": "《营造法式》“其檐自次角补间铺作心，椽头皆生出向外……飞子……各以檐出十分之六”"
+    },
+    "roofThick": {
+      "value": 250,
+      "unit": "mm",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "where": "卷十三 用瓦",
+      "label": "屋面厚（望板、泥背、瓦）",
+      "note": "示意值"
+    }
+  },
+  "parts": {
+    "taiming": {
+      "name": "台明",
+      "layer": "台基",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "platform"
+      ],
+      "desc": "殿坐在砖砌的台上，正面中间有踏道。"
+    },
+    "zhuchu": {
+      "name": "柱础",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "colDia"
+      ],
+      "desc": "柱子平放在石础上。础的大小按柱径估。"
+    },
+    "fotan": {
+      "name": "佛坛、神坛",
+      "layer": "台基",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "fotan",
+        "fotanH"
+      ],
+      "desc": "殿里安放塑像的坛，只做了位置和大致体量，塑像没有做。"
+    },
+    "zhu": {
+      "name": "檐柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "colH",
+        "shengqi",
+        "cejiao",
+        "colDia"
+      ],
+      "desc": "外面一圈柱子。角上的高（生起），柱脚向外撇（侧脚）。"
+    },
+    "neizhu": {
+      "name": "内柱",
+      "layer": "柱",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "colDia",
+        "innerPlan"
+      ],
+      "desc": "殿里的柱子。减柱造：只留下资料里写的几根，比檐柱高，直接顶到上面的梁下。"
+    },
+    "qiang": {
+      "name": "檐墙、山墙",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "params": [
+        "wall",
+        "front",
+        "back"
+      ],
+      "desc": "下面一段砖，上面抹灰刷红。"
+    },
+    "gezi": {
+      "name": "门",
+      "layer": "墙门窗",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "params": [
+        "front",
+        "door"
+      ],
+      "desc": "前檐开门的几间；门的高低按照片估。"
+    },
+    "chuang": {
+      "name": "窗",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "params": [
+        "front"
+      ],
+      "desc": "槛墙上的直棂窗。"
+    },
+    "gongyan": {
+      "name": "栱眼壁",
+      "layer": "墙门窗",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "斗拱之间抹灰的墙。"
+    },
+    "lane": {
+      "name": "阑额",
+      "layer": "额枋",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "lane"
+      ],
+      "desc": "柱头之间的横枋。"
+    },
+    "pupai": {
+      "name": "普拍枋",
+      "layer": "额枋",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "pupai"
+      ],
+      "desc": "压在柱头和阑额上的扁枋，斗拱坐在它上面。"
+    },
+    "ludou": {
+      "name": "栌斗",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "cai",
+        "ludou"
+      ],
+      "desc": "一朵斗拱最下面的大斗。"
+    },
+    "dou": {
+      "name": "散斗",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "sandou"
+      ],
+      "desc": "垫在栱头上的小斗。"
+    },
+    "henggong": {
+      "name": "横栱",
+      "layer": "铺作",
+      "basis": "材分推算",
+      "src": [
+        "yzfs",
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "cai",
+        "gongLen",
+        "jixin"
+      ],
+      "desc": "顺着墙的栱：泥道栱、瓜子栱、慢栱、令栱。"
+    },
+    "huagong": {
+      "name": "华栱",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "cai",
+        "qi",
+        "jumps",
+        "puzuo"
+      ],
+      "desc": "向外、向里伸出的栱。"
+    },
+    "ang": {
+      "name": "下昂",
+      "layer": "铺作",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "puzuo",
+        "jumps"
+      ],
+      "desc": "斜着向下伸出的长构件，外端是昂嘴。没做的殿这一项不出现。"
+    },
+    "shuatou": {
+      "name": "耍头",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "cai"
+      ],
+      "desc": "最上一跳上面伸出的构件，柱头上的和梁头连在一起。"
+    },
+    "fang": {
+      "name": "柱头枋、罗汉枋",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "cai"
+      ],
+      "desc": "顺墙一道道叠起来的方木，把各朵斗拱连起来。"
+    },
+    "timu": {
+      "name": "替木",
+      "layer": "铺作",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "timu"
+      ],
+      "desc": "令栱上托槫的短木。"
+    },
+    "rufu": {
+      "name": "乳栿、三椽栿、劄牵",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "beam",
+        "innerPlan"
+      ],
+      "desc": "从檐柱斗拱搭到内柱上的梁。"
+    },
+    "dafu": {
+      "name": "六椽栿、四椽栿",
+      "layer": "梁架",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "upper"
+      ],
+      "desc": "内柱上、一层层往上收的梁。"
+    },
+    "pingliang": {
+      "name": "平梁",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "upper"
+      ],
+      "desc": "最上一层梁，中间立蜀柱顶脊槫。"
+    },
+    "chashou": {
+      "name": "叉手",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "upper"
+      ],
+      "desc": "平梁上斜撑脊槫的两根木。"
+    },
+    "tuofeng": {
+      "name": "驼峰、蜀柱",
+      "layer": "梁架",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [],
+      "desc": "梁和梁之间、梁和槫之间垫的木块和短柱。"
+    },
+    "liaofeng": {
+      "name": "橑檐槫",
+      "layer": "槫",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "tuanD",
+        "jumps"
+      ],
+      "desc": "斗拱最外一跳上的圆槫，屋檐压在它上面。"
+    },
+    "tuan": {
+      "name": "平槫、脊槫",
+      "layer": "槫",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "tuanD",
+        "jia"
+      ],
+      "desc": "顺着殿身的圆木，椽子搭在上面。两山的槫伸到角梁下。"
+    },
+    "chuan": {
+      "name": "椽、飞子",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "rafter",
+        "eave",
+        "flyRatio"
+      ],
+      "desc": "从脊到檐一根根排下来的圆椽，檐口外再接方飞子。"
+    },
+    "jiaoliang": {
+      "name": "角梁",
+      "layer": "椽",
+      "basis": "推测",
+      "src": [
+        "yzfs"
+      ],
+      "params": [
+        "lift",
+        "chong"
+      ],
+      "desc": "四角斜出的梁，戗脊下面就是它。"
+    },
+    "wamian": {
+      "name": "瓦面",
+      "layer": "屋面",
+      "basis": "实测",
+      "src": [
+        "du-xianzhou-1963"
+      ],
+      "params": [
+        "rise",
+        "zhe",
+        "roofThick"
+      ],
+      "desc": "筒瓦屋面。四面坡，五条脊（庑殿顶）。"
+    },
+    "ji": {
+      "name": "正脊、戗脊",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "params": [
+        "ridge"
+      ],
+      "desc": "屋顶最高的一条脊和四角的斜脊。"
+    },
+    "chiwei": {
+      "name": "鸱吻",
+      "layer": "屋面",
+      "basis": "推测",
+      "src": [
+        "du-xianzhou-1963",
+        "commons-yongle"
+      ],
+      "params": [
+        "ridge"
+      ],
+      "desc": "正脊两头的大吻，样子没照实物做。"
+    }
+  }
+}

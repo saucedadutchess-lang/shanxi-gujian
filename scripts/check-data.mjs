@@ -133,6 +133,8 @@ for (const f of existsSync(modelsDir) ? readdirSync(modelsDir).filter((n) => n.e
 // 建筑页（data/buildings/）：每条文字都要有类型、出处和页码位置；建筑页多一种类型“学界推断”，
 // 用来标论文作者的推测和假说，和史料记载、民间传说分开
 const PAGE_KINDS = [...KINDS, '学界推断'];
+// 有方位图的模型（src/building/plan.ts 的 PLANS）：建筑页写了这些模型，看点就要写 at
+const PLAN_MODELS = new Set(['nanchan', 'shengmudian', 'muta']);
 const buildingsDir = new URL('../data/buildings/', import.meta.url);
 const photoFiles = new Set(Object.values(photos).flat().map((p) => p.file));
 for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) => n.endsWith('.json')) : []) {
@@ -143,6 +145,11 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
   else if (!curated[b.unitId]?.buildings?.some((x) => x.id === b.buildingId)) err(w, `单体 ${b.buildingId} 在 curated.json 的这个单位下找不到`);
   if (!curated[b.unitId]?.card) err(w, '这个单位在 curated.json 里还没写名片三句话');
   if (b.model && !existsSync(new URL(`../data/models/${b.model}.json`, import.meta.url))) err(w, `模型 data/models/${b.model}.json 不在`);
+  if (b.models && b.model) err(w, 'model 和 models 只写一个');
+  for (const md of b.models ?? []) {
+    if (!md.id || !md.title) err(w, 'models 每项要写 id 和 title');
+    else if (!existsSync(new URL(`../data/models/${md.id}.json`, import.meta.url))) err(w, `模型 data/models/${md.id}.json 不在`);
+  }
   if (!b.name || !b.review) err(w, '缺名称或审核状态 review');
   const item = (where, x) => {
     fact(where, x, { needKind: false });
@@ -190,7 +197,7 @@ for (const f of existsSync(buildingsDir) ? readdirSync(buildingsDir).filter((n) 
     ns.add(o.n);
     // 没有方位图的（没模型也没实测平面）不用写方位
     if (o.hall !== undefined && !b.plans?.[o.hall]) err(wo, `hall ${o.hall} 没有对应的平面`);
-    if ((b.model || b.plan || b.plans || o.at) && !o.far && (!Array.isArray(o.at) || o.at.length !== 2)) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
+    if ((PLAN_MODELS.has(b.model) || b.plan || b.plans || o.at) && !o.far && (!Array.isArray(o.at) || o.at.length !== 2)) err(wo, '方位 at 要写 [x, z]（米，x 向东、z 向南）');
     if (o.photo && !photoFiles.has(o.photo)) err(wo, `照片 ${o.photo} 不在 data/photos.json 里`);
   }
   if (b.practical?.address) item(`${w} 地址`, b.practical.address);

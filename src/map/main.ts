@@ -1,6 +1,6 @@
 import '../style.css';
 import './map.css';
-import { ERA_GROUPS, type EraGroup } from './era';
+import { ERA_GROUPS, parseEra, type EraGroup } from './era';
 import { galleryBlock, photosOf, wireGallery } from './photos';
 import { setupSplitter } from './splitter';
 import { createSvgView } from './svgview';
@@ -261,7 +261,7 @@ function update() {
       const li = document.createElement('li');
       const b = document.createElement('button');
       b.type = 'button';
-      b.innerHTML = `<span class="nm">${esc(u.name)}</span><span class="meta">${esc(u.record.era)} · ${esc(u.record.county)}</span>`;
+      b.innerHTML = `<span class="nm">${esc(u.name)}</span><span class="meta">${eraText(u)} · ${esc(u.record.county)}</span>`;
       if (!u.location) b.title = '暂无坐标，图上没有这一处';
       b.addEventListener('click', () => select(u.id));
       li.append(b);
@@ -327,13 +327,26 @@ const BUILDING_PAGES: Record<string, string> = {
   '1-0093-3-046': './building.html?id=yonglegong',
   '5-0224-3-030': './building.html?id=jiwangmiao',
 };
-const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang', '1-0085-3-038': 'shengmudian', '1-0071-3-024': 'muta', '1-0091-3-044': 'bojia' };
+const MODEL_PAGES: Record<string, string> = { '1-0079-3-032': 'nanchan', '1-0080-3-033': 'foguang', '1-0085-3-038': 'shengmudian', '1-0071-3-024': 'muta', '1-0091-3-044': 'bojia', '1-0088-3-041': 'shanhuadian', '1-0093-3-046': 'sanqing', '5-0224-3-030': 'jiwang' };
 /** 名片里 3D 的说明：精度不是“依据图纸复原”的，或者模型只是单位里的一座殿，在这里写 */
 const MODEL_CAPTION: Record<string, [string, string]> = {
-  bojia: ['示意', '下寺薄伽教藏殿：柱网、柱高、斗拱、屋面坡度按实测数字，平棋以上梁架、出檐、壁藏是推测，塑像没有做'],
+  bojia: ['示意', '下寺薄伽教藏殿：柱网、柱高、斗拱、屋面坡度按实测数字，平棋以上梁架、出檐、壁藏是推测，塑像没有做（上寺大雄宝殿的模型在建筑页）'],
+  shanhuadian: ['示意', '大雄宝殿：没找到测绘数字，只按材广、椽架和《营造法式》推测，只能看个大概；另外三座殿没有做'],
+  sanqing: ['示意', '三清殿：总尺寸、柱高、斗拱、举折按 1963 年的数字，各间开间、出檐是推测；其他殿没有做'],
+  jiwang: ['示意', '大殿：面阔、进深、斗拱按测绘论文，梁架按论文的“前后乳栿用四柱”（省文物局说有一列中柱，两说待核），柱高、举高、出檐是推测'],
 };
 
 /** 示意殿堂的参数换成屋顶变形器的网址，进去就摆好这个形制和年代 */
+/** 年代：一般照录名录；单体的有据年代比名录年代还早、朝代也不同时（如稷王庙名录作“金”，题记是北宋），先写单体年代，再注名录原文 */
+function eraText(u: Unit): string {
+  const r = u.record;
+  const b = (u.curated?.buildings ?? []).filter((x) => x.year).sort((x, y) => x.year!.value - y.year!.value)[0];
+  if (!b?.year || b.year.value >= u.era.year) return esc(r.era);
+  const name = parseEra(b.year.label).name;
+  if (!name || r.era.includes(name)) return esc(r.era);
+  return `${esc(name)}（名录作“${esc(r.era)}”）`;
+}
+
 function morphHref(s: MorphState) {
   const form = s.zj ? '攒尖' : s.g ? '硬山' : s.t >= 1 ? '悬山' : s.t > 0 ? '歇山' : '庑殿';
   return `./index.html?form=${encodeURIComponent(form)}&era=${s.era.toFixed(2)}${s.dbl ? '&dbl=1' : ''}`;
@@ -429,7 +442,7 @@ function select(id: string | null) {
     <button type="button" class="widen" aria-pressed="${splitter.isWide()}" title="把详情栏放大到约半屏，再点一次还原">${splitter.isWide() ? '还原' : '放大'}</button>
     <p class="card-kicker">${esc(u.region)} · ${esc(r.category)}${rankOf(u) !== 'B' ? ` · <span class="badge${c?.tier ? '' : ' soft'}">${esc(RANK_LABEL[rankOf(u)])}</span>` : ''}</p>
     <h2>${esc(u.name)}</h2>
-    <p class="card-sub">${esc(r.era)} · ${esc(r.prefecture)}${esc(r.county)}</p>
+    <p class="card-sub">${eraText(u)} · ${esc(r.prefecture)}${esc(r.county)}</p>
     ${media}
     ${three}
     ${actions}
@@ -563,7 +576,7 @@ function hover(id: string | null, x: number, y: number) {
       ${thumbBlock(u)}
       <p class="hc-kicker"><i style="background:${REGION_COLOR[u.region]}"></i>${esc(u.region)} · ${esc(u.record.county)} · ${esc(u.record.category)}</p>
       <h4>${esc(u.name)}</h4>
-      <p class="hc-era">${esc(u.record.era)}${rankOf(u) !== 'B' ? ` · ${esc(RANK_LABEL[rankOf(u)])}` : ''}</p>
+      <p class="hc-era">${eraText(u)}${rankOf(u) !== 'B' ? ` · ${esc(RANK_LABEL[rankOf(u)])}` : ''}</p>
       ${what ? `<p class="hc-what">${esc(what)}</p>` : '<p class="hc-todo">名片还没写，点开看名录信息</p>'}
       <p class="hc-hint">点击看详情</p>`;
     fillThumbs(hoverEl);

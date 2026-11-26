@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>万荣稷王庙大殿 · 拆开看｜观晋</title>
+    <meta name="description" content="按徐怡涛 2014 年论文里的尺寸生成的万荣稷王庙大殿三维模型（示意），可以一层层拆开，看每个构件的尺寸和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html">地图</a>
+        <a href="./intro.html">古建入门</a>
+        <a href="./index.html">屋顶变形器</a>
+        <a href="./building.html?id=foguang">佛光寺东大殿</a>
+        <a href="./building.html?id=nanchan">南禅寺大殿</a>
+        <a href="./building.html?id=shengmudian">晋祠圣母殿</a>
+        <a href="./building.html?id=muta">应县木塔</a>
+        <a href="./building.html?id=huayansi">华严寺</a>
+        <a href="./building.html?id=shanhuasi">善化寺</a>
+        <a href="./building.html?id=yonglegong">永乐宫</a>
+        <a href="./building.html?id=jiwangmiao" aria-current="page">稷王庙</a>
+      </nav>
+    </header>
+    <main>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="万荣稷王庙大殿的三维模型"></canvas>
+        <div class="nc-views" role="group" aria-label="视角">
+          <button type="button" data-view="front" title="站在殿前看正面（殿朝南）">正面</button>
+          <button type="button" data-view="corner" title="从东南角看，正面和东山面都看得到">斜看</button>
+          <button type="button" data-view="eave" title="走到檐下，抬头看斗拱和出檐">檐下</button>
+          <button type="button" data-view="inside" title="进到殿里，抬头看梁架">殿内</button>
+          <button type="button" data-view="top" title="从高处看屋顶">俯瞰</button>
+        </div>
+        <img class="nc-overlay" id="overlay" alt="" hidden />
+        <p class="nc-credit" id="overlay-credit" hidden></p>
+        <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
+      </div>
+
+      <aside class="panel nc-panel">
+        <p class="nc-back"><a href="./building.html?id=jiwangmiao">← 稷王庙建筑页</a></p>
+        <h2>万荣稷王庙大殿 <span class="badge" id="precision"></span></h2>
+        <p class="lead" id="precision-note"></p>
+
+        <section>
+          <div class="row"><label for="explode">拆开</label><output id="explode-out">合拢</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" />
+          <div class="nc-layers" id="layers" role="group" aria-label="显示哪些层"></div>
+        </section>
+
+        <section>
+          <h3>颜色</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="颜色">
+            <button type="button" role="radio" aria-checked="true" data-color="material">看材质</button>
+            <button type="button" role="radio" aria-checked="false" data-color="basis">看依据</button>
+          </div>
+          <ul class="nc-legend" id="legend"></ul>
+        </section>
+
+        <section>
+          <h3>和实拍照片对照</h3>
+          <p class="desc nc-small">还没做：这座殿还没有找到可用的照片。</p>
+          <div class="nc-photo-ctl" hidden>
+            <div class="row"><label for="photo-op">照片透明度</label><output id="photo-op-out">50%</output></div>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" />
+            <p class="nc-s" id="photo-note"></p>
+          </div>
+        </section>
+
+        <section id="info" aria-live="polite">
+          <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>
+        </section>
+
+        <section class="sources">
+          <p>各间面阔、通进深、材广、斗拱做法（五铺作偷心，柱头双杪，补间和转角单杪单下昂，补间逐间一朵）和梁架形式（六架椽屋前后乳栿用四柱）取自徐怡涛《论碳十四测年技术测定中国古代建筑建造年代的基本方法》（《文物》2014 年第 9 期）。全部参数和出处在仓库的 <code>data/models/jiwang.json</code>。</p><p>柱高、举高、出檐、台基、门窗没有找到，又没有照片可对照，都按《营造法式》推测，所以标“示意”。省文物局介绍里说殿内有一列中柱，和论文的“前后乳栿用四柱”对不上，模型按论文。</p>
+        </section>
+      </aside>
+    </main>
+    <script type="module" src="/src/jiwang/main.ts"></script>
+  </body>
+</html>

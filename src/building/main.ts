@@ -23,6 +23,8 @@ interface Page {
   name: string;
   place: string;
   model?: string;
+  /** 一页讲几座殿、各有模型时用，代替 model */
+  models?: { id: string; title: string }[];
   /** 没有模型时，到现场必看的方位图按这里的实测柱网画 */
   plan?: GridSpec & Item;
   /** 一页讲几座殿时，每座一张方位图；看点用 hall 指明在第几张（从 0 数） */
@@ -163,15 +165,19 @@ function render(p: Page) {
         )
         .join('')}</tbody></table></div>`
     : '';
-  const modelPage = p.model ? `./${p.model}.html` : null;
+  const models = p.models ?? (p.model ? [{ id: p.model, title: '' }] : []);
   const structKey = k.structure
     ? `<div class="bp-key" id="key-structure"><h3><span>三</span>拆结构</h3>
       <p class="bp-lead">${esc(k.structure.text)}</p>
       ${(k.structure.facts ?? []).map((x) => `<p>${esc(x.text)}${meta(x)}</p>`).join('')}
       ${
-        modelPage
-          ? `${k.structure.pending ? `<p class="todo">${esc(k.structure.pending)}</p>` : ''}<div class="bp-model" id="model-box"><button type="button" class="bp-model-open">在这里打开 3D 模型<small>要读入不少贴图，比较占内存，用完可以刷新页面</small></button></div>
-             <p class="bp-go-row"><a class="bp-go" href="${modelPage}">在新页面全屏打开 →</a></p>`
+        models.length
+          ? `${k.structure.pending ? `<p class="todo">${esc(k.structure.pending)}</p>` : ''}${models
+              .map(
+                (md) => `${md.title ? `<h4>${esc(md.title)}</h4>` : ''}<div class="bp-model" data-model="${esc(md.id)}" data-title="${esc(md.title || p.name)}"><button type="button" class="bp-model-open">在这里打开 3D 模型<small>要读入不少贴图，比较占内存，用完可以刷新页面</small></button></div>
+             <p class="bp-go-row"><a class="bp-go" href="./${esc(md.id)}.html">在新页面全屏打开 →</a></p>`,
+              )
+              .join('')}`
           : `<p class="todo">${esc(k.structure.pending ?? '3D 模型还在做，做好后放在这里。')}</p>`
       }</div>`
     : '';
@@ -257,7 +263,7 @@ function render(p: Page) {
   root.innerHTML = `${hero}<div class="bp-body">${toc}<div class="bp-main">${body}${biblio}</div></div>`;
 
   wireGallery(root);
-  wire(p, unit, thumb?.state);
+  wire(unit, thumb?.state);
 }
 
 /** 直线距离最近的几处国保 */
@@ -279,17 +285,17 @@ function nearby(u: Unit, n: number, maxKm: number) {
     .slice(0, n);
 }
 
-function wire(p: Page, unit: Unit, thumbState: Parameters<typeof renderThumb>[0] | undefined) {
+function wire(unit: Unit, thumbState: Parameters<typeof renderThumb>[0] | undefined) {
   // 认形制的示意小图
   const img = root.querySelector<HTMLImageElement>('img[data-thumb]');
   if (img && thumbState) renderThumb(thumbState).then((url) => (img.src = url));
 
   // 拆结构：点了才读模型（另一个 WebGL 页面，很占内存）
-  const box = root.querySelector<HTMLElement>('#model-box');
-  box?.querySelector('button')?.addEventListener('click', () => {
-    box.classList.add('open');
-    box.innerHTML = `<iframe src="./${p.model}.html?embed" title="${esc(p.name)}三维模型" loading="eager"></iframe>`;
-  });
+  for (const box of root.querySelectorAll<HTMLElement>('.bp-model[data-model]'))
+    box.querySelector('button')?.addEventListener('click', () => {
+      box.classList.add('open');
+      box.innerHTML = `<iframe src="./${box.dataset.model}.html?embed" title="${box.dataset.title}三维模型" loading="eager"></iframe>`;
+    });
 
   // 看点照片
   for (const b of root.querySelectorAll<HTMLButtonElement>('[data-photo]')) b.addEventListener('click', () => openPhoto(unit.id, b.dataset.photo!));

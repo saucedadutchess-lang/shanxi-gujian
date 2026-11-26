@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>善化寺大雄宝殿 · 拆开看｜观晋</title>
+    <meta name="description" content="按材广、椽架平长和《营造法式》推测生成的大同善化寺大雄宝殿三维模型（示意），可以一层层拆开，看每个构件的尺寸和出处。" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>观晋</h1>
+      <p>看懂山西古建筑</p>
+      <nav class="site-nav" aria-label="页面">
+        <a href="./map.html">地图</a>
+        <a href="./intro.html">古建入门</a>
+        <a href="./index.html">屋顶变形器</a>
+        <a href="./building.html?id=foguang">佛光寺东大殿</a>
+        <a href="./building.html?id=nanchan">南禅寺大殿</a>
+        <a href="./building.html?id=shengmudian">晋祠圣母殿</a>
+        <a href="./building.html?id=muta">应县木塔</a>
+        <a href="./building.html?id=huayansi">华严寺</a>
+        <a href="./building.html?id=shanhuasi" aria-current="page">善化寺</a>
+        <a href="./building.html?id=yonglegong">永乐宫</a>
+        <a href="./building.html?id=jiwangmiao">稷王庙</a>
+      </nav>
+    </header>
+    <main>
+      <div class="stage-wrap">
+        <canvas id="stage" aria-label="善化寺大雄宝殿的三维模型"></canvas>
+        <div class="nc-views" role="group" aria-label="视角">
+          <button type="button" data-view="front" title="站在殿前看正面（殿朝南）">正面</button>
+          <button type="button" data-view="corner" title="从东南角看，正面和东山面都看得到">斜看</button>
+          <button type="button" data-view="eave" title="走到檐下，抬头看斗拱和出檐">檐下</button>
+          <button type="button" data-view="inside" title="进到殿里，抬头看梁架">殿内</button>
+          <button type="button" data-view="top" title="从高处看屋顶">俯瞰</button>
+        </div>
+        <img class="nc-overlay" id="overlay" alt="" hidden />
+        <p class="nc-credit" id="overlay-credit" hidden></p>
+        <p class="hint">拖动旋转 · 滚轮缩放 · 右键平移 · 点构件看名称和出处</p>
+      </div>
+
+      <aside class="panel nc-panel">
+        <p class="nc-back"><a href="./building.html?id=shanhuasi">← 善化寺建筑页</a></p>
+        <h2>善化寺大雄宝殿 <span class="badge" id="precision"></span></h2>
+        <p class="lead" id="precision-note"></p>
+
+        <section>
+          <div class="row"><label for="explode">拆开</label><output id="explode-out">合拢</output></div>
+          <input type="range" id="explode" min="0" max="1" step="0.01" value="0" />
+          <div class="nc-layers" id="layers" role="group" aria-label="显示哪些层"></div>
+        </section>
+
+        <section>
+          <h3>颜色</h3>
+          <div class="nc-seg" role="radiogroup" aria-label="颜色">
+            <button type="button" role="radio" aria-checked="true" data-color="material">看材质</button>
+            <button type="button" role="radio" aria-checked="false" data-color="basis">看依据</button>
+          </div>
+          <ul class="nc-legend" id="legend"></ul>
+        </section>
+
+        <section>
+          <h3>和实拍照片对照</h3>
+          <p class="desc nc-small">还没做：照片 <code>shanhua/01.jpg</code> 是斜着拍的近景，叠合校验留到下一版。</p>
+          <div class="nc-photo-ctl" hidden>
+            <div class="row"><label for="photo-op">照片透明度</label><output id="photo-op-out">50%</output></div>
+            <input type="range" id="photo-op" min="0" max="1" step="0.01" value="0.5" />
+            <p class="nc-s" id="photo-note"></p>
+          </div>
+        </section>
+
+        <section id="info" aria-live="polite">
+          <p class="desc nc-empty">点模型上的构件，这里显示它叫什么、做什么用、尺寸从哪里来。</p>
+        </section>
+
+        <section class="sources">
+          <p>这座殿没有找到测绘数字。材广 260 毫米、椽架平长 2250–2540 毫米取自王一臻、徐怡涛《辽代建筑营造“大尺”与尺度构成研究》（《故宫博物院院刊》2023 年第 12 期）转引的陈明达数据；“广七间、深五间、外檐双杪计心、中间四缝省去部分内柱”取自梁思成《中国建筑史》；十架椽、减去中间两排八根内柱、补间斜栱、生起取自网上游记和学习笔记（转述郭黛姮等书，原书没读到）。全部参数和出处在仓库的 <code>data/models/shanhuadian.json</code>。</p><p>各间面阔、柱高、举高、出檐都是按《营造法式》和照片推测的，只能看个大概，所以标“示意”。殿内藻井、平棋、金代塑像没有做。</p>
+        </section>
+      </aside>
+    </main>
+    <script type="module" src="/src/shanhuadian/main.ts"></script>
+  </body>
+</html>
